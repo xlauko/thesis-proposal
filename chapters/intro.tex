@@ -5,28 +5,23 @@
 
 The contemporary research in computer science is starting to be snowed under a lot of new techniques, tools, and algorithms.
 However, many of them are not designed with reusability in mind.
-This trend causes researchers to reimplement many of algorithms by themselves if they want extend existing work.
-The reimplementation does not just cost extra time resources but also produce hardly comparable results with previous approaches.
+This trend causes researchers to reimplement many of algorithms by themselves if they want to extend existing work.
+The reimplementation does not just cost extra time resources but also produce hardly comparable results with previous approaches because the evaluation is becoming implementation-dependent.
 
 The computer verification community is not an exception.
-According to the classification of used techniques in recent \svcomp \cite{SVCOMP2019}, many tools utilize a similar set of core techniques.\sidenote{The techniques used by tools in \svcomp 2019 are summarized in table \autoref{tab:svcomp}.}
+According to the classification of used techniques in recent \svcomp \cite{SVCOMP2019}, many tools utilize a similar set of core techniques.\sidenote{The techniques used by tools in \svcomp 2019 are summarized in \autoref{tab:svcomp}.}
 
-The prominent role of presented approaches is taken by \emph{abstraction} related techniques, concretely \cegar, predicate abstraction, shape analysis, lazy abstraction or symbolic data representation.
-Even though these techniques share the similar ideas each of the tools ships its own implementation of them.
+The prominent role of presented approaches is taken by \emph{abstraction} related techniques, concretely \cegar
+\cite{Clarke20}, predicate abstraction \cite{Flanagan02}, shape analysis \cite{Yang2008}, lazy abstraction \cite{Henzinger2002}, or symbolic data representation \cite{King76,Burch1990}.
+Even though these techniques share similar ideas each of the tools ships own implementation of them.
 
 % besides sv-comp abstraction is widely adopted to tackle .... (google scholar citation)
 
-On the other hand, we may find also examples of reusable techniques.
-One such example is a utilization of \smt logics and solvers in the symbolic verification.
+On the other hand, we may also find examples of reusable techniques.
+One such example is the utilization of \smt logics and solvers in the symbolic verification.
 With widely adopted format SMT-LIB \cite{Barrett2010}, \smt solvers are easily used out-of-the-box [TODO].
 \add{extend}
 % TODO what i will present in my thesis
-
-In this thesis proposal we present a survey of current abstraction techniques and  present a technique how to generalize them to be reusable across \llvm based tools.
-
-\add{propose a generalized}
-
-\add{llvm intro}
 
 % In order to contribute to the solution of the software reliability problem, tools have been designed to analyze statically the run-time
 % behavior of programs. Because the correctness problem is undecidable,
@@ -38,43 +33,98 @@ In this thesis proposal we present a survey of current abstraction techniques an
 
 	\centering
     \resizebox{\textwidth}{!}{%
-    \begin{tabular}{l | llllllllllllllllll}
-    \textsc{participant} &  &  &  &  &  &  &  & &  &  &  &  &  &  &  &  &  &  \\
+    \newcolumntype{C}{>{\sffamily}l}
+    \begin{tabular}{C |  g c g c g c g c g c g c g c g c g c}
+        \textsc{participant}
+        & \rotatebox{90}{\cegar}
+        & \rotatebox{90}{Predicate Abstraction}
+        & \rotatebox{90}{Symbolic Execution}
+        & \rotatebox{90}{Bounded Model Checking}
+        & \rotatebox{90}{k-Induction}
+        & \rotatebox{90}{Property-Directed Reach.}
+        & \rotatebox{90}{Explicit-Value Analysis}
+        & \rotatebox{90}{Numeric. Interval Analysis}
+        & \rotatebox{90}{Shape Analysis}
+        & \rotatebox{90}{Separation Logic}
+        & \rotatebox{90}{Bit-Precise Analysis}
+        & \rotatebox{90}{ARG-Based Analysis}
+        & \rotatebox{90}{Lazy Abstraction}
+        & \rotatebox{90}{Interpolation}
+        & \rotatebox{90}{Automata-Based Analysis}
+        & \rotatebox{90}{Concurrency Support}
+        & \rotatebox{90}{Ranking Functions}
+        & \rotatebox{90}{Evolutionary Algorithms}
+        \\
  	\hline
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    2LS             &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    AProVE          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    CBMC            &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    CBMC-Path       &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    CPA-BAM-BnB     &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    CPA-Lockator    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    CPA-Seq         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    DepthK          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    DIVINE-explicit &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    DIVINE-SMT    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    ESBMC-kind      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    JayHorn         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    JBMC            &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    JPF             &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    Lazy-CSeq       &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Map2Check       &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    PeSCo           &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Pinaka          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    PredatorHP      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Skink           &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    Smack           &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    SPF             &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    \hline
+    Symbolic        &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    UAutomizer      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
 	\hline
+    UKojak          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    UTaipan         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+	\hline
+    VeriAbs         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    VeriFuzz        &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+	\hline
+    VIAP            &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Yogar-CBMC      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+	\hline
+    Yogar-CBMC-Par. &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
 	\end{tabular}
     }
 
-\caption{Technologies and features that the competition candidates offer.}
+\caption{Techniques that the \svcomp 2019 candidates offer \cite{SVCOMP2019}.}
 \label{tab:svcomp}
 \end{table}
 
 \add{larger introduction to techniques - abstraction motivation}
+The main success of abovementioned techniques is in their purpose.
+Since program verification is generally undecidable, the automatic computer-aided verification tools rely on the approximation techniques.
+Either they provide only partial algorithms, requires human interaction (in the case of theorem provers) or consider a restricted form of programs and their properties.
 
+The model on which verifier operates introduces the first approximation of the real environment.
+In general, it would be impractical if not almost impossible to verify the whole environment, starting from the underlying hardware and ending with an operating system and user interactions.
+Hence verifiers assume the correctness of underlying layers of the program and focus only on the system under test.
+Another approximation made by verifiers is on the level of program semantics.  When verifying a program (for example in C), one can decide whether to perform atomic semantic steps by program lines or based on the compiled assembly code. Whereas the first may preserve a piece of information about the behavior of the program, the letter is closer to the real execution.
+The last approximation of our concern is data abstraction that is used to represent non-deterministic values in the program and tackles the state-space explosion problem.
+
+In this thesis proposal, we present a survey of current abstraction techniques and present a technique of how to generalize them to be reusable across \llvm based tools.
+
+\add{propose a generalized}
+
+\add{llvm intro}
 
 
 The thesis proposal is organized as follows: \autoref{ch:state} summarizes the state of the art and is divided into {\color{red}x} parts. \autoref{ch:results}

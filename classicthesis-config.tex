@@ -171,6 +171,7 @@
 % ****************************************************************************************************
 % 4. Setup floats: tables, (sub)figures, and captions
 % ****************************************************************************************************
+\usepackage{colortbl}
 \usepackage{tabularx} % better tables
     \setlength{\extrarowheight}{3pt} % increase table row height
 \newcommand{\tableheadline}[1]{\multicolumn{1}{c}{\spacedlowsmallcaps{#1}}}
@@ -178,6 +179,8 @@
 \usepackage{caption}
 \captionsetup{format=plain,font=small, textfont=it, labelfont=bf}
 \usepackage{subfig}
+
+\newcolumntype{g}{>{\columncolor{pruss!10}}c}
 
 % ****************************************************************************************************
 % 6. PDFLaTeX, hyperreferences and citation backreferences
@@ -498,6 +501,9 @@
 %\usepackage[urw-garamond]{mathdesign} <-- no osf support :-(
 %\usepackage[default,osfigures]{opensans} % scale=0.95
 %\usepackage[sfdefault]{FiraSans}
+
+\usepackage{pifont}
+
 % ****************************************************************************************************
 
 \usepackage{sidenotes}
