@@ -1,2 +1,73 @@
 \chapter{Introduction}
 \label{ch:intro}
+
+% Stručné uvedení do problematiky, motivace, přehled dalších kapitol, 2 - 3 strany.
+
+The contemporary research in computer science is starting to be snowed under a lot of new techniques, tools, and algorithms.
+However, many of them are not designed with reusability in mind.
+This trend causes researchers to reimplement many of algorithms by themselves if they want extend existing work.
+The reimplementation does not just cost extra time resources but also produce hardly comparable results with previous approaches.
+
+The computer verification community is not an exception.
+According to the classification of used techniques in recent \svcomp \cite{SVCOMP2019}, many tools utilize a similar set of core techniques.
+\sidenote{The techniques used by tools in \svcomp 2019 are summarized in table \autoref{tab:svcomp}.}
+
+The prominent role of presented approaches is taken by \emph{abstraction} related techniques, concretely \cegar, predicate abstraction, shape analysis, lazy abstraction or symbolic data representation.
+Even though these techniques share the similar ideas each of the tools ships its own implementation of them.
+
+% besides sv-comp abstraction is widely adopted to tackle .... (google scholar citation)
+
+On the other hand, we may find also examples of reusable techniques.
+One such example is a utilization of \smt logics and solvers in the symbolic verification.
+With precisely defined format [TODO] and interface, \smt solvers are easily used out-of-the-box [TODO].
+
+% TODO what i will present in my thesis
+
+In this thesis proposal we present a survey of current abstraction techniques and  present a technique how to generalize them to be reusable across llvm based tools.
+
+propose a generalized
+
+% In order to contribute to the solution of the software reliability problem, tools have been designed to analyze statically the run-time
+% behavior of programs. Because the correctness problem is undecidable,
+% some form of approximation is needed. The purpose of abstract interpretation is to formalize this idea of approximation. We illustrate informally
+% the application of abstraction to the semantics of programming languages
+% as well as to static program analysis. [Abstract Interpretation Based Formal Methods and Future Challenges]
+
+\begin{table}[h!]
+
+	\centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{l | llllllllllllllllll}
+    \textsc{Praticipant} &  &  &  &  &  &  &  & &  &  &  &  &  &  &  &  &  &  \\
+ 	\hline
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+	\hline
+	\end{tabular}
+    }
+
+\caption{Technologies and features that the competition candidates offer.}
+\label{tab:svcomp}
+\end{table}
