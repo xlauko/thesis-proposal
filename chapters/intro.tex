@@ -12,8 +12,9 @@ The computer verification community is not an exception.
 According to the classification of used techniques in recent \svcomp \cite{SVCOMP2019}, many tools utilize a similar set of core techniques.\sidenote{The techniques used by tools in \svcomp 2019 are summarized in \autoref{tab:svcomp}.}
 
 The prominent role of presented approaches is taken by \emph{abstraction} related techniques, concretely \cegar
-\cite{Clarke20}, predicate abstraction \cite{Flanagan02}, shape analysis \cite{Yang2008}, lazy abstraction \cite{Henzinger2002}, or symbolic data representation \cite{King76,Burch1990}.
+\cite{Clarke20}, predicate abstraction \cite{Flanagan02}, shape analysis \cite{Yang2008}, lazy abstraction \cite{Henzinger2002}, or symbolic data representation \cite{King76,Burch1990,Majumdar2018}.
 Even though these techniques share similar ideas each of the tools ships own implementation of them.
+Moreover, the design of these algorithms is not well suited for reusability.
 
 % besides sv-comp abstraction is widely adopted to tackle .... (google scholar citation)
 
@@ -56,52 +57,52 @@ With widely adopted format SMT-LIB \cite{Barrett2010}, \smt solvers are easily u
         & \rotatebox{90}{Evolutionary Algorithms}
         \\
  	\hline
-    2LS             &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    AProVE          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    2LS             &  &  &  & \cm & \cm &  &  & \cm &  &  & \cm &  &  &  &  &  & \cm &  \\
+    AProVE          &  &  & \cm &  &  &  & \cm & \cm &  & \cm & \cm &  &  &  &  &  & \cm &  \\
     \hline
-    CBMC            &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    CBMC-Path       &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    CBMC            &  &  &  & \cm &  &  &  &  &  &  & \cm &  &  &  &  & \cm &  &  \\
+    CBMC-Path       &  &  &  & \cm &  &  &  &  &  &  & \cm &  &  &  &  & \cm &  &  \\
     \hline
-    CPA-BAM-BnB     &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    CPA-Lockator    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    CPA-BAM-BnB     & \cm & \cm &  &  &  &  & \cm &  &  &  & \cm & \cm & \cm & \cm &  &  &  &  \\
+    CPA-Lockator    & \cm & \cm &  &  &  &  & \cm &  &  &  & \cm & \cm & \cm & \cm &  & \cm &  &  \\
     \hline
-    CPA-Seq         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    DepthK          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    CPA-Seq         & \cm  & \cm &  & \cm & \cm &  & \cm & \cm & \cm &  & \cm & \cm & \cm & \cm &  & \cm & \cm &  \\
+    DepthK          &  &  &  & \cm & \cm &  &  &  &  &  & \cm &  &  &  &  & \cm &  &  \\
     \hline
-    DIVINE-explicit &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    DIVINE-SMT    &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    DIVINE-explicit &  &  &  &  &  &  & \cm &  &  &  & \cm &  &  &  &  & \cm &  &  \\
+    DIVINE-SMT      &  &  &  &  &  &  & \cm &  &  &  & \cm &  &  &  &  & \cm &  &  \\
     \hline
-    ESBMC-kind      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    JayHorn         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    ESBMC-kind      &  &  &  & \cm & \cm &  &  &  &  &  & \cm &  &  &  &  & \cm &  &  \\
+    JayHorn         & \cm & \cm &  &  &  & \cm &  & \cm &  &  &  &  & \cm & \cm &  &  &  &  \\
     \hline
-    JBMC            &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    JPF             &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    JBMC            &  &  &  & \cm &  &  &  &  &  &  & \cm &  &  &  &  & \cm &  &  \\
+    JPF             &  &  &  & \cm &  &  & \cm & \cm &  &  & \cm &  &  &  &  &  &  &  \\
     \hline
-    Lazy-CSeq       &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    Map2Check       &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Lazy-CSeq       &  &  &  & \cm &  &  &  &  &  &  & \cm &  &  &  &  & \cm  &  &  \\
+    Map2Check       &  &  &  & \cm &  &  &  &  &  &  & \cm &  &  &  &  &  &  &  \\
     \hline
-    PeSCo           &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    Pinaka          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    PeSCo           & \cm & \cm &  & \cm & \cm &  & \cm & \cm & \cm &  & \cm & \cm & \cm & \cm &  & \cm & \cm &  \\
+    Pinaka          &  &  & \cm & \cm &  &  &  &  &  &  & \cm &  &  &  &  &  &  &  \\
     \hline
-    PredatorHP      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    Skink           &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    PredatorHP      &  &  &  &  &  &  &  &  & \cm &  &  &  &  &  &  &  &  &  \\
+    Skink           & \cm &  &  &  &  &  & \cm &  &  &  &  &  &  & \cm & \cm &  &  &  \\
     \hline
-    Smack           &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    SPF             &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Smack           & \cm &  &  & \cm &  & \cm &  &  &  &  & \cm &  & \cm &  &  & \cm &  &  \\
+    SPF             &  &  & \cm &  &  &  &  &  & \cm &  &  &  &  &  &  & \cm &  &  \\
     \hline
-    Symbolic        &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    UAutomizer      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Symbiotic       &  &  & \cm &  &  &  &  & \cm &  &  & \cm &  &  &  &  &  &  &  \\
+    UAutomizer      & \cm & \cm &  &  &  &  &  &  &  &  & \cm &  & \cm & \cm & \cm &  & \cm &  \\
 	\hline
-    UKojak          &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    UTaipan         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    UKojak          & \cm & \cm &  &  &  &  &  &  &  &  & \cm &  & \cm & \cm &  &  &  &  \\
+    UTaipan         & \cm & \cm &  &  &  &  &  &  &  &  & \cm &  & \cm & \cm & \cm &  &  &  \\
 	\hline
-    VeriAbs         &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    VeriFuzz        &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    VeriAbs         & \cm &  &  & \cm & \cm &  & \cm & \cm &  &  &  &  &  &  &  &  &  &  \\
+    VeriFuzz        &  &  &  & \cm &  &  &  & \cm &  &  &  &  &  &  &  &  &  & \cm \\
 	\hline
     VIAP            &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
-    Yogar-CBMC      &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Yogar-CBMC      & \cm &  &  & \cm &  &  &  &  &  &  & \cm &  & \cm &  &  & \cm &  &  \\
 	\hline
-    Yogar-CBMC-Par. &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+    Yogar-CBMC-Par. & \cm &  &  & \cm &  &  &  &  &  &  & \cm &  & \cm &  &  & \cm &  &  \\
 	\end{tabular}
     }
 
@@ -110,7 +111,8 @@ With widely adopted format SMT-LIB \cite{Barrett2010}, \smt solvers are easily u
 \end{table}
 
 \add{larger introduction to techniques - abstraction motivation}
-The main success of abovementioned techniques is in their purpose.
+Notwithstanding the amount of work required a lot of tools reinvent the wheel and adapt the existing algorithms.
+The main success of abovementioned techniques is in their indispensability.
 Since program verification is generally undecidable, the automatic computer-aided verification tools rely on the approximation techniques.
 Either they provide only partial algorithms, requires human interaction (in the case of theorem provers) or consider a restricted form of programs and their properties.
 
@@ -120,7 +122,12 @@ Hence verifiers assume the correctness of underlying layers of the program and f
 Another approximation made by verifiers is on the level of program semantics.  When verifying a program (for example in C), one can decide whether to perform atomic semantic steps by program lines or based on the compiled assembly code. Whereas the first may preserve a piece of information about the behavior of the program, the letter is closer to the real execution.
 The last approximation of our concern is data abstraction that is used to represent non-deterministic values in the program and tackles the state-space explosion problem.
 
-In this thesis proposal, we present a survey of current abstraction techniques and present a technique of how to generalize them to be reusable across \llvm based tools.
+In this thesis proposal, we present a survey of the essential as well as contemporary abstraction and symbolic techniques.
+
+We identify their common specifics and present a potential design for reausable
+abstraction across tools.
+
+In my recent work I have investigated how to repurpose a symbolic computation for explicit-based model checking [TODO].
 
 \add{propose a generalized}
 

@@ -24,16 +24,97 @@
 
 \section{Preliminaries}
 
-This section introduces the notation used in the rest of the proposal.
+This section introduces the notation used in the rest of the thesis proposal.
+The presented notation is mainly based on the configurable software verification technique \cite{Beyer2007, Beyer2018, Beyer2018b} and Cousot's notation used to describe abstract interpretation \cite{Cousot2012}.
 
 \subsection{Programs, Control-Flow Graph, States}
+We restrict the presentation to a simplified version of \llvm programs \cite{Lattner04}. An elementary unit of \llvm program is an instruction. We distinguish binary instructions (arithmetic operations, relational operations), memory access operations, data flow operations (branching instructions, calls, return instructions). Because \llvmir is a typed language, it provides also casting instructions. We admit scalar types (floats, integers), pointer types, and aggregate types (arrays, structures).\sidenote{For detailed syntax and semantics description see \autoref{ch:llvm}.}
 
-We restrict to simplified version of \llvm (todo see).
+The entire program in \llvm consists of global variables and functions.
+A function is a directed graph of basic blocks. A basic block is a sequence of non-terminal instructions terminated by a terminal instruction.\sidenote{A terminal instruction is either branching or return instruction.}
+
+For a more accessible representation of an \llvm program, we will use a \emph{control flow automaton} (CFA), which is a directed graph with \llvm instructions attached to its edges (see \autoref{fig:cfa}).
+
+\begin{definition}
+    Given a set of instructions $\mathcal{I}$, a control flow automaton $\mathcal{A}$ is a tuple $(\mathcal{L}, l_{\textit{init}}, \mathcal{G})$, where $\mathcal{L}$ is a set of program locations, $l_{\textit{init}} \in \mathcal{L}$ is an initial location that represents a program entry point and $\mathcal{G} \subseteq (\mathcal{L} \times \mathcal{I} \times \mathcal{L})$ is set of edges between program locations, each labeled with an instruction that is executed when the control flows along the edge.
+\end{definition}
+
+The set of all variables that occur in the \llvm program is denoted by $\mathcal{V}$.\sidenote{In addition to program variables, we will also consider \llvm registers as variables. Even though \llvm registers are only assigned ones in the \ssa.} A \emph{concrete state} $\sigma : \mathcal{V} \rightarrow \mathbb{C}$ is a mapping from program variables to concrete values. We denote the set of all concrete states as $\Sigma$. Furthermore we define a map $st : \mathcal{L} \rightarrow 2^{\Sigma}$, which assigns to each program location a set of admissible concrete states. \add{TODO concrete values}
+
+The semantics of instruction $i \in \mathcal{I}$ is defined by \emph{strongest post condition} $SP_{i}(\cdot)$ -- for further details see \autoref{ch:llvm}.
+
+A set of all edges $\mathcal{G}$ induces a transition relation $\rightarrow$ on the set of states $\Sigma$, such that for each $g \in \mathcal{G}$ there is $\xrightarrow{g} \: \subseteq \Sigma \times \{g\} \times \Sigma$. The transition relation is a union over all edges $\rightarrow \bigcup_{g \in\mathcal{G}} \xrightarrow{g}$.
+
+A \emph{program path} $\pi$ is a sequence of concrete states $\langle c_0, c_1, \dots, c_n \rangle$ such that for all $1 \leq i \leq n$ there is a edge $c_{i-1} \rightarrow c_i$. The semantics of path $\pi$ is defined by iterative application of $SP_{i}( \cdot )$ for each instruction in path $\pi$ (TODO). A path $\pi$ is called \emph{feasible} if $SP_{\pi}(\textit{true})$ is satisfiable and \emph{infeasible} otherwise. A concrete state $\sigma \in \Sigma$ is \emph{reachable} from \emph{region} $r$ if there exists a feasible path $\pi$ starting from state $c_0 \in r$.
+
+A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L}, l_{\textit{init}}, \mathcal{G})$ is to show that error location $l_{\textit{err}} \in \mathcal{L}$ is unreachable in $\mathcal{A}$, or to find feasible error path.
+
+\begin{figure}
+
+\begin{minipage}[t]{0.5\textwidth}
+\begin{minted}[linenos]{llvm}
+define i32 @main() {
+entry:
+  %x = alloca i32
+  store i32 0 to i32* %x
+  br label %loop
+loop:
+  %v = load i32* %x
+  %a = add i32 %v, 1
+  store i32 %a to i32* %x
+  %b = icmp ult i32 %a, 5
+  br %b, label %loop, label %end
+end:
+  ret i32 0
+}
+\end{minted}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\strut\vspace*{-\baselineskip}\newline\centering
+\begin{tikzpicture}[node distance=1.1em]
+    \node [loc] (l1) {$l_1$};
+    \node [lab, left = 0cm of l1] (entry) {\llvmint{entry:}};
+
+    \node [loc, below = of l1] (l2) {$l_2$};
+    \node [loc, below = of l2] (l3) {$l_3$};
+    \node [lab, left = 0cm of l3] (loop) {\llvmint{loop:}};
+
+    %\node[fit=(l1) (l2), draw, dashed] (ebb) {};
+
+    \node [loc, below = of l3] (l4) {$l_4$};
+    \node [loc, below = of l4] (l5) {$l_5$};
+    \node [loc, below = of l5] (l6) {$l_6$};
+    \node [loc, below = of l6] (l7) {$l_7$};
+
+    %\node[fit=(l3) (l4) (l5) (l6) (l7), draw, dashed] (lbb) {};
+
+    \node [loc, below = of l7] (l8) {$l_8$};
+    \node [lab, left = 0cm of l8] (loop) {\llvmint{end:}};
+
+    \node [loc, below = of l8] (l9) {$l_9$};
+
+    %\node[fit=(l8) (l9), draw, dashed] (lbb) {};
+
+    \draw [->, >=stealth] (l1) -- node[midway, right] {\llvmint{|\var{\%x}| = alloca i32}} (l2);
+    \draw [->, >=stealth] (l2) -- node[midway, right] {\llvmint{store 0 to |\var{\%x}|}} (l3);
+    \draw [->, >=stealth] (l3) -- node[midway, right] {\llvmint{|\var{\%v}| = load |\var{\%x}|}} (l4);
+    \draw [->, >=stealth] (l4) -- node[midway, right] {\llvmint{|\var{\%a}| = add |\var{\%v}| 1}} (l5);
+    \draw [->, >=stealth] (l5) -- node[midway, right] {\llvmint{store |\var{\%a}| to |\var{\%x}|}} (l6);
+    \draw [->, >=stealth] (l6) -- node[midway, right] {\llvmint{|\var{\%b}| = ult |\var{\%a}| 5}} (l7);
+    \draw [->, >=stealth] (l7) -- node[midway, right] {\llvmint{[|\var{\%b}| = false]}} (l8);
+    \draw [->, >=stealth] (l7) to [bend left=40] node[above, rotate = 90] {\llvmint{[|\var{\%b}|= true]}} (l3);
+    \draw [->, >=stealth] (l8) -- node[midway, right] {\llvmint{ret 0}} (l9);
+
+\end{tikzpicture}
+\end{minipage}
+
+\caption{An example of \llvm program (left) and its CFA (right).}
+\label{fig:cfa}
+\end{figure}
 % state space
 
 \subsubsection{Program Semantics}
-
-
 
 % small step semantics
 
@@ -45,8 +126,15 @@ We restrict to simplified version of \llvm (todo see).
 
 % galois connection
 
-\section{Abstraction Framework}
+\section{Abstract Interpretation}
 
+Abstract interpretation \cite{Cousot1977, Cousot1979} is a theory of
+abstraction and constructive approximation of the mathematical structures used
+in the formal description of programming languages and the inference or
+verification of undecidable program properties~\cite{Cousot2012}.
+
+
+\section{Abstraction Framework}
 %See handbook of model checkin chap. 13
 
 %\subsection{Soundness}
@@ -58,13 +146,17 @@ We restrict to simplified version of \llvm (todo see).
 
 \section{Abstraction base techniques}
 
-\subsection{Abstract Interpretation}
-
 \subsection{Abstraction-based model checking}
+
+\add{ Abstraction is used in model checking to make model smaller. In general we are talking about overapproximating abstraction, wham mean that if an abstract model is correct the concrete model is also. However there is no guarantee that there is an error when ... }
 
 % reachability algorithm
 
 \section{Abstract Domains}
+
+\begin{definition}
+    An \textbf{abstract domain} $\mathsf{A}$ is a tuple $(\Sigma, \alpha, \gamma)$
+\end{definition}
 
 % interval domain, sign domain, octagonal domain ...
 
@@ -72,9 +164,41 @@ We restrict to simplified version of \llvm (todo see).
 
 % control flow of a program
 
-\subsection{Term Domain}
+\add{ If we want to omit program variable $v_i$ of a model by abstraction, we can simply assign an empty domain (unit domain) to the variable. }
 
-\subsection{Predicate Abstraction}
+\begin{figure}
+
+\begin{minted}{c}
+int i = 10;
+int v = 0;
+while (i >= 0) {
+    i = i - 1;
+    if (random())
+        v = v + 1;
+}
+\end{minted}
+
+\caption{\textbf{The need of relational domains.} To prove that $v \leq 11$ at
+line TODO we need to prove the relational loop invariant $v + i \leq 10$.}
+\end{figure}
+
+\add{other applications of relational domains: analysis of programs with
+symbolic parameters, modular analysis of procedures, inference of non-uniform
+non-numerical invariants (pointer analysis)}
+
+\subsection{Relational abstract domains}
+
+\subsubsection{Term Domain}
+
+\subsubsection{Predicate Abstraction}
+
+\subsection{Weakly relational abstract domains}
+
+\subsubsection{Zone domain}
+
+\subsubsection{Octagon domain}
+
+\subsubsection{Zone congruence domain}
 
 \subsection{Refinement}
 

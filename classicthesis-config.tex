@@ -90,13 +90,20 @@
     rulecolor=pruss,
     framesep=2mm,
     baselinestretch=1.2,
-    fontsize=\footnotesize
+    fontsize=\footnotesize,
+    escapeinside=||,
+    mathescape=true
 }
 \usemintedstyle{lovelace}
+
+\newmintinline[llvmint]{llvm}{}
 
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\ccode}[1]{\mintinline{cpp}{#1}}
 \newcommand{\lcode}[1]{\mintinline{llvm}{#1}}
+
+\definecolor{varcolor}{HTML}{B83838}
+\newcommand{\var}[1]{\hspace{-0.5em}\color{varcolor}\text{#1}}
 
 \usepackage{csquotes}
 
@@ -167,6 +174,8 @@
 \clubpenalty  = 8000        % help suppress orphans, default = 4,000 (?), from 0 to 10 000 (from 300 to 1 000 recommended, 10 000 not recommended)
 \widowpenalty = 8000        % help suppress widows,  default = 4,000 (?), from 0 to 10 000 (from 300 to 1 000 recommended, 10 000 not recommended)
 \SetTracking{encoding={*}, shape=sc}{40}
+
+\usepackage{syntax}
 
 % ****************************************************************************************************
 % 4. Setup floats: tables, (sub)figures, and captions
@@ -309,174 +318,7 @@
 \newcommand*{\textoverline}[1]{$\overline{\hbox{#1}}\m@th$}
 \makeatother
 
-\usetikzlibrary{shapes, arrows, automata, shadows, positioning, calc, shapes.geometric, fit, backgrounds, decorations.pathmorphing}
-
-\tikzset{
-    treenode/.style= {
-        align = center,
-        inner sep = 0pt,
-        text=pruss,
-        minimum width = 0.75cm,
-        minimum height = 0.75cm,
-        text centered,
-        prefix after command= {
-            \pgfextra{\tikzset{every label/.style={
-            color=pruss,
-            font=\ttfamily
-        }}}}
-    },
-    fnode/.style = {
-        align = center,
-        inner sep = 0pt,
-        text=pruss,
-        minimum width = 0.75cm,
-        minimum height = 0.75cm,
-        text centered
-    },
-    fvar/.style = {
-        rectangle,
-        fnode,
-        draw,
-        thick,
-        color=pruss
-    },
-    fop/.style = {
-        circle,
-        fnode,
-        fill=apple!40
-    },
-    fatom/.style = {
-        circle,
-        fill=pruss
-    },
-    ftreenode/.style = {
-        treenode,
-        circle,
-        fill=apple!40
-    },
-    pass/.style = {
-        draw,
-        inner sep=3pt,
-        rounded corners= 3pt,
-        minimum width = 0cm,
-        minimum height = 1.5cm,
-        text width = 3cm,
-        node distance = 4cm,
-        text centered,
-        color=pruss,
-        fill=pruss!10
-    },
-    data/.style={
-        rounded corners = 2mm,
-        minimum height = 1cm,
-        text width = 3.7cm,
-        inner sep =5pt,
-        align = center,
-        text=pruss
-    },
-    llvm/.style={
-        draw,
-        dotted,
-        thick,
-        minimum height = 1cm,
-        text width = 3.7cm,
-        align = center,
-        color=pruss,
-        fill=white,
-        font = \ttfamily
-    },
-    clllvm/.style={
-        llvm,
-        text=orioles
-    },
-    pc/.style={
-        data,
-        font = \ttfamily,
-        fill=apple!40,
-    },
-    br/.style={
-        data,
-        diamond,
-        aspect=2.5,
-        inner sep=-2pt,
-        fill=ucla!40,
-        font = \ttfamily
-    },
-    flow/.style={
-        ->,
-        thick,
-        color=pruss
-    },
-    fun/.style={
-        inner sep=7pt,
-        rectangle,
-        draw,
-        dashed,
-        thick,
-        color=pruss,
-        rounded corners= 3pt,
-        prefix after command= {
-            \pgfextra{\tikzset{every label/.style={
-            color=pruss,
-            font=\ttfamily
-        }}}}
-    },
-    clabel/.style={
-        color=pruss,
-        font=\bfseries
-    },
-    fnlabel/.style={
-        color=pruss,
-        font=\ttfamily
-    },
-    bb/.style={
-        fill=apple!40,
-        inner sep=3pt,
-        rounded corners= 3pt
-    },
-    emptycomponent/.style={
-        draw, text centered,
-        rounded corners=3pt, minimum height=3 em,
-        minimum width=2.2 cm, text width=2 cm,
-        thick,
-        color=pruss
-    },
-    component/.style={
-        emptycomponent,
-        fill=white
-    },
-    runtime/.style={
-        component,
-        fill=vivid!40
-    },
-    verification/.style={
-        component,
-        fill=apple!40
-    },
-    outer/.style={
-        draw=none
-    },
-    input/.style={
-        dashed
-    },
-    output/.style={
-        decorate, decoration={snake, post length=0.1 cm}
-    },
-    connector/.style={
-        -latex,
-        font=\scriptsize
-    },
-    rectangle connector/.style={
-        connector,
-        to path={(\tikztostart) -- ++(#1,0pt) \tikztonodes |- (\tikztotarget) },
-        pos=0.5
-    },
-    rectangle connector/.default=-2cm,
-    straight connector/.style={
-        connector,
-        to path=--(\tikztotarget) \tikztonodes
-    }
-}
+\usepackage{tikz-picture}
 
 % ****************************************************************************************************
 % 8. Further adjustments (experimental)
