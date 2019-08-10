@@ -25,29 +25,74 @@
 \section{Preliminaries}
 
 This section introduces the notation used in the rest of the thesis proposal.
-The presented notation is mainly based on the configurable software verification technique \cite{Beyer2007, Beyer2018, Beyer2018b} and Cousot's notation used to describe abstract interpretation \cite{Cousot2012}.
+The presented notation is mainly based on the configurable software
+verification technique \cite{Beyer2007, Beyer2018, Beyer2018b} and Cousot's
+notation used to describe abstract interpretation \cite{Cousot2012}.
 
 \subsection{Programs, Control-Flow Graph, States}
-We restrict the presentation to a simplified version of \llvm programs \cite{Lattner04}. An elementary unit of \llvm program is an instruction. We distinguish binary instructions (arithmetic operations, relational operations), memory access operations, data flow operations (branching instructions, calls, return instructions). Because \llvmir is a typed language, it provides also casting instructions. We admit scalar types (floats, integers), pointer types, and aggregate types (arrays, structures).\sidenote{For detailed syntax and semantics description see \autoref{ch:llvm}.}
 
-The entire program in \llvm consists of global variables and functions.
-A function is a directed graph of basic blocks. A basic block is a sequence of non-terminal instructions terminated by a terminal instruction.\sidenote{A terminal instruction is either branching or return instruction.}
+We restrict the presentation to a simplified version of \llvm programs
+\cite{Lattner04}. An elementary unit of \llvm program is an instruction. We
+distinguish binary instructions (arithmetic operations, relational operations),
+memory access operations, data flow operations (branching instructions, calls,
+return instructions). Because \llvmir is a typed language, it provides also
+casting instructions. We admit scalar types (floats, integers), pointer types,
+and aggregate types (arrays, structures).\sidenote{For detailed syntax and
+semantics description see \autoref{ch:llvm}.}
 
-For a more accessible representation of an \llvm program, we will use a \emph{control flow automaton} (CFA), which is a directed graph with \llvm instructions attached to its edges (see \autoref{fig:cfa}).
+The entire program in \llvm consists of global variables and functions.  A
+function is a directed graph of basic blocks. A basic block is a sequence of
+non-terminal instructions terminated by a terminal instruction.\sidenote{A
+terminal instruction is either branching or return instruction.}
+
+For a more accessible representation of an \llvm program, we will use a
+\emph{control flow automaton} (CFA), which is a directed graph with \llvm
+instructions attached to its edges (see \autoref{fig:cfa}).
 
 \begin{definition}
-    Given a set of instructions $\mathcal{I}$, a control flow automaton $\mathcal{A}$ is a tuple $(\mathcal{L}, l_{\textit{init}}, \mathcal{G})$, where $\mathcal{L}$ is a set of program locations, $l_{\textit{init}} \in \mathcal{L}$ is an initial location that represents a program entry point and $\mathcal{G} \subseteq (\mathcal{L} \times \mathcal{I} \times \mathcal{L})$ is set of edges between program locations, each labeled with an instruction that is executed when the control flows along the edge.
+    Given a set of instructions $\mathcal{I}$, a control flow automaton
+    $\mathcal{A}$ is a tuple $(\mathcal{L}, l_{\textit{init}}, \mathcal{G})$,
+    where $\mathcal{L}$ is a set of program locations, $l_{\textit{init}} \in
+    \mathcal{L}$ is an initial location that represents a program entry point
+    and $\mathcal{G} \subseteq (\mathcal{L} \times \mathcal{I} \times
+    \mathcal{L})$ is set of edges between program locations, each labeled with
+    an instruction that is executed when the control flows along the edge.
 \end{definition}
 
-The set of all variables that occur in the \llvm program is denoted by $\mathcal{V}$.\sidenote{In addition to program variables, we will also consider \llvm registers as variables. Even though \llvm registers are only assigned ones in the \ssa.} A \emph{concrete state} $\sigma : \mathcal{V} \rightarrow \mathbb{C}$ is a mapping from program variables to concrete values. We denote the set of all concrete states as $\Sigma$. Furthermore we define a map $st : \mathcal{L} \rightarrow 2^{\Sigma}$, which assigns to each program location a set of admissible concrete states. \add{TODO concrete values}
+The set of all variables that occur in the \llvm program is denoted by
+$\mathcal{V}$.\sidenote{In addition to program variables, we will also consider
+\llvm registers as variables. Even though \llvm registers are only assigned
+ones in the \ssa.} A \emph{concrete state} $\sigma : \mathcal{V} \rightarrow
+\mathbb{C}$ is a mapping from program variables to concrete values. We denote
+the set of all concrete states as $\Sigma$. Thus, the concrete state can be
+viewed as a state of program's memory that holds the value for each program
+variable. A~set of admissible states at some location $l \in \mathcal{L}$ is
+called a \emph{context} $\mathcal{C}_l \subseteq \mathcal{P}(\Sigma)$.
 
-The semantics of instruction $i \in \mathcal{I}$ is defined by \emph{strongest post condition} $SP_{i}(\cdot)$ -- for further details see \autoref{ch:llvm}.
+The semantics of instruction $i \in \mathcal{I}$ is defined by \emph{strongest
+post condition} $SP_{i}(\cdot)$, i.e. it is executed on a particular program
+state a accordingly updates values of program variables -- for further details
+see \autoref{ch:llvm}.
 
-A set of all edges $\mathcal{G}$ induces a transition relation $\rightarrow$ on the set of states $\Sigma$, such that for each $g \in \mathcal{G}$ there is $\xrightarrow{g} \: \subseteq \Sigma \times \{g\} \times \Sigma$. The transition relation is a union over all edges $\rightarrow \bigcup_{g \in\mathcal{G}} \xrightarrow{g}$.
+A set of all edges $\mathcal{G}$ induces a transition relation $\rightarrow$ on
+the set of states $\Sigma$, such that for each $g \in \mathcal{G}$ there is
+$\xrightarrow{g} \: \subseteq \Sigma \times \{g\} \times \Sigma$. The
+transition relation is a union over all edges $\rightarrow \bigcup_{g
+\in\mathcal{G}} \xrightarrow{g}$.
 
-A \emph{program path} $\pi$ is a sequence of concrete states $\langle c_0, c_1, \dots, c_n \rangle$ such that for all $1 \leq i \leq n$ there is a edge $c_{i-1} \rightarrow c_i$. The semantics of path $\pi$ is defined by iterative application of $SP_{i}( \cdot )$ for each instruction in path $\pi$ (TODO). A path $\pi$ is called \emph{feasible} if $SP_{\pi}(\textit{true})$ is satisfiable and \emph{infeasible} otherwise. A concrete state $\sigma \in \Sigma$ is \emph{reachable} from \emph{region} $r$ if there exists a feasible path $\pi$ starting from state $c_0 \in r$.
+A \emph{program path} $\pi$ is a sequence of concrete states $\langle c_0, c_1,
+\dots, c_n \rangle$ such that for all $1 \leq i \leq n$ there is a edge
+$c_{i-1} \rightarrow c_i$. The semantics of path $\pi$ is defined by iterative
+application of $SP_{i}( \cdot )$ for each instruction in path $\pi$ (TODO). A
+path $\pi$ is called \emph{feasible} if $SP_{\pi}(\textit{true})$ is
+satisfiable and \emph{infeasible} otherwise. A concrete state $\sigma \in
+\Sigma$ is \emph{reachable} from \emph{region} $r$ if there exists a feasible
+path $\pi$ starting from state $c_0 \in r$.
 
-A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L}, l_{\textit{init}}, \mathcal{G})$ is to show that error location $l_{\textit{err}} \in \mathcal{L}$ is unreachable in $\mathcal{A}$, or to find feasible error path.
+A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L},
+l_{\textit{init}}, \mathcal{G})$ is to show that error location
+$l_{\textit{err}} \in \mathcal{L}$ is unreachable in $\mathcal{A}$, or to find
+feasible error path.
 
 \begin{figure}
 
@@ -112,45 +157,39 @@ end:
 \caption{An example of \llvm program (left) and its CFA (right).}
 \label{fig:cfa}
 \end{figure}
-% state space
-
-\subsubsection{Program Semantics}
-
-% small step semantics
-
-% llvm grammar
-
-% abstract domain
-
-% lattice ?
-
-% galois connection
 
 \section{Abstract Interpretation}
 
-Abstract interpretation \cite{Cousot1977, Cousot1979} is a theory of
-abstraction and constructive approximation of the mathematical structures used
-in the formal description of programming languages and the inference or
-verification of undecidable program properties~\cite{Cousot2012}.
+The original idea of abstract interpretation dates back to the 70s, first
+summarized by Patrick and Radhia Cousot \cite{Cousot1977}. Cousots first presented the
+original idea of viewing abstract domains as elements of the lattice \cite{Cousot1979}.
 
+Cousot describes \emph{abstract interpretation} as a theory of abstraction and
+constructive approximation of the mathematical structures used in the formal
+description of programming languages and the inference or verification of
+undecidable program properties~\cite{Cousot2012}.
 
-\section{Abstraction Framework}
-%See handbook of model checkin chap. 13
+For our course, the goal of abstract interpretation is to assign each program
+location a context in a given domain. Program contexts are computed by solving
+a system of fixed point equations generated from a transition function $\textsf{SP}$
+\cite{Cousot1977}. Such computation simulates the execution of a program in a
+given domain. As a result, each context contains all values that might all
+variables obtain after the execution of the program with arbitrary input. The
+states\sidenote{State of computation comprise of all intermediate contexts
+assigned to program locations.} of the computation forms a complete lattice:
+$(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$,
+where $S$ is a set of states, $\sqcup$, $\sqcap$ are meet and join
+operators, $\sqsubseteq$ ordering of a lattice, $\top$ is the greatest element
+and $\bot$ it the least element of the lattice.
 
-%\subsection{Soundness}
-% A principal requirement for any abstraction framework is that it is sound.
-
-
-% see 13.4.1.1 Specific Abstractions: Examples
-% 13.4.2 Additional Reading
-
-\section{Abstraction base techniques}
-
-\subsection{Abstraction-based model checking}
-
-\add{ Abstraction is used in model checking to make model smaller. In general we are talking about overapproximating abstraction, wham mean that if an abstract model is correct the concrete model is also. However there is no guarantee that there is an error when ... }
-
-% reachability algorithm
+Given the concrete contexts from previous definitions, the \emph{concrete
+semantic domain} is a complete lattice $(\mathcal{P}(\Sigma), \cap, \cup,
+\subseteq, \Sigma, \emptyset)$. Even though this technique gives us a tool to
+compute all possible states that a program might reach, it is, unfortunately,
+uncomputable (it can be easily shown by reduction to halting problem). To
+mitigate the problem of computability, we employ an abstract domain instead of
+a concrete one. In the following sections, we will investigate various types of
+abstract domains with their advantages and disadvantages.
 
 \section{Abstract Domains}
 
@@ -199,6 +238,28 @@ non-numerical invariants (pointer analysis)}
 \subsubsection{Octagon domain}
 
 \subsubsection{Zone congruence domain}
+
+
+
+%Later the technique was extended by complementation \cite{Cortesi1995}.
+
+%\section{Abstraction Framework}
+%See handbook of model checkin chap. 13
+
+%\subsection{Soundness}
+% A principal requirement for any abstraction framework is that it is sound.
+
+
+% see 13.4.1.1 Specific Abstractions: Examples
+% 13.4.2 Additional Reading
+
+\section{Abstraction base techniques}
+
+\subsection{Abstraction-based model checking}
+
+\add{ Abstraction is used in model checking to make model smaller. In general we are talking about overapproximating abstraction, wham mean that if an abstract model is correct the concrete model is also. However there is no guarantee that there is an error when ... }
+
+% reachability algorithm
 
 \subsection{Refinement}
 
