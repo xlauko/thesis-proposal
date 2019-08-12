@@ -448,9 +448,8 @@ the class of simple domains that track only single property about variables --
 also known as \emph{property domains}. Another famous example of a property
 domain is a \textbf{\emph{parity domain}}, which tracks only whether the
 variable is odd or even. The parity domain is just a special case of a
-\textbf{\emph{congruence domain}}. In congruence domain, a set of values is
-abstracted to the least common set where each variable has the form
-$a\mathbb{Z} + b$ \cite{Granger1989, Granger1991}.
+\textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
+%In congruence domain, a set of values is abstracted to the least common set where each variable has the form $a\mathbb{Z} + b$ .
 
 A~\textbf{\emph{constant propagation domain}} \domain{cp} (see
 \autoref{fig:cp}) has used another example of property domain (i.e., variable
@@ -552,14 +551,11 @@ with thresholds \cite{Blanchet2003, Lakhdar2011}, delayed widening, parma wideni
 An alternative approach to tackle infinite interpretation that does not require
 any extrapolation operator is a \textbf{\emph{policy iteration}}
 \cite{Costan2005, Gaubert2007, Gawlitza2007, Gawlitza2007b, Gawlitza2011}. The
-idea of policies it computes fixpoint solution of a sequence of semantic
-equations, such that the least fixpoint is reached after a finite number of
-iterations.  The sequence of policies defines a strategy to approach the
-fixpoint either from above or below.
-
-The drawback of until now presented domains is that they are not able to track
-relational properties between variables -- hence we address them as
-\emph{non-relational} abstract domains.
+idea of policies is to compute fixpoint solution of a sequence of simpler
+semantic equations, such that the least fixpoint is reached after a finite
+number of iterations.  The sequence of policies defines a strategy to approach
+the fixpoint either from above or below. Policies are formed from a
+decomposition of original abstraction.
 
 \begin{marginfigure}
 \begin{minted}[linenos]{c}
@@ -574,14 +570,24 @@ while (i >= 0) {
     \caption{Program that requires a relational invariant.}
     \label{fig:relationalc}
 \end{marginfigure}
-For a program from the \autoref{fig:relationalc}, to prove that $v \leq 11$ at line 7,
-we need to prove a relational loop invariant $v + i \leq 10$.
+
+The drawback of until now presented domains is that they are not able to track
+relational properties between variables -- hence we address them as
+\emph{non-relational} abstract domains. For example in a program from the
+\autoref{fig:relationalc}, to show that $v \leq 11$ at line 7, we need to
+prove a relational loop invariant $v + i \leq 10$.
 
 \add{other applications of relational domains: analysis of programs with
 symbolic parameters, modular analysis of procedures, inference of non-uniform
 non-numerical invariants (pointer analysis)}
 
 \subsection{Relational abstract domains}
+
+linear equalities
+
+polyhedra
+
+octagons
 
 \subsubsection{Term Domain}
 
@@ -595,6 +601,21 @@ non-numerical invariants (pointer analysis)}
 
 \subsubsection{Zone congruence domain}
 
+\section{Abstract Operators}
+
+\prule
+\bigskip
+
+So far, we have presented only domains, which abstract only scalar values -- we call
+them numerical abstract domains.  Overall a \emph{numerical abstract domain} is
+determined by three ingredients:
+\begin{enumerate}
+    \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretisation and abstraction function,
+    \item effective and sound abstract operators,
+    \item an iteration strategy.
+\end{enumerate}
+
+\subsection{Non-numeric abstract domains}
 
 
 %Later the technique was extended by complementation \cite{Cortesi1995}.
@@ -608,6 +629,7 @@ non-numerical invariants (pointer analysis)}
 
 % see 13.4.1.1 Specific Abstractions: Examples
 % 13.4.2 Additional Reading
+
 
 \section{Abstraction base techniques}
 
