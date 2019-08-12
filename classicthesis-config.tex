@@ -180,8 +180,9 @@
 % ****************************************************************************************************
 % 4. Setup floats: tables, (sub)figures, and captions
 % ****************************************************************************************************
+\usepackage[strict]{changepage}%
 \usepackage{colortbl}
-\usepackage{tabularx} % better tables
+\usepackage{booktabs,tabularx}%
     \setlength{\extrarowheight}{3pt} % increase table row height
 \newcommand{\tableheadline}[1]{\multicolumn{1}{c}{\spacedlowsmallcaps{#1}}}
 \newcommand{\myfloatalign}{\centering} % to be used with each float for alignment
@@ -190,6 +191,11 @@
 \usepackage{subfig}
 
 \newcolumntype{g}{>{\columncolor{pruss!10}}c}
+
+\usepackage[strict]{changepage}%to know on which page we are (left or right)
+\usepackage{xkeyval}
+\usepackage{subfig}
+\usepackage{graphicx}
 
 % ****************************************************************************************************
 % 6. PDFLaTeX, hyperreferences and citation backreferences

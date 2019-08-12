@@ -63,7 +63,7 @@ The set of all variables that occur in the \llvm program is denoted by
 $\mathcal{V}$.\sidenote{In addition to program variables, we will also consider
 \llvm registers as variables. Even though \llvm registers are only assigned
 ones in the \ssa.} A \emph{concrete state} $\sigma : \mathcal{V} \rightarrow
-\mathbb{C}$ is a mapping from program variables to concrete values. We denote
+\mathsf{C}$ is a mapping from program variables to concrete values. We denote
 the set of all concrete states as $\Sigma$. Thus, the concrete state can be
 viewed as a state of program's memory that holds the value for each program
 variable. A~set of admissible states at some location $l \in \mathcal{L}$ is
@@ -80,14 +80,18 @@ $\xrightarrow{g} \: \subseteq \Sigma \times \{g\} \times \Sigma$. The
 transition relation is a union over all edges $\rightarrow \bigcup_{g
 \in\mathcal{G}} \xrightarrow{g}$.
 
-A \emph{program path} $\pi$ is a sequence of concrete states $\langle c_0, c_1,
-\dots, c_n \rangle$ such that for all $1 \leq i \leq n$ there is a edge
-$c_{i-1} \rightarrow c_i$. The semantics of path $\pi$ is defined by iterative
-application of $SP_{i}( \cdot )$ for each instruction in path $\pi$ (TODO). A
-path $\pi$ is called \emph{feasible} if $SP_{\pi}(\textit{true})$ is
-satisfiable and \emph{infeasible} otherwise. A concrete state $\sigma \in
-\Sigma$ is \emph{reachable} from \emph{region} $r$ if there exists a feasible
-path $\pi$ starting from state $c_0 \in r$.
+A \emph{program path} $\pi$ TODO
+%is a sequence of concrete states $\langle c_0, c_1,
+%\dots, c_n \rangle$ such that for all $1 \leq i \leq n$ there is a edge
+%$c_{i-1} \rightarrow c_i$. The semantics of path $\pi$ is defined by iterative
+%application of $SP_{i}( \cdot )$ for each instruction in path $\pi$. Given
+%initial constraints on variables, the path  Given initial constraints on
+%variables $\phi$, the strongest postcondition of path $\pi$ is
+%$\textsf{SP}_{\pi} = \textsf{SP}_{i_n}(\dots,$. A path $\pi$ is called
+%\emph{feasible} if $SP_{\pi}(\textit{true})$ is satisfiable and
+%\emph{infeasible} otherwise. A concrete state $\sigma \in \Sigma$ is
+%\emph{reachable} from \emph{region} $r$ if there exists a feasible path $\pi$
+%starting from state $c_0 \in r$.
 
 A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L},
 l_{\textit{init}}, \mathcal{G})$ is to show that error location
@@ -160,29 +164,30 @@ end:
 
 \section{Abstract Interpretation}
 
-The original idea of abstract interpretation dates back to the 70s, first
-summarized by Patrick and Radhia Cousot \cite{Cousot1977}. Cousots first presented the
-original idea of viewing abstract domains as elements of the lattice \cite{Cousot1979}.
-
+The original idea of abstract interpretation dates back to the late 70s, first
+summarized by Patrick and Radhia Cousot \cite{Cousot1977}.
 Cousot describes \emph{abstract interpretation} as a theory of abstraction and
 constructive approximation of the mathematical structures used in the formal
 description of programming languages and the inference or verification of
 undecidable program properties~\cite{Cousot2012}.
 
+
+% TODO incorporate https://link.springer.com/content/pdf/10.1007%2F978-3-540-39910-0_11.pdf
 For our course, the goal of abstract interpretation is to assign each program
 location a context in a given domain. Program contexts are computed by solving
-a system of fixed point equations generated from a transition function $\textsf{SP}$
-\cite{Cousot1977}. Such computation simulates the execution of a program in a
-given domain. As a result, each context contains all values that might all
-variables obtain after the execution of the program with arbitrary input. The
-states\sidenote{State of computation comprise of all intermediate contexts
-assigned to program locations.} of the computation forms a complete lattice:
-$(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$,
-where $S$ is a set of states, $\sqcup$, $\sqcap$ are meet and join
-operators, $\sqsubseteq$ ordering of a lattice, $\top$ is the greatest element
-and $\bot$ it the least element of the lattice.
+a system of fixpoint equations generated from a transition function
+$\textsf{SP}$ \cite{Cousot1977}. Such computation simulates the execution of a
+program in a given domain. As a result, each context contains all values that
+might all variables obtain after the execution of the program with arbitrary
+input. The states\sidenote{State of computation comprise of all intermediate
+contexts assigned to program locations.} of the computation forms a complete
+lattice: $(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$, where $S$ is a set of
+states, $\sqcup$, $\sqcap$ are meet and join operators, $\sqsubseteq$ ordering
+of a lattice, $\top$ is the greatest element and $\bot$ it the least element of
+the lattice. Throughout the rest of the thesis proposal we will assume
+familiarity with the basic notions of lattice theory \cite{Birkhoff1940}.
 
-Given the concrete contexts from previous definitions, the \emph{concrete
+Given the concrete contexts from previous definitions, the \emph{concretp
 semantic domain} is a complete lattice $(\mathcal{P}(\Sigma), \cap, \cup,
 \subseteq, \Sigma, \emptyset)$. Even though this technique gives us a tool to
 compute all possible states that a program might reach, it is, unfortunately,
@@ -193,21 +198,371 @@ abstract domains with their advantages and disadvantages.
 
 \section{Abstract Domains}
 
+
+To obtain a computable model, we need to drop some information about program
+variables. For instance, to drop all the information about each program
+variable except whether it is positive negative or zero. This can be achieved
+by replacement of values domain we are computing on $\mathsf{C}$ by an abstract
+domain $\domainm{sign} = \{ \bot, -, 0, +, \top)$ =, where $\bot$ represents an
+undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
+\begin{marginfigure}%
+    \centering
+    \begin{tikzpicture}[node distance=1em]
+    \node [] (t) {$\top$};
+    \node [below = of t] (0) {$0$};
+    \node [left = of 0] (m) {$-$};
+    \node [right = of 0] (p) {$+$};
+    \node [below = of 0] (b) {$\bot$};
+    \draw [thin] (t) -- (m) -- (b);
+    \draw [thin] (t) -- (0) -- (b);
+    \draw [thin] (t) -- (p) -- (b);
+    \end{tikzpicture}
+    \caption{$\mathsf{A}_{\textit{sign}}$ domain lattice.}
+    \label{fig:signd}%
+\end{marginfigure}%
+sign of variable and $\top$ is for an arbitrary value (i.e., variable can be
+either negative, positive or zero).
+
+\begin{figure}%
+\begin{minipage}[t]{0.3\textwidth}
+\strut\vspace*{-\baselineskip}\newline\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[node distance=1.1em]
+    \node [loc] (l1) {$l_1$};
+    \node [lab, left = 0cm of l1] (entry) {\llvmint{entry:}};
+    \node [lab, right = 0cm of l1] (e1) {$(\bot, \bot, \bot, \bot)$};
+
+    \node [loc, below = of l1] (l2) {$l_2$};
+    \node [lab, right = 0cm of l2] (e2) {$(\bot, \bot, \bot, \bot)$};
+    \node [loc, below = of l2] (l3) {$l_3$};
+    \node [lab, left = 0cm of l3] (loop) {\llvmint{loop:}};
+    \node [lab, right = 0cm of l3] (e3) {$(0, \bot, \bot, \bot)$};
+
+    %\node[fit=(l1) (l2), draw, dashed] (ebb) {};
+
+    \node [loc, below = of l3] (l4) {$l_4$};
+    \node [lab, right = 0cm of l4] (e4) {$(\bot, \bot, \bot, \bot)$};
+    \node [loc, below = of l4] (l5) {$l_5$};
+    \node [lab, right = 0cm of l5] (e5) {$(\bot, \bot, \bot, \bot)$};
+    \node [loc, below = of l5] (l6) {$l_6$};
+    \node [lab, right = 0cm of l6] (e6) {$(\bot, \bot, \bot, \bot)$};
+    \node [loc, below = of l6] (l7) {$l_7$};
+    \node [lab, right = 0cm of l7] (e7) {$(\bot, \bot, \bot, \bot)$};
+
+    %\node[fit=(l3) (l4) (l5) (l6) (l7), draw, dashed] (lbb) {};
+
+    \node [loc, below = of l7] (l8) {$l_8$};
+    \node [lab, left = 0cm of l8] (loop) {\llvmint{end:}};
+    \node [lab, right = 0cm of l8] (e8) {$(\bot, \bot, \bot, \bot)$};
+
+    \node [loc, below = of l8] (l9) {$l_9$};
+    \node [lab, right = 0cm of l9] (e9) {$(\bot, \bot, \bot, \bot)$};
+
+    %\node[fit=(l8) (l9), draw, dashed] (lbb) {};
+
+    \draw [->, >=stealth] (l1) -- node[midway, right] {\llvmint{|\var{\%x}| = alloca i32}} (l2);
+    \draw [->, >=stealth] (l2) -- node[midway, right] {\llvmint{store 0 to |\var{\%x}|}} (l3);
+    \draw [->, >=stealth] (l3) -- node[midway, right] {\llvmint{|\var{\%v}| = load |\var{\%x}|}} (l4);
+    \draw [->, >=stealth] (l4) -- node[midway, right] {\llvmint{|\var{\%a}| = add |\var{\%v}| 1}} (l5);
+    \draw [->, >=stealth] (l5) -- node[midway, right] {\llvmint{store |\var{\%a}| to |\var{\%x}|}} (l6);
+    \draw [->, >=stealth] (l6) -- node[midway, right] {\llvmint{|\var{\%b}| = ult |\var{\%a}| 5}} (l7);
+    \draw [->, >=stealth] (l7) -- node[midway, right] {\llvmint{[|\var{\%b}| = false]}} (l8);
+    \draw [->, >=stealth] (l7) to [bend left=40] node[above, rotate = 90] {\llvmint{[|\var{\%b}|= true]}} (l3);
+    \draw [->, >=stealth] (l8) -- node[midway, right] {\llvmint{ret 0}} (l9);
+\end{tikzpicture}
+}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.3\textwidth}
+\strut\vspace*{-\baselineskip}\newline\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[node distance=1.1em]
+    \node [loc] (l1) {$l_1$};
+    \node [lab, left = 0cm of l1] (entry) {\llvmint{entry:}};
+    \node [lab, right = 0cm of l1] (e1) {$(\bot, \bot, \bot, \bot)$};
+
+    \node [loc, below = of l1] (l2) {$l_2$};
+    \node [lab, right = 0cm of l2] (e2) {$(\bot, \bot, \bot, \bot)$};
+    \node [loc, below = of l2] (l3) {$l_3$};
+    \node [lab, left = 0cm of l3] (loop) {\llvmint{loop:}};
+    \node [lab, right = 0cm of l3] (e3) {$(0, \bot, \bot, \bot)$};
+
+    %\node[fit=(l1) (l2), draw, dashed] (ebb) {};
+
+    \node [loc, below = of l3] (l4) {$l_4$};
+    \node [lab, right = 0cm of l4] (e4) {$(0, 0, \bot, \bot)$};
+    \node [loc, below = of l4] (l5) {$l_5$};
+    \node [lab, right = 0cm of l5] (e5) {$(0, 0, +, \bot)$};
+    \node [loc, below = of l5] (l6) {$l_6$};
+    \node [lab, right = 0cm of l6] (e6) {$(+, 0, +, \bot)$};
+    \node [loc, below = of l6] (l7) {$l_7$};
+    \node [lab, right = 0cm of l7] (e7) {$(+, 0, +, \top)$};
+
+    %\node[fit=(l3) (l4) (l5) (l6) (l7), draw, dashed] (lbb) {};
+
+    \node [loc, below = of l7] (l8) {$l_8$};
+    \node [lab, left = 0cm of l8] (loop) {\llvmint{end:}};
+    \node [lab, right = 0cm of l8] (e8) {$(\bot, \bot, \bot, \bot)$};
+
+    \node [loc, below = of l8] (l9) {$l_9$};
+    \node [lab, right = 0cm of l9] (e9) {$(\bot, \bot, \bot, \bot)$};
+
+    %\node[fit=(l8) (l9), draw, dashed] (lbb) {};
+
+    \draw [->, >=stealth] (l1) -- node[midway, right] {\llvmint{|\var{\%x}| = alloca i32}} (l2);
+    \draw [->, >=stealth] (l2) -- node[midway, right] {\llvmint{store 0 to |\var{\%x}|}} (l3);
+    \draw [->, >=stealth] (l3) -- node[midway, right] {\llvmint{|\var{\%v}| = load |\var{\%x}|}} (l4);
+    \draw [->, >=stealth] (l4) -- node[midway, right] {\llvmint{|\var{\%a}| = add |\var{\%v}| 1}} (l5);
+    \draw [->, >=stealth] (l5) -- node[midway, right] {\llvmint{store |\var{\%a}| to |\var{\%x}|}} (l6);
+    \draw [->, >=stealth] (l6) -- node[midway, right] {\llvmint{|\var{\%b}| = ult |\var{\%a}| 5}} (l7);
+    \draw [->, >=stealth] (l7) -- node[midway, right] {\llvmint{[|\var{\%b}| = false]}} (l8);
+    \draw [->, >=stealth] (l7) to [bend left=40] node[above, rotate = 90] {\llvmint{[|\var{\%b}|= true]}} (l3);
+    \draw [->, >=stealth] (l8) -- node[midway, right] {\llvmint{ret 0}} (l9);
+\end{tikzpicture}
+}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.3\textwidth}
+\strut\vspace*{-\baselineskip}\newline\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[node distance=1.1em]
+    \node [loc] (l1) {$l_1$};
+    \node [lab, left = 0cm of l1] (entry) {\llvmint{entry:}};
+    \node [lab, right = 0cm of l1] (e1) {$(\bot, \bot, \bot, \bot)$};
+
+    \node [loc, below = of l1] (l2) {$l_2$};
+    \node [lab, right = 0cm of l2] (e2) {$(\bot, \bot, \bot, \bot)$};
+    \node [loc, below = of l2] (l3) {$l_3$};
+    \node [lab, left = 0cm of l3] (loop) {\llvmint{loop:}};
+    \node [lab, right = 0cm of l3] (e3) {$(\top, \top, \top, \top)$};
+
+    %\node[fit=(l1) (l2), draw, dashed] (ebb) {};
+
+    \node [loc, below = of l3] (l4) {$l_4$};
+    \node [lab, right = 0cm of l4] (e4) {$(\top, \top, \top, \top)$};
+    \node [loc, below = of l4] (l5) {$l_5$};
+    \node [lab, right = 0cm of l5] (e5) {$(\top, \top, \top, \top)$};
+    \node [loc, below = of l5] (l6) {$l_6$};
+    \node [lab, right = 0cm of l6] (e6) {$(\top, \top, \top, \top)$};
+    \node [loc, below = of l6] (l7) {$l_7$};
+    \node [lab, right = 0cm of l7] (e7) {$(\top, \top, \top, \top)$};
+
+    %\node[fit=(l3) (l4) (l5) (l6) (l7), draw, dashed] (lbb) {};
+
+    \node [loc, below = of l7] (l8) {$l_8$};
+    \node [lab, left = 0cm of l8] (loop) {\llvmint{end:}};
+    \node [lab, right = 0cm of l8] (e8) {$(\top, \top, \top, \top)$};
+
+    \node [loc, below = of l8] (l9) {$l_9$};
+    \node [lab, right = 0cm of l9] (e9) {$(\top, \top, \top, \top)$};
+
+    %\node[fit=(l8) (l9), draw, dashed] (lbb) {};
+
+    \draw [->, >=stealth] (l1) -- node[midway, right] {\llvmint{|\var{\%x}| = alloca i32}} (l2);
+    \draw [->, >=stealth] (l2) -- node[midway, right] {\llvmint{store 0 to |\var{\%x}|}} (l3);
+    \draw [->, >=stealth] (l3) -- node[midway, right] {\llvmint{|\var{\%v}| = load |\var{\%x}|}} (l4);
+    \draw [->, >=stealth] (l4) -- node[midway, right] {\llvmint{|\var{\%a}| = add |\var{\%v}| 1}} (l5);
+    \draw [->, >=stealth] (l5) -- node[midway, right] {\llvmint{store |\var{\%a}| to |\var{\%x}|}} (l6);
+    \draw [->, >=stealth] (l6) -- node[midway, right] {\llvmint{|\var{\%b}| = ult |\var{\%a}| 5}} (l7);
+    \draw [->, >=stealth] (l7) -- node[midway, right] {\llvmint{[|\var{\%b}| = false]}} (l8);
+    \draw [->, >=stealth] (l7) to [bend left=40] node[above, rotate = 90] {\llvmint{[|\var{\%b}|= true]}} (l3);
+    \draw [->, >=stealth] (l8) -- node[midway, right] {\llvmint{ret 0}} (l9);
+\end{tikzpicture}
+}
+\end{minipage}
+    \caption{\domain{sign} fixpoint iteration for variables
+    (\llvmint{|\var{\%x}, \var{\%v}, \var{\%a}, \var{\%b}|}). A~tuple at each
+    location represents an abstract evaluation of the variables in this order.
+    The presented states of iteration are after first iteration
+    (\textbf{left}), after 5 iterations (\textbf{middle}), reached fixpoint
+    (\textbf{right}).}
+    \label{fig:signcomp}%
+    \add{todo page width}
+\end{figure}%
+
+We say that $\mathsf{A}$ is an abstraction of $\mathsf{C}$ because it carries
+less information about program variables. One requirement on $\mathsf{A}$ is
+that its values form a complete lattice (see \autoref{fig:signd}). Moreover, a
+well-defined domain is required to have an image for each concrete value and
+that $\mathcal{A}$ is over approximating abstraction. Such properties of
+domains are described by Galois connection:
+%For concrete lattice $(C, \subseteq)$ and abstract lattice $(A, \sqsubseteq)$:
+%\textbf{1. Abstraction over-approximates:}
+%\textbf{2. Abstraction after concretisation yields no imprecision:}
 \begin{definition}
-    An \textbf{abstract domain} $\mathsf{A}$ is a tuple $(\Sigma, \alpha, \gamma)$
+    If $(C, \subseteq)$ and $(A, \sqsubseteq)$ are posets and $\alpha : C
+    \rightarrow A$, $\gamma : A \rightarrow C$ are monotonic functions such
+    that:
+    \[
+        \forall c \in C.\: c \subseteq \gamma( \alpha( c ) )
+         \quad \text{and} \quad
+        \forall a \in A.\: \alpha( \gamma( a ) ) \sqsubseteq a
+    \]
+    we call $(\alpha, \gamma)$ a \textbf{Galois connection} for posets $C$ and
+    $A$.
 \end{definition}
 
-% interval domain, sign domain, octagonal domain ...
+\noindent
+In abstract interpretation $C$ and $A$ are called \emph{concrete} respectivelly
+\emph{abstract} domain and they are assumed to be complete lattices. We call
+$\alpha$ the \emph{abstraction} map and $\gamma$ the \emph{concretization} map.
+\add{galois connection image}
 
-\subsection{Unit domain}
+Given an abstract domain and abstract operations\sidenote{In our case a
+definition how \llvm instructions transform abstract values.} we can perform a
+fixpoint iteration\sidenote{For detailed algorithm see \cite{Cousot1977}} a
+by Knaster-Tarski theorem \cite{Tarski1955} we are guaranteed to obtain a
+solution, see \autoref{fig:signcomp}.
 
-% control flow of a program
+\add{ induced operation by abstraction}
 
-\add{ If we want to omit program variable $v_i$ of a model by abstraction, we can simply assign an empty domain (unit domain) to the variable. }
+\begin{marginfigure}%
+    \centering
+\resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[node distance=1em]
+    \node [] (t) {$\top$};
+    \node [below = 3em of t] (0) {$0$};
+    \node [left = of 0] (m1) {$-1$};
+    \node [left = of m1] (m2) {$-2$};
+    \node [left = of m2] (m) {$\dots$};
+    \node [right = of 0] (p1) {$1$};
+    \node [right = of p1] (p2) {$2$};
+    \node [right = of p2] (p) {$\dots$};
+    \node [below = 3em of 0] (b) {$\bot$};
+    \draw [thin] (t) -- (m) -- (b);
+    \draw [thin] (t) -- (m2) -- (b);
+    \draw [thin] (t) -- (m1) -- (b);
+    \draw [thin] (t) -- (0) -- (b);
+    \draw [thin] (t) -- (p1) -- (b);
+    \draw [thin] (t) -- (p2) -- (b);
+    \draw [thin] (t) -- (p) -- (b);
+    \end{tikzpicture}
+}
+    \caption{\domain{cp} domain lattice.}
+    \label{fig:cp}%
+\end{marginfigure}%
+Even though our example program in \autoref{fig:signcomp} is quite trivial, the
+sign domain \domain{sign} was not able to preserve any interesting properties,
+and all resulting contexts are either $\top$ or $\bot$.  Sign domain belongs to
+the class of simple domains that track only single property about variables --
+also known as \emph{property domains}. Another famous example of a property
+domain is a \textbf{\emph{parity domain}}, which tracks only whether the
+variable is odd or even. The parity domain is just a special case of a
+\textbf{\emph{congruence domain}}. In congruence domain, a set of values is
+abstracted to the least common set where each variable has the form
+$a\mathbb{Z} + b$ \cite{Granger1989, Granger1991}.
 
-\begin{figure}
+A~\textbf{\emph{constant propagation domain}} \domain{cp} (see
+\autoref{fig:cp}) has used another example of property domain (i.e., variable
+can gain only single value) used in optimization techniques \cite{Kildall1973}.
+Property domains can be combined to track multiple properties either by
+tracking each property separately or by joining lattice of multiple
+abstractions (see \autoref{fig:cpsign}).
+\add{find citation for decomposition of abstract domains}
+\begin{marginfigure}%
+    \centering
+\resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[node distance=1em]
+    \node [] (t) {$\top$};
+    \node [below = 6em of t] (0) {$0$};
+    \node [left = of 0] (m1) {$-1$};
+    \node [left = of m1] (m2) {$-2$};
+    \node [above = 3em of m2] (mm) {$-$};
+    \node [left = of m2] (m) {$\dots$};
+    \node [right = of 0] (p1) {$1$};
+    \node [right = of p1] (p2) {$2$};
+    \node [right = of p2] (p) {$\dots$};
+    \node [above = 3em of p2] (pp) {$+$};
+    \node [below = 3em of 0] (b) {$\bot$};
+        \draw [thin] (t) -- (mm) -- (m)  -- (b);
+        \draw [thin] (t) -- (mm) -- (m2) -- (b);
+        \draw [thin] (t) -- (mm) -- (m1) -- (b);
+    \draw [thin] (t) -- (0) -- (b);
+        \draw [thin] (t) -- (pp)-- (p1) -- (b);
+        \draw [thin] (t) -- (pp)-- (p2) -- (b);
+        \draw [thin] (t) -- (pp) -- (p) -- (b);
+    \end{tikzpicture}
+}
+    \caption{\domain{cs} is a joint sign (\domain{sign}) and constant propagation (\domain{cp}) domain.}
+    \label{fig:cpsign}%
+\end{marginfigure}%
 
-\begin{minted}{c}
+Probably the simplest of domains is a definedness domain \domain{D}, which only
+tracks a definedness of values (see \autoref{fig:unitd}). Despite its
+simplicity, it can be useful to detect reachability of program locations. Even
+simpler domain is a single value domain \domain{U}. The single value domain is
+usefull if we want to omit a variable from the model of the program.
+
+\begin{marginfigure}%
+    \centering
+    \begin{tikzpicture}[node distance=1em]
+    \node [] (t) {$\top$};
+    \node [below = of t] (b) {$\bot$};
+    \draw [thin] (t) -- (b);
+    \end{tikzpicture}
+    \caption{\domain{U} tracks only definedness of variables.}
+    \label{fig:unitd}%
+\end{marginfigure}%
+
+Since the precision of an abstract domain highly depends on the program
+structure, many abstract domains were designed to track various program
+properties. Let us take it chronologically. The first domain presented in
+Cousot's paper \cite{Cousot1977} to achieve more precise results was an
+\textbf{\emph{interval domain}} \domain{I}. In the interval abstraction a set of values
+is represented by its minimal and maximal value. Since in some cases, it is not
+possible to determine the boundary values, the interval domain utilizes
+infinities to denote arbitrary bound -- we represent arbitrary value
+$\top_{\textit{I}}$ by $[-\infty, \infty]$ and undetermined value $\bot_{\textit{I}}$
+by empty interval $\emptyset$.
+
+\add{ lattice of abstract domains}
+
+Unfortunately, with the infinite lattice of the interval
+domain,\sidenote{The interval domain does not meet ascending chain condition.} the
+abstract interpretation obtained a possible infinite or impractically long
+executions (e.g., when the interpretation can not determine the bound of a loop
+it can increment the boundary of an interval indefinitely never reaching the
+fixpoint). For this reason, abstract interpreters employ widening and
+narrowing techniques to accelerate convergence \cite{Cousot1992a, Cortesi2011}.
+The idea of widening is to overshoot the least fixpoint after few
+unsuccessful iterations of the interpretation and subsequently by narrowing to
+refine the over-approximated solution.
+\begin{definition}
+    \textbf{Widening operator} $\nabla$ for domain $(\mathcal{A},
+    \sqsubseteq)$ fulfills:
+    \begin{enumerate}
+        \item $\forall v_1, v_2 \in \mathcal{A} : v_1 \sqcup v_2 \sqsubseteq v_1 \nabla v_2$,
+        \item for each sequence $(v_k)_{k \in \mathbb{N}}$, the sequence $(v^{\nabla}_k)_{k \in \mathbb{N}}$ defined as $v^{\nabla}_0 = v_0$ and $v^{\nabla}_k = v^{\nabla}_{k-1} \nabla v_k$ reaches a fixpoint after finitely many steps.
+    \end{enumerate}
+\end{definition}
+\begin{definition}
+    \textbf{Narrowing operator} $\Delta$ for domain $(\mathcal{A},
+    \sqsubseteq)$ fulfills:
+    \begin{enumerate}
+        \item $\forall v_1, v_2 \in \mathcal{A} : v_1 \sqsupseteq v_2 \implies v_1 \Delta v_2 \sqsubseteq v_2$,
+        \item for each sequence $(v_k)_{k \in \mathbb{N}}$, the sequence $(v^{\Delta}_k)_{k \in \mathbb{N}}$ defined as $v^{\Delta}_0 = v_0$ and $v^{\Delta}_k = v^{\Delta}_{k-1} \Delta v_k$ reaches a fixpoint after finitely many steps.
+    \end{enumerate}
+\end{definition}
+
+By different implementation of widening and narrowing, abstract interpreters
+employ a different strategies to achieve convergence -- for example widening
+with thresholds \cite{Blanchet2003, Lakhdar2011}, delayed widening, parma widening
+\cite{Bagnara2008} or abstract acceleration \cite{Gonnord2006, Feautrier2010}.
+
+An alternative approach to tackle infinite interpretation that does not require
+any extrapolation operator is a \textbf{\emph{policy iteration}}
+\cite{Costan2005, Gaubert2007, Gawlitza2007, Gawlitza2007b, Gawlitza2011}. The
+idea of policies it computes fixpoint solution of a sequence of semantic
+equations, such that the least fixpoint is reached after a finite number of
+iterations.  The sequence of policies defines a strategy to approach the
+fixpoint either from above or below.
+
+The drawback of until now presented domains is that they are not able to track
+relational properties between variables -- hence we address them as
+\emph{non-relational} abstract domains.
+
+\begin{marginfigure}
+\begin{minted}[linenos]{c}
 int i = 10;
 int v = 0;
 while (i >= 0) {
@@ -216,10 +571,11 @@ while (i >= 0) {
         v = v + 1;
 }
 \end{minted}
-
-\caption{\textbf{The need of relational domains.} To prove that $v \leq 11$ at
-line TODO we need to prove the relational loop invariant $v + i \leq 10$.}
-\end{figure}
+    \caption{Program that requires a relational invariant.}
+    \label{fig:relationalc}
+\end{marginfigure}
+For a program from the \autoref{fig:relationalc}, to prove that $v \leq 11$ at line 7,
+we need to prove a relational loop invariant $v + i \leq 10$.
 
 \add{other applications of relational domains: analysis of programs with
 symbolic parameters, modular analysis of procedures, inference of non-uniform
