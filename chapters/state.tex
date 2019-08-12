@@ -454,10 +454,11 @@ variable is odd or even. The parity domain is just a special case of a
 A~\textbf{\emph{constant propagation domain}} \domain{cp} (see
 \autoref{fig:cp}) has used another example of property domain (i.e., variable
 can gain only single value) used in optimization techniques \cite{Kildall1973}.
-Property domains can be combined to track multiple properties either by
-tracking each property separately or by joining lattice of multiple
-abstractions (see \autoref{fig:cpsign}).
-\add{find citation for decomposition of abstract domains}
+It is possible to combine multiple domains to track multiple properties either
+by tracking each property separately or by reduced product of domains which is
+more precise and more efficient than multiple separate interpretations
+\cite{Cousot2011b} (see \autoref{fig:cpsign}).  \add{find citation for
+decomposition of abstract domains}
 \begin{marginfigure}%
     \centering
 \resizebox{\textwidth}{!}{
@@ -583,23 +584,68 @@ non-numerical invariants (pointer analysis)}
 
 \subsection{Relational abstract domains}
 
-linear equalities
+The simplest of the relational abstract domains is a \emph{linear equality
+domain} that captures information about affine relationships among program
+variables \cite{Karr1976}. In this domain, an abstract variable is represented
+by the affine subspace of program state space. The problem with the affine
+domain is in its nonunique minimal form; this problem is solved by combination
+with the congruence domain \cite{Granger1991}.
 
-polyhedra
+Another relational domain is a \emph{polyhedron abstract domain} which is
+deeply inspired by the theory of linear programming and optimization
+\cite{Cousot1978} and provides a unique representation. Though, the
+manipulation with polyhedron abstract values involves costly computation of a
+simplex algorithm \cite{Schrijver1986}. Nowadays a polyhedron abstract domain
+is still extensively studied -- an abstraction of polyhedron by bounding boxes
+to simplify abstract operations \cite{Singh2017}, combination with interval
+domain to reson about interval linear properties \cite{Chen2009}.
 
-octagons
+\subsection{Weakly relational abstract domains}
+
+In the middle between relational and non-relational abstract domains stand
+\textbf{\emph{weakly relational abstract domains}}. These domains aim to
+increase the precision of non-relational domains (interval domain) and reduce
+the cost of abstraction of relational domains (polyhedron domain) by tracking
+only a reduced amount of relations.
+
+The notable representant of weakly-relational domains is an \emph{octagon
+abstract domain} \cite{Mine2006}. This domain efficiently enables to represent
+invariants of form $\pm x \pm y \leq c$, where $x$ and $y$ are program
+variables and $c$ is a constant.  Moreover, the advantage of the octagon domain
+is in its representation by potential graphs and difference-bound matrices
+\cite{Larsen1997}, which allows a unique minimal representation of abstract
+values. The octagon domain was further optimized by bucketing of octagons
+\cite{Blanchet2003, Venet2004} and modified to extend captured properties
+\cite{Claris2004, Mine2004}. Further restriction provides a zone domain
+\cite{Mine2001} which reasons only about invariants of form $x - y \leq c$ and
+$\pm x \leq c$.
+
+A less precise and lightweight relational domain of pentagons was introduced in
+\cite{Logozzo2010} with applicability on validation of array manipulating
+byte-code. The pentagon domain captures properties of the form of $x \in [a,b]
+\wedge x < y$.
+
+A recent abstract domain utilizes parallelotopes to encode any linear
+constraint as the polyhedra, while it preserves the efficiency of weakly
+relational abstract domains \cite{Amato2017}.
+
+A disadvantageous aspect of relational abstract domains is their complicated
+representation and therefore computationally less efficient abstract
+operations. In addition to maintaining more properties about variables, the
+representation also needs to assure uniqueness of the representation. Hence the
+operations need to incorporate some sort of normalization (e.g., difference
+bound matrices in the octagon domain \cite{Mine2006}, or generators of affine
+space in the linear equality domain \cite{Karr1976}).
+
+Except picking of a suitable abstraction, a precision of abstract methods can
+be improved by symbolic methods. Miné presents in his work \cite{Mine2006} a
+set of lightweight simplifications (linearization and symbolic constant
+propagation) which are used to transform numerical expressions in order to
+increase the precision of the analysis.
 
 \subsubsection{Term Domain}
 
 \subsubsection{Predicate Abstraction}
-
-\subsection{Weakly relational abstract domains}
-
-\subsubsection{Zone domain}
-
-\subsubsection{Octagon domain}
-
-\subsubsection{Zone congruence domain}
 
 \section{Abstract Operators}
 
@@ -615,7 +661,7 @@ determined by three ingredients:
     \item an iteration strategy.
 \end{enumerate}
 
-\subsection{Non-numeric abstract domains}
+\subsection{Non-numerical abstract domains}
 
 
 %Later the technique was extended by complementation \cite{Cortesi1995}.
@@ -630,6 +676,7 @@ determined by three ingredients:
 % see 13.4.1.1 Specific Abstractions: Examples
 % 13.4.2 Additional Reading
 
+% TODO Symbolic Methods to Enhance the Precision of Numerical Abstract Domains
 
 \section{Abstraction base techniques}
 
