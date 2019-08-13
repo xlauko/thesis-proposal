@@ -198,7 +198,6 @@ abstract domains with their advantages and disadvantages.
 
 \section{Abstract Domains}
 
-
 To obtain a computable model, we need to drop some information about program
 variables. For instance, to drop all the information about each program
 variable except whether it is positive negative or zero. This can be achieved
@@ -385,28 +384,54 @@ less information about program variables. One requirement on $\mathsf{A}$ is
 that its values form a complete lattice (see \autoref{fig:signd}). Moreover, a
 well-defined domain is required to have an image for each concrete value and
 that $\mathcal{A}$ is over approximating abstraction. Such properties of
-domains are described by Galois connection:
-%For concrete lattice $(C, \subseteq)$ and abstract lattice $(A, \sqsubseteq)$:
-%\textbf{1. Abstraction over-approximates:}
-%\textbf{2. Abstraction after concretisation yields no imprecision:}
-\begin{definition}
-    If $(C, \subseteq)$ and $(A, \sqsubseteq)$ are posets and $\alpha : C
-    \rightarrow A$, $\gamma : A \rightarrow C$ are monotonic functions such
-    that:
+domains are described by \textbf{\emph{Galois connection}}. For concrete
+lattice $(C, \subseteq)$ and abstract lattice $(A, \sqsubseteq)$ a galois
+connection is $(\alpha, \gamma)$, where $\alpha : C \rightarrow A$, $\gamma : A
+\rightarrow C$ are monotonic functions such that:
+
+\bigskip
+\begin{center}
+\begin{minipage}{0.45\textwidth}
+\centering
+    \emph{Abstraction \\ over-approximates}
+\begin{tikzpicture}
+    \node [domainbox, thick, color = apple, label=\color{apple}$C$] (c) {};
+    \node [context, below = 1em of c.north] (cs) {};
+    \node [below = 0.5em of cs.north] (co) {\textbullet$c$};
+    \node [domainbox, thick, color = vivid, right = of c, label=\color{vivid}$A$] (a) {};
+    \node [context, below = 1em of a.north] (as) {};
+
+    \draw [->, >=stealth] (as) to [bend right=40] node[above] {$\gamma$} (cs);
+    \draw [->, >=stealth] (co) to [bend right=40] node[below] {$\alpha$} (as);
+\end{tikzpicture}
     \[
         \forall c \in C.\: c \subseteq \gamma( \alpha( c ) )
-         \quad \text{and} \quad
+    \]
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\centering
+    \emph{Abstraction after concretisation yields no imprecision}
+\begin{tikzpicture}
+    \node [domainbox, thick, color = apple, label=\color{apple}$C$] (c) {};
+    \node [context, below = 1em of c.north] (cs) {};
+    \node [domainbox, thick, color = vivid, right = of c, label=\color{vivid}$A$] (a) {};
+    \node [below = 0.5em of as.north] (ao) {$a$};
+    \node [context, below = 1em of a.north] (as) {};
+
+    \draw [->, >=stealth] (as) to [bend right=40] node[above] {$\gamma$} (cs);
+    \draw [->, >=stealth] (cs) to [bend right=40] node[below] {$\alpha$} (ao);
+\end{tikzpicture}
+    \[
         \forall a \in A.\: \alpha( \gamma( a ) ) \sqsubseteq a
     \]
-    we call $(\alpha, \gamma)$ a \textbf{Galois connection} for posets $C$ and
-    $A$.
-\end{definition}
+\end{minipage}
+\end{center}
 
 \noindent
 In abstract interpretation $C$ and $A$ are called \emph{concrete} respectivelly
 \emph{abstract} domain and they are assumed to be complete lattices. We call
 $\alpha$ the \emph{abstraction} map and $\gamma$ the \emph{concretization} map.
-\add{galois connection image}
 
 Given an abstract domain and abstract operations\sidenote{In our case a
 definition how \llvm instructions transform abstract values.} we can perform a
@@ -441,12 +466,21 @@ solution, see \autoref{fig:signcomp}.
     \caption{\domain{cp} domain lattice.}
     \label{fig:cp}%
 \end{marginfigure}%
+
+\subsection{Abstract operators}
+
+\add{TODO}
+
+
+\prule
+\bigskip
+
 Even though our example program in \autoref{fig:signcomp} is quite trivial, the
 sign domain \domain{sign} was not able to preserve any interesting properties,
 and all resulting contexts are either $\top$ or $\bot$.  Sign domain belongs to
-the class of simple domains that track only single property about variables --
+the class of simple domains that reason only about single property of variables --
 also known as \emph{property domains}. Another famous example of a property
-domain is a \textbf{\emph{parity domain}}, which tracks only whether the
+domain is a \textbf{\emph{parity domain}}, which captures whether the
 variable is odd or even. The parity domain is just a special case of a
 \textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
 %In congruence domain, a set of values is abstracted to the least common set where each variable has the form $a\mathbb{Z} + b$ .
@@ -454,9 +488,9 @@ variable is odd or even. The parity domain is just a special case of a
 A~\textbf{\emph{constant propagation domain}} \domain{cp} (see
 \autoref{fig:cp}) has used another example of property domain (i.e., variable
 can gain only single value) used in optimization techniques \cite{Kildall1973}.
-It is possible to combine multiple domains to track multiple properties either
-by tracking each property separately or by reduced product of domains which is
-more precise and more efficient than multiple separate interpretations
+It is possible to combine multiple domains to reason about multiple properties
+either by tracking each property separately or by reduced product of domains
+which is more precise and more efficient than multiple separate interpretations
 \cite{Cousot2011b} (see \autoref{fig:cpsign}).  \add{find citation for
 decomposition of abstract domains}
 \begin{marginfigure}%
@@ -514,7 +548,7 @@ possible to determine the boundary values, the interval domain utilizes
 infinities to denote arbitrary bound -- we represent arbitrary value
 $\top_{\textit{I}}$ by $[-\infty, \infty]$ and undetermined value $\bot_{\textit{I}}$
 by empty interval $\emptyset$.
-
+\add{ example of interval abstraction on example program }
 \add{ lattice of abstract domains}
 
 Unfortunately, with the infinite lattice of the interval
@@ -597,8 +631,8 @@ deeply inspired by the theory of linear programming and optimization
 manipulation with polyhedron abstract values involves costly computation of a
 simplex algorithm \cite{Schrijver1986}. Nowadays a polyhedron abstract domain
 is still extensively studied -- an abstraction of polyhedron by bounding boxes
-to simplify abstract operations \cite{Singh2017}, combination with interval
-domain to reson about interval linear properties \cite{Chen2009}.
+to simplify abstract operations \cite{Singh2017}, or in combination with interval
+domain to reason about interval linear properties \cite{Chen2009}.
 
 \subsection{Weakly relational abstract domains}
 
@@ -643,11 +677,9 @@ set of lightweight simplifications (linearization and symbolic constant
 propagation) which are used to transform numerical expressions in order to
 increase the precision of the analysis.
 
-\subsubsection{Term Domain}
-
 \subsubsection{Predicate Abstraction}
 
-\section{Abstract Operators}
+\subsubsection{Term Domain}
 
 \prule
 \bigskip
@@ -656,13 +688,30 @@ So far, we have presented only domains, which abstract only scalar values -- we 
 them numerical abstract domains.  Overall a \emph{numerical abstract domain} is
 determined by three ingredients:
 \begin{enumerate}
-    \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretisation and abstraction function,
+    \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretization and abstraction function,
     \item effective and sound abstract operators,
     \item an iteration strategy.
 \end{enumerate}
 
 \subsection{Non-numerical abstract domains}
 
+\subsubsection{Memory abstraction}
+% see https://www-apr.lip6.fr/~mine/enseignement/mpri/current/05-mpri-0-mem.pdf
+\add{ memory models }
+
+\add{ pointer abstractions }
+
+\add{ separation logic in abstraction }
+
+\add{ shape abstract domains }
+
+\subsubsection{Shape analysis}
+
+\add{ three value logic }
+
+\add{ combination with value abstraction }
+
+\subsubsection{String abstractions}
 
 %Later the technique was extended by complementation \cite{Cortesi1995}.
 
@@ -678,7 +727,15 @@ determined by three ingredients:
 
 % TODO Symbolic Methods to Enhance the Precision of Numerical Abstract Domains
 
-\section{Abstraction base techniques}
+\subsection{Real-wirld programs dedicated abstractions}
+
+\add{ floats abstraction }
+
+\add{ An Abstract Domain for Bit-Vector Inequalities }
+
+\add{ Sound Bit-Precise Numerical Domains \cite{Sharma2017} }
+
+\section{Abstraction based techniques}
 
 \subsection{Abstraction-based model checking}
 
