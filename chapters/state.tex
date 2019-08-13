@@ -81,18 +81,16 @@ $\xrightarrow{g} \: \subseteq \Sigma \times \{g\} \times \Sigma$. The
 transition relation is a union over all edges $\rightarrow \bigcup_{g
 \in\mathcal{G}} \xrightarrow{g}$.
 
-A \emph{program path} $\pi$ TODO
-%is a sequence of concrete states $\langle c_0, c_1,
-%\dots, c_n \rangle$ such that for all $1 \leq i \leq n$ there is a edge
-%$c_{i-1} \rightarrow c_i$. The semantics of path $\pi$ is defined by iterative
-%application of $SP_{i}( \cdot )$ for each instruction in path $\pi$. Given
-%initial constraints on variables, the path  Given initial constraints on
-%variables $\phi$, the strongest postcondition of path $\pi$ is
-%$\textsf{SP}_{\pi} = \textsf{SP}_{i_n}(\dots,$. A path $\pi$ is called
-%\emph{feasible} if $SP_{\pi}(\textit{true})$ is satisfiable and
-%\emph{infeasible} otherwise. A concrete state $\sigma \in \Sigma$ is
-%\emph{reachable} from \emph{region} $r$ if there exists a feasible path $\pi$
-%starting from state $c_0 \in r$.
+A \emph{program path} $\pi$ is a sequence of consecutive edges $\langle
+\rightarrow_1, \rightarrow_2, \dots, \rightarrow_n \rangle$ such that all edges
+form in continuous path in transition system induced by $\mathcal{G}$.  A path
+is called a \emph{program path} if it starts from initial program location
+$\l_{\textit{init}}$. The semantics of path $\pi$ is defined by iterative
+application of $SP_{i}( \cdot )$ for each instruction in path $\pi$. Given
+initial constraints $\phi$ on variables, the strongest postcondition of path
+$\pi$ is $\textsf{SP}_{\pi} = \textsf{SP}_{i_n}(\dots,SP_{i_1}(\phi),\dots)$. A
+path $\pi$ is called \emph{feasible} if $SP_{\pi}(\textit{true})$ is
+satisfiable and \emph{infeasible} otherwise \cite{Beyer2018b}.
 
 A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L},
 l_{\textit{init}}, \mathcal{G})$ is to show that error location
@@ -168,28 +166,27 @@ end:
 
 The original idea of abstract interpretation dates back to the late 70s, first
 summarized by Patrick and Radhia Cousot \cite{Cousot1977}.
-Cousot describes \emph{abstract interpretation} as a theory of abstraction and
+They describe \emph{abstract interpretation} as a theory of abstraction and
 constructive approximation of the mathematical structures used in the formal
 description of programming languages and the inference or verification of
 undecidable program properties~\cite{Cousot2012}.
 
-
-% TODO incorporate https://link.springer.com/content/pdf/10.1007%2F978-3-540-39910-0_11.pdf
 For our course, the goal of abstract interpretation is to assign each program
-location a context in a given domain. Program contexts are computed by solving
-a system of fixpoint equations generated from a transition function
-$\textsf{SP}$ \cite{Cousot1977}. Such computation simulates the execution of a
-program in a given domain. As a result, each context contains all values that
-might all variables obtain after the execution of the program with arbitrary
-input. The states\sidenote{State of computation comprise of all intermediate
-contexts assigned to program locations.} of the computation forms a complete
-lattice: $(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$, where $S$ is a set of
-states, $\sqcup$, $\sqcap$ are meet and join operators, $\sqsubseteq$ ordering
-of a lattice, $\top$ is the greatest element and $\bot$ it the least element of
-the lattice. Throughout the rest of the thesis proposal we will assume
-familiarity with the basic notions of lattice theory \cite{Birkhoff1940}.
+location a context in a given domain, i.e., given a set of program states, the
+abstraction represents properties of these states by abstract states. Program
+contexts are computed by solving a system of fixpoint equations generated from
+a transition function \cite{Cousot1977}. Such computation simulates the
+execution of a program in an abstract domain. As a result, each abstract context represent possible properties (invariants about states) of variables at a location after the execution of the program
+with arbitrary input. The states\sidenote{State of computation comprise of all
+intermediate contexts assigned to program locations.} of the computation forms
+a complete lattice: $(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$, where $S$
+is a set of states, $\sqcup$, $\sqcap$ are meet and join operators,
+$\sqsubseteq$ ordering of a lattice, $\top$ is the greatest element and $\bot$
+it the least element of the lattice. Throughout the rest of the thesis proposal
+we will assume familiarity with the basic notions of lattice theory
+\cite{Birkhoff1940}.
 
-Given the concrete contexts from previous definitions, the \emph{concretp
+Given the concrete contexts from previous definitions, the \emph{concrete
 semantic domain} is a complete lattice $(\mathcal{P}(\Sigma), \cap, \cup,
 \subseteq, \Sigma, \emptyset)$. Even though this technique gives us a tool to
 compute all possible states that a program might reach, it is, unfortunately,
@@ -203,7 +200,7 @@ abstract domains with their advantages and disadvantages.
 
 To obtain a computable model, we need to drop some information about program
 variables. For instance, to drop all the information about each program
-variable except whether it is positive negative or zero. This can be achieved
+variable except whether it is positive, negative or zero. This can be achieved
 by replacement of values domain we are computing on $\mathsf{C}$ by an abstract
 domain $\domainm{sign} = \{ \bot, -, 0, +, \top)$ =, where $\bot$ represents an
 undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
@@ -442,8 +439,6 @@ fixpoint iteration\sidenote{For detailed algorithm see \cite{Cousot1977}} a
 by Knaster-Tarski theorem \cite{Tarski1955} we are guaranteed to obtain a
 solution, see \autoref{fig:signcomp}.
 
-\add{ induced operation by abstraction}
-
 \begin{marginfigure}%
     \centering
 \resizebox{\textwidth}{!}{
@@ -470,14 +465,6 @@ solution, see \autoref{fig:signcomp}.
     \label{fig:cp}%
 \end{marginfigure}%
 
-\subsection{Abstract operators}
-
-\add{TODO}
-
-
-\prule
-\bigskip
-
 Even though our example program in \autoref{fig:signcomp} is quite trivial, the
 sign domain \domain{sign} was not able to preserve any interesting properties,
 and all resulting contexts are either $\top$ or $\bot$.  Sign domain belongs to
@@ -486,16 +473,22 @@ also known as \emph{property domains}. Another famous example of a property
 domain is a \textbf{\emph{parity domain}}, which captures whether the
 variable is odd or even. The parity domain is just a special case of a
 \textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
-%In congruence domain, a set of values is abstracted to the least common set where each variable has the form $a\mathbb{Z} + b$ .
+
+The basic building block of these domains is \emph{basis} that expresses how to
+abstract one variable and has abstract counterparts for arithmetic operators
+instead of abstract counterparts for complex transfer functions. Thanks to
+galois connection the rest of interpretation can be derived automatically
+\cite{Mine2004Thesis}.
 
 A~\textbf{\emph{constant propagation domain}} \domain{cp} (see
-\autoref{fig:cp}) has used another example of property domain (i.e., variable
-can gain only single value) used in optimization techniques \cite{Kildall1973}.
-It is possible to combine multiple domains to reason about multiple properties
+\autoref{fig:cp}) is another example of property domain (i.e., variable can
+gain only single value) used in optimization techniques \cite{Kildall1973}.  It
+is possible to combine multiple domains to reason about multiple properties
 either by tracking each property separately or by reduced product of domains
 which is more precise and more efficient than multiple separate interpretations
-\cite{Cousot2011b} (see \autoref{fig:cpsign}).  \add{find citation for
-decomposition of abstract domains}
+\cite{Cousot2011b} (see \autoref{fig:cpsign}). For further information see
+\autoref{sec:domainrefinement}.
+
 \begin{marginfigure}%
     \centering
 \resizebox{\textwidth}{!}{
@@ -551,8 +544,57 @@ possible to determine the boundary values, the interval domain utilizes
 infinities to denote arbitrary bound -- we represent arbitrary value
 $\top_{\textit{I}}$ by $[-\infty, \infty]$ and undetermined value $\bot_{\textit{I}}$
 by empty interval $\emptyset$.
+
+\begin{marginfigure}
+\strut\vspace*{-\baselineskip}\newline\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[node distance=1.1em]
+    \node [loc] (l1) {$l_1$};
+    \node [lab, left = 0cm of l1] (entry) {\llvmint{entry:}};
+    \node [lab, right = 0cm of l1] (e1) {$(\bot, \bot, \bot, \bot)$};
+
+    \node [loc, below = of l1] (l2) {$l_2$};
+    \node [lab, right = 0cm of l2] (e2) {$(\bot, \bot, \bot, \bot)$};
+    \node [loc, below = of l2] (l3) {$l_3$};
+    \node [lab, left = 0cm of l3] (loop) {\llvmint{loop:}};
+    \node [lab, right = 0cm of l3] (e3) {$([0,0], [0,0], [0,0], [0,0])$};
+
+    %\node[fit=(l1) (l2), draw, dashed] (ebb) {};
+
+    \node [loc, below = of l3] (l4) {$l_4$};
+    \node [lab, right = 0cm of l4] (e4) {$([0,0], [0,0], [1,1], [0,1])$};
+    \node [loc, below = of l4] (l5) {$l_5$};
+    \node [lab, right = 0cm of l5] (e5) {$([0,0], [0,0], [1,1], [0,1])$};
+    \node [loc, below = of l5] (l6) {$l_6$};
+    \node [lab, right = 0cm of l6] (e6) {$([1,1], [0,0], [1,1], [0,1])$};
+    \node [loc, below = of l6] (l7) {$l_7$};
+    \node [lab, right = 0cm of l7] (e7) {$([1,1], [0,0], [1,1], [0,1])$};
+
+    %\node[fit=(l3) (l4) (l5) (l6) (l7), draw, dashed] (lbb) {};
+
+    \node [loc, below = of l7] (l8) {$l_8$};
+    \node [lab, left = 0cm of l8] (loop) {\llvmint{end:}};
+    \node [lab, right = 0cm of l8] (e8) {$([0,0], [0,0], [0,0], [0,0])$};
+
+    \node [loc, below = of l8] (l9) {$l_9$};
+    \node [lab, right = 0cm of l9] (e9) {$([0,0], [0,0], [0,0], [0,0])$};
+
+    %\node[fit=(l8) (l9), draw, dashed] (lbb) {};
+
+    \draw [->, >=stealth] (l1) -- node[midway, right] {\llvmint{|\var{\%x}| = alloca i32}} (l2);
+    \draw [->, >=stealth] (l2) -- node[midway, right] {\llvmint{store 0 to |\var{\%x}|}} (l3);
+    \draw [->, >=stealth] (l3) -- node[midway, right] {\llvmint{|\var{\%v}| = load |\var{\%x}|}} (l4);
+    \draw [->, >=stealth] (l4) -- node[midway, right] {\llvmint{|\var{\%a}| = add |\var{\%v}| 1}} (l5);
+    \draw [->, >=stealth] (l5) -- node[midway, right] {\llvmint{store |\var{\%a}| to |\var{\%x}|}} (l6);
+    \draw [->, >=stealth] (l6) -- node[midway, right] {\llvmint{|\var{\%b}| = ult |\var{\%a}| 5}} (l7);
+    \draw [->, >=stealth] (l7) -- node[midway, right] {\llvmint{[|\var{\%b}| = false]}} (l8);
+    \draw [->, >=stealth] (l7) to [bend left=40] node[above, rotate = 90] {\llvmint{[|\var{\%b}|= true]}} (l3);
+    \draw [->, >=stealth] (l8) -- node[midway, right] {\llvmint{ret 0}} (l9);
+\end{tikzpicture}
+}
+    \caption{TODO correct intervals: Interval abstraction example after fixpoint iteration.}
+\end{marginfigure}
 \add{ example of interval abstraction on example program }
-\add{ lattice of abstract domains}
 
 Unfortunately, with the infinite lattice of the interval
 domain,\sidenote{The interval domain does not meet ascending chain condition.} the
@@ -611,13 +653,13 @@ while (i >= 0) {
 
 The drawback of until now presented domains is that they are not able to track
 relational properties between variables -- hence we address them as
-\emph{non-relational} abstract domains. For example in a program from the
-\autoref{fig:relationalc}, to show that $v \leq 11$ at line 7, we need to
-prove a relational loop invariant $v + i \leq 10$.
+\emph{non-relational} abstract domains. Given \autoref{fig:relationalc}, to
+show that $v \leq 11$ at line 7, we need to prove a relational loop invariant
+$v + i \leq 10$.
 
-\add{other applications of relational domains: analysis of programs with
-symbolic parameters, modular analysis of procedures, inference of non-uniform
-non-numerical invariants (pointer analysis)}
+%\add{other applications of relational domains: analysis of programs with
+%symbolic parameters, modular analysis of procedures, inference of non-uniform
+%non-numerical invariants (pointer analysis)}
 
 \subsection{Relational abstract domains}
 
@@ -738,6 +780,58 @@ determined by three ingredients:
 \add{ An Abstract Domain for Bit-Vector Inequalities }
 
 \add{ Sound Bit-Precise Numerical Domains \cite{Sharma2017} }
+
+\subsection{Domain Refinement}
+\label{sec:domainrefinement}
+
+\begin{marginfigure}%
+    \centering
+\resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[node distance=2em]
+        \node [align=center] (con) {$\mathcal{P}(\mathbb{Z})$ \\ \textsf{concrete domain}};
+        \node [align=center, below = of con] (ci) {\textsf{intervals and congruences}};
+        \node [align=center, below right = of ci] (co) {\{$a\mathbb{Z} + b\} \cup \{\bot\}$ \\ \textsf{congruences}};
+        \node [align=center, below left = of ci] (i) {$\{[a,b]\} \cup \{\bot\}$ \\ \textsf{intervals}};
+        \node [align=center, below = of co] (c) {$\mathbb{Z} \cup \{\top, \bot\}$ \\ \textsf{constants}};
+        \node [align=center, below = of i] (s) {$\{0, +, -, \top, \bot\}$ \\ \textsf{signs}};
+        \node [align=center, below = 11em of ci] (n) {$\{0, \top, \bot\}$ \\ \textsf{nullness}};
+        \node [align=center, below = of n] (d) {$\{\top, \bot\}$ \\ \textsf{dead code}};
+        \node [align=center, below = of d] (t) {$\{\top\}$ \\ \textsf{no information}};
+
+        \draw [thin] (con) -- (ci) -- (i)  -- (s) -- (n) -- (d) -- (t);
+        \draw [thin] (ci) -- (co) -- (c)  -- (n);
+        \draw [thin] (c) -- (i);
+    \end{tikzpicture}
+}
+    \caption{Lattice of non-relational abstract domains.}
+    \label{fig:latticeabs}%
+\end{marginfigure}%
+
+
+So far, we have seen abstract domains with various expressiveness, cost, and
+precision. However, in many cases, we want to start with the simplest domains
+and refine them automatically on the fly when a spurious counter-example is
+encountered. The first approach of refinement is based on the observation that
+also abstraction form a lattice (see \autoref{fig:latticeabs}). In the lattice
+of domains we can refine two domains by a meet operation on them -- also known
+as reduced product construction \cite{Toubhans2013, Cousot2011b}.
+
+Many abstract domains are not closed under union. Usually, the approximation
+induced by abstract unions is a major source of precision loss. Disjunctive
+completion methods address this problem \cite{File1999}. This complementation
+introduces to abstraction \domain{} all those concrete disjunctions of elements
+of \domain{} initially missing in \domain{}. The resulting domain is the most
+abstract domain that is exact on disjunctions of abstract properties in
+\domain{}.  The usual usecase of abstract dijunctions is to merge multiple paths
+of program.  Similarly complementation supplements missing complements to the
+abstraction \cite{Cortesi1995}.
+
+On the other hand, the fixpoint completion is a program dependent refinement,
+which improves the abstract domain by introducing all the properties which
+would make the fixpoint iteration imprecise \cite{Giacobazzi2000,
+Giacobazzi2001}.
+
+\add{ todo investigate more approaches }
 
 \subsection{ Tools }
 

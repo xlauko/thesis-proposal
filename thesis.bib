@@ -1429,4 +1429,70 @@ $$
   organization = {Springer},
 }
 
+@PhdThesis{Mine2004Thesis,
+  author = {Min{\'e}, Antoine},
+  title  = {Weakly relational numerical abstract domains},
+  year   = {2004},
+}
+
+@Article{File1999,
+  author   = {Gilberto Filé and Francesco Ranzato},
+  title    = {The powerset operator on abstract interpretations},
+  journal  = {Theoretical Computer Science},
+  year     = {1999},
+  volume   = {222},
+  number   = {1},
+  pages    = {77 - 111},
+  issn     = {0304-3975},
+  abstract = {In the context of the standard Cousot and Cousot framework, refinement operators that systematically produce more precise abstract interpretations from simpler ones are useful. We present a theoretical study of one such operator: the powerset. For any given abstract interpretation, i.e. an abstract domain equipped with corresponding abstract operations, the powerset operator yields a new abstract interpretation, where the abstract domain is (very close to) the powerset of the original one and the operations are accordingly extended. It turns out that the refined powerset domain is able to represent in the best possible way the concrete disjunction. Conditions that guarantee the correctness of the powerset operator are given, and the relationship, with respect to the precision, between any abstract interpretation and its powerset is studied. The general theory is applied to the well-known abstract interpretation POS, typically used for ground-dependency analysis of logic languages. We show that the powerset P(POS) is strictly more precise than POS both at the domain and operations level. Furthermore, the standard bottom-up abstract semantics of logic programs based on POS and P(POS) are compared by exhibiting a completeness relationship between them, i.e. the first semantics can be obtained by abstracting back the second one.},
+  doi      = {https://doi.org/10.1016/S0304-3975(98)00007-3},
+  keywords = {Abstract interpretation, Powerset operator, Logic program ground-dependency analysis},
+  url      = {http://www.sciencedirect.com/science/article/pii/S0304397598000073},
+}
+
+@Article{Giacobazzi2000,
+  author     = {Giacobazzi, Roberto and Ranzato, Francesco and Scozzari, Francesca},
+  title      = {Making Abstract Interpretations Complete},
+  journal    = {J. ACM},
+  year       = {2000},
+  volume     = {47},
+  number     = {2},
+  pages      = {361--416},
+  month      = mar,
+  issn       = {0004-5411},
+  acmid      = {333989},
+  address    = {New York, NY, USA},
+  doi        = {10.1145/333979.333989},
+  issue_date = {March 2000},
+  numpages   = {56},
+  publisher  = {ACM},
+  url        = {http://doi.acm.org/10.1145/333979.333989},
+}
+
+@InProceedings{Giacobazzi2001,
+  author    = {Giacobazzi, Roberto and Quintarelli, Elisa},
+  title     = {Incompleteness, Counterexamples, and Refinements in Abstract Model-Checking},
+  booktitle = {Static Analysis},
+  year      = {2001},
+  editor    = {Cousot, Patrick},
+  pages     = {356--373},
+  address   = {Berlin, Heidelberg},
+  publisher = {Springer Berlin Heidelberg},
+  abstract  = {In this paper we study the relation between the lack of completeness in abstract interpretation of model-checking and the structure of the counterexamples produced by a model-checker. We consider two dual forms of completeness of an abstract interpretation: Forward and backward completeness. They correspond respectively to the standard $\gamma$/$\alpha$ completeness of an abstract interpretation and can be related with each other by adjunction. We give a constructive characterization of Clarke et al.'s spurious counterexamples in terms of both forward and backward completeness of the underlying abstract interpretation. This result allows us to understand the structure of the counterexamples that can be removed by systematically refining abstract domains to achieve completeness with respect to a given operation. We apply our result to improve static program analysis by refining the model-checking of an abstract interpretation.},
+  isbn      = {978-3-540-47764-8},
+}
+
+@InProceedings{Toubhans2013,
+  author    = {Toubhans, Antoine and Chang, Bor-Yuh Evan and Rival, Xavier},
+  title     = {Reduced Product Combination of Abstract Domains for Shapes},
+  booktitle = {Verification, Model Checking, and Abstract Interpretation},
+  year      = {2013},
+  editor    = {Giacobazzi, Roberto and Berdine, Josh and Mastroeni, Isabella},
+  pages     = {375--395},
+  address   = {Berlin, Heidelberg},
+  publisher = {Springer Berlin Heidelberg},
+  abstract  = {Real-world data structures are often enhanced with additional pointers capturing alternative paths through a basic inductive skeleton (e.g., back pointers, head pointers). From the static analysis point of view, we must obtain several interlocking shape invariants. At the same time, it is well understood in abstract interpretation design that supporting a separation of concerns is critically important to designing powerful static analyses. Such a separation of concerns is often obtained via a reduced product on a case-by-case basis. In this paper, we lift this idea to abstract domains for shape analyses, introducing a domain combination operator for memory abstractions. As an example, we present simultaneous separating shape graphs, a product construction that combines instances of separation logic-based shape domains. The key enabler for this construction is a static analysis on inductive data structure definitions to derive relations between the skeleton and the alternative paths. From the engineering standpoint, this construction allows each component to reason independently about different aspects of the data structure invariant and then separately exchange information via a reduction operator. From the usability standpoint, we enable describing a data structure invariant in terms of several inductive definitions that hold simultaneously.},
+  isbn      = {978-3-642-35873-9},
+}
+
 @Comment{jabref-meta: databaseType:bibtex;}
