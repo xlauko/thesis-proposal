@@ -8,8 +8,8 @@ However, many of them are not designed with reusability in mind.
 This trend causes researchers to reimplement many of algorithms by themselves if they want to extend existing work.
 The reimplementation does not just cost extra time resources but also produce hardly comparable results with previous approaches because the evaluation is becoming implementation-dependent.
 
-The computer verification community is not an exception.
-According to the classification of used techniques in recent \svcomp \cite{SVCOMP2019}, many tools utilize a similar set of core techniques.\sidenote{The techniques used by tools in \svcomp 2019 are summarized in \autoref{tab:svcomp}.}
+The computer-aided verification community is not an exception.
+According to the classification of used techniques in recent \svcomp \cite{SVCOMP2019}, many tools utilize a similar set of core techniques (see \autoref{tab:svcomp}).
 
 The prominent role of presented approaches is taken by \emph{abstraction} related techniques, concretely \cegar
 \cite{Clarke20}, predicate abstraction \cite{Flanagan02}, shape analysis \cite{Yang2008}, lazy abstraction \cite{Henzinger2002}, or symbolic data representation \cite{King76,Burch1990,Majumdar2018}.
@@ -18,10 +18,11 @@ Moreover, the design of these algorithms is not well suited for reusability.
 
 % besides sv-comp abstraction is widely adopted to tackle .... (google scholar citation)
 
-On the other hand, we may also find examples of reusable techniques.
-One such example is the utilization of \smt logics and solvers in the symbolic verification.
-With widely adopted format SMT-LIB \cite{Barrett2010}, \smt solvers are easily used out-of-the-box [TODO].
-\add{extend}
+On the other hand, we may also find examples of reusable techniques.  One such
+example is the utilization of \smt logics and solvers in the symbolic
+verification.  With widely adopted format SMT-LIB \cite{Barrett2010}, \smt
+solvers are easily used out-of-the-box \cite{Dutertre2006, DeMoura2008, Barrett2011, Corzilius2015}.
+
 % TODO what i will present in my thesis
 
 % In order to contribute to the solution of the software reliability problem, tools have been designed to analyze statically the run-time
@@ -110,8 +111,7 @@ With widely adopted format SMT-LIB \cite{Barrett2010}, \smt solvers are easily u
 \label{tab:svcomp}
 \end{table}
 
-\add{larger introduction to techniques - abstraction motivation}
-Notwithstanding the amount of work required a lot of tools reinvent the wheel and adapt the existing algorithms.
+Notwithstanding the amount of work required many tools reinvent the wheel and adapt the existing algorithms.
 The main success of abovementioned techniques is in their indispensability.
 Since program verification is generally undecidable, the automatic computer-aided verification tools rely on the approximation techniques.
 Either they provide only partial algorithms, requires human interaction (in the case of theorem provers) or consider a restricted form of programs and their properties.
@@ -122,19 +122,20 @@ Hence verifiers assume the correctness of underlying layers of the program and f
 Another approximation made by verifiers is on the level of program semantics.  When verifying a program (for example in C), one can decide whether to perform atomic semantic steps by program lines or based on the compiled assembly code. Whereas the first may preserve a piece of information about the behavior of the program, the letter is closer to the real execution.
 The last approximation of our concern is data abstraction that is used to represent non-deterministic values in the program and tackles the state-space explosion problem.
 
-In this thesis proposal, we present a survey of the essential as well as contemporary abstraction and symbolic techniques.
+In this thesis proposal, we present a survey of the essential as well as contemporary abstraction and symbolic techniques. We identify their common specifics and present a potential design for reausable
+abstraction across tools. The rest of the proposal is organized as follows: \autoref{ch:state} summarizes the state of the art of approximation techniques, the \autoref{sec:preliminaries} present a common notation used in following chapters, followed by introduction to abstraction (\autoref{sec:abstraction}) and summary of abstract domains \autoref{sec:domains}. The second half of \autoref{ch:state} investigates abstraction-based techniques used in computer-aided verification (\autoref{sec:techniques}).
 
-We identify their common specifics and present a potential design for reausable
-abstraction across tools.
+The following \autoref{ch:aim} examines the presented approaches and states the
+challenges of reusable abstraction design. We introduce a notion a
+transformation-based abstraction, which is one of the possible solutions for
+the stated objectives. Further, we present possible directions for the thesis
+in \autoref{sec:objectives}.
 
-In my recent work I have investigated how to repurpose a symbolic computation for explicit-based model checking [TODO].
-
-\add{propose a generalized}
-
-\add{llvm intro}
-
-
-The thesis proposal is organized as follows: \autoref{ch:state} summarizes the state of the art and is divided into {\color{red}x} parts. \autoref{ch:results}
-In the following chapter
-
-\add{chapter description}
+The last chapter (\autoref{ch:results}) presents already achieved results in
+transformation-based approach.  In \autoref{sec:symbolic} investigates how we
+have repurposed a symbolic computation for explicit-based model checking
+\cite{Lauko2019Sym, Lauko2018SymComp}. Further in \autoref{sec:string}, we
+present a technique for string and parametrizable abstract domains which were
+integrated into the transformation-based approach [TODO].  In the end
+(\autoref{sec:publications}), the chapter lists my already published papers
+related to abstraction techniques.

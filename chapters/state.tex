@@ -23,6 +23,7 @@
 % TODO prerequisites
 
 \section{Preliminaries}
+\label{sec:preliminaries}
 
 This section introduces the notation used in the rest of the thesis proposal.
 The presented notation is mainly based on the configurable software
@@ -163,6 +164,7 @@ end:
 \end{figure}
 
 \section{Abstract Interpretation}
+\label{sec:abstraction}
 
 The original idea of abstract interpretation dates back to the late 70s, first
 summarized by Patrick and Radhia Cousot \cite{Cousot1977}.
@@ -197,6 +199,7 @@ a concrete one. In the following sections, we will investigate various types of
 abstract domains with their advantages and disadvantages.
 
 \section{Abstract Domains}
+\label{sec:domains}
 
 To obtain a computable model, we need to drop some information about program
 variables. For instance, to drop all the information about each program
@@ -672,7 +675,7 @@ bound matrices in the octagon domain \cite{Mine2006}, or generators of affine
 space in the linear equality domain \cite{Karr1976}).
 
 Except picking of a suitable abstraction, a precision of abstract methods can
-be improved by symbolic methods. Miné presents in his work \cite{Mine2006} a
+be improved by symbolic methods. Miné presents in his work \cite{Mine2006b} a
 set of lightweight simplifications (linearization and symbolic constant
 propagation) which are used to transform numerical expressions in order to
 increase the precision of the analysis.
@@ -692,6 +695,7 @@ determined by three ingredients:
     \item effective and sound abstract operators,
     \item an iteration strategy.
 \end{enumerate}
+
 
 \subsection{Non-numerical abstract domains}
 
@@ -727,7 +731,7 @@ determined by three ingredients:
 
 % TODO Symbolic Methods to Enhance the Precision of Numerical Abstract Domains
 
-\subsection{Real-wirld programs dedicated abstractions}
+\subsection{Real-world programs dedicated abstractions}
 
 \add{ floats abstraction }
 
@@ -735,7 +739,12 @@ determined by three ingredients:
 
 \add{ Sound Bit-Precise Numerical Domains \cite{Sharma2017} }
 
+\subsection{ Tools }
+
+\add{ ASTREE, SeaHorn }
+
 \section{Abstraction based techniques}
+\label{sec:techniques}
 
 \subsection{Abstraction-based model checking}
 

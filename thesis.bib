@@ -1340,7 +1340,7 @@ $$
   url       = {http://dl.acm.org/citation.cfm?id=645774.668110},
 }
 
-@InProceedings{Mine2006,
+@InProceedings{Mine2006b,
   author    = {Min{\'e}, Antoine},
   title     = {Symbolic Methods to Enhance the Precision of Numerical Abstract Domains},
   booktitle = {Verification, Model Checking, and Abstract Interpretation},
@@ -1351,6 +1351,82 @@ $$
   publisher = {Springer Berlin Heidelberg},
   abstract  = {We present lightweight and generic symbolic methods to improve the precision of numerical static analyses based on Abstract Interpretation. The main idea is to simplify numerical expressions before they are fed to abstract transfer functions. An important novelty is that these simplifications are performed on-the-fly, using information gathered dynamically by the analyzer.},
   isbn      = {978-3-540-31622-0},
+}
+
+@InProceedings{Sharma2017,
+  author    = {Sharma, Tushar and Reps, Thomas},
+  title     = {Sound Bit-Precise Numerical Domains},
+  booktitle = {Verification, Model Checking, and Abstract Interpretation},
+  year      = {2017},
+  editor    = {Bouajjani, Ahmed and Monniaux, David},
+  pages     = {500--520},
+  address   = {Cham},
+  publisher = {Springer International Publishing},
+  abstract  = {This paper tackles the challenge of creating a numerical abstract domain that can identify affine-inequality invariants while handling overflow in arithmetic operations over bit-vector data-types. The paper describes the design and implementation of a class of new abstract domains, called the Bit-Vector-Sound, Finite-Disjunctive ({\$}{\$}{\backslash}textit{\{}BVSFD{\}}{\$}{\$}) domains. We introduce a framework that takes an abstract domain {\$}{\$}{\backslash}mathcal {\{}A{\}}{\$}{\$}that is sound with respect to mathematical integers and creates an abstract domain {\$}{\$}{\backslash}textit{\{}BVS{\}}({\backslash}mathcal {\{}A{\}}){\$}{\$}whose operations and abstract transformers are sound with respect to machine integers. We also describe how to create abstract transformers for {\$}{\$}{\backslash}textit{\{}BVS{\}}({\backslash}mathcal {\{}A{\}}){\$}{\$}that are sound with respect to machine arithmetic. The abstract transformers make use of an operation {\$}{\$}{\backslash}textit{\{}WRAP{\}}({\backslash}textit{\{}av{\}}, v){\$}{\$}---where {\$}{\$}{\backslash}textit{\{}av{\}} {\backslash}in {\backslash}mathcal {\{}A{\}}{\$}{\$}and v is a set of program variables---which performs wraparound in av for the variables in v.},
+  isbn      = {978-3-319-52234-0},
+}
+
+@InProceedings{DeMoura2008,
+  author    = {de Moura, Leonardo and Bj{\o}rner, Nikolaj},
+  title     = {Z3: An Efficient SMT Solver},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems},
+  year      = {2008},
+  editor    = {Ramakrishnan, C. R. and Rehof, Jakob},
+  pages     = {337--340},
+  address   = {Berlin, Heidelberg},
+  publisher = {Springer Berlin Heidelberg},
+  abstract  = {Satisfiability Modulo Theories (SMT) problem is a decision problem for logical first order formulas with respect to combinations of background theories such as: arithmetic, bit-vectors, arrays, and uninterpreted functions. Z3 is a new and efficient SMT Solver freely available from Microsoft Research. It is used in various software verification and analysis applications.},
+  isbn      = {978-3-540-78800-3},
+}
+
+@InProceedings{Barrett2011,
+  author    = {Barrett, Clark and Conway, Christopher L. and Deters, Morgan and Hadarean, Liana and Jovanovi{\'{c}}, Dejan and King, Tim and Reynolds, Andrew and Tinelli, Cesare},
+  title     = {CVC4},
+  booktitle = {Computer Aided Verification},
+  year      = {2011},
+  editor    = {Gopalakrishnan, Ganesh and Qadeer, Shaz},
+  pages     = {171--177},
+  address   = {Berlin, Heidelberg},
+  publisher = {Springer Berlin Heidelberg},
+  abstract  = {CVC4 is the latest version of the Cooperating Validity Checker. A joint project of NYU and U Iowa, CVC4 aims to support the useful feature set of CVC3 and SMT-LIBv2 while optimizing the design of the core system architecture and decision procedures to take advantage of recent engineering and algorithmic advances. CVC4 represents a completely new code base; it is a from-scratch rewrite of CVC3, and many subsystems have been completely redesigned. Additional decision procedures for CVC4 are currently under development, but for what it currently achieves, it is a lighter-weight and higher-performing tool than CVC3. We describe the system architecture, subsystems of note, and discuss some applications and continuing work.},
+  isbn      = {978-3-642-22110-1},
+}
+
+@Article{Dutertre2006,
+  author  = {Dutertre, Bruno and De Moura, Leonardo},
+  title   = {The yices smt solver},
+  journal = {Tool paper at http://yices. csl. sri. com/tool-paper. pdf},
+  year    = {2006},
+  volume  = {2},
+  number  = {2},
+  pages   = {1--2},
+}
+
+@InProceedings{Corzilius2015,
+  author       = {Corzilius, Florian and Kremer, Gereon and Junges, Sebastian and Schupp, Stefan and {\'A}brah{\'a}m, Erika},
+  title        = {SMT-RAT: An open source C++ toolbox for strategic and parallel SMT solving},
+  booktitle    = {International Conference on Theory and Applications of Satisfiability Testing},
+  year         = {2015},
+  pages        = {360--368},
+  organization = {Springer},
+}
+
+@InProceedings{Lauko2019Sym,
+  author       = {Lauko, Henrich and {\v{S}}till, Vladim{\'\i}r and Ro{\v{c}}kai, Petr and Barnat, Ji{\v{r}}{\'\i}},
+  title        = {Extending DIVINE with Symbolic Verification Using SMT},
+  booktitle    = {International Conference on Tools and Algorithms for the Construction and Analysis of Systems},
+  year         = {2019},
+  pages        = {204--208},
+  organization = {Springer},
+}
+
+@InProceedings{Lauko2018SymComp,
+  author       = {Lauko, Henrich and Ro{\v{c}}kai, Petr and Barnat, Ji{\v{r}}{\'\i}},
+  title        = {Symbolic computation via program transformation},
+  booktitle    = {International Colloquium on Theoretical Aspects of Computing},
+  year         = {2018},
+  pages        = {313--332},
+  organization = {Springer},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
