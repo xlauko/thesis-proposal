@@ -1,0 +1,106 @@
+% tikz-picture.sty
+% (c) 2018 Henrich Lauko template standalone tikz pictures
+
+\usepackage{tikz}
+\usepackage{tikzscale}
+\usepackage[outline]{contour}
+\contourlength{2pt}
+
+\usetikzlibrary{
+    decorations.pathreplacing,
+    positioning,
+    backgrounds,
+    patterns,
+    shapes,
+    arrows,
+    calc,
+    fit
+}
+
+\tikzset{
+    common/.style = {
+        inner sep = 0.8pt,
+        outer sep = 0pt,
+        minimum height = 1.5em,
+        minimum width = 1.5em,
+        align=center,
+        text centered
+    },
+    val/.style = {
+        draw,
+        rectangle,
+        text width=1em,
+        common
+    },
+    loc/.style = {
+        draw,
+        common,
+        rectangle,
+        text width = 0.9em,
+        font = \tiny,
+        minimum height = 1.1em,
+        minimum width = 1.1em
+    },
+    lab/.style = {
+        font = \footnotesize,
+    },
+    op/.style = {
+        draw,
+        circle,
+        text width=1em,
+        common
+    },
+    constraint/.style = {
+        rectangle,
+        fill=gray!30,
+        rounded corners,
+        common,
+        minimum width = 3.5em
+    },
+    component/.style = {
+        draw,
+        rectangle,
+        common,
+        minimum width = 7em
+    },
+    hatching/.style = {
+        pattern = north west lines,
+        pattern color = red
+    },
+    added/.style = {
+        color = red,
+        pattern=north west lines,
+        pattern color=red
+    },
+    controlflow/.style = {
+        dotted
+    },
+    ptr/.style = {
+        dotted, ->, >=stealth
+    },
+    domainbox/.style = {
+        common,
+        draw,
+        rectangle,
+        dashed,
+        rounded corners,
+        minimum height = 4em,
+        minimum width = 5em
+    },
+    context/.style = {
+        common,
+        draw,
+        color = pruss,
+        rectangle,
+        rounded corners,
+        minimum height = 2em,
+        minimum width = 2em
+    },
+    point/.style = {
+        draw,
+        fill,
+        circle,
+        redius = 2pt,
+        color = pruss
+    }
+}

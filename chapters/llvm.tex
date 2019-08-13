@@ -1,0 +1,55 @@
+\chapter{\llvm syntax \& semantics}
+\label{ch:llvm}
+
+\llvm syntax
+
+\section{Types}
+\begin{grammar}
+
+<n> ::= $i \in \mathbb{N}^+$
+
+<float> ::= "half" | "float" | "double" | "fp80" | "fp128"
+
+<type> ::= "void" | "i"<n> | <float> | <type>* | "[" <n> $\times$ <type> "]" | { <type> } | "id"
+
+\end{grammar}
+
+\section{Operations}
+\begin{grammar}
+<bop> ::= "add" | "sub" | "mul" | "udiv" | "sdiv" | "urem" | "srem" \alt
+          "shl" | "lshr" | "ashr" | "and" | "or" | "xor"
+
+<fbop> ::= "fadd" | "fsub" | "fmul" | "fdiv" | "frem"
+
+<eop>  ::= "zext" | "sext" | "fpext"
+
+<cop>  ::= "bitcast" | "ptrtoint" | "inttoptr" | "fptoui" | "fptosi" \alt
+           "uitofp"  | "sitofp"
+
+<trop> ::= "trunc" | "fptrunc"
+
+<cond> ::= TODO cmp
+\end{grammar}
+
+\section{Values}
+\begin{grammar}
+<cnst> ::= TODO
+
+<val> ::= <id> | <cnst>
+
+<glob> ::= "global" TODO | "define" TODO | "declare" TODO
+\end{grammar}
+
+\section{Control Flow}
+\begin{grammar}
+<block> ::= TODO
+
+<phi> ::= TODO
+
+<cfl> ::= "br val l_1 l_2" | "br l" | "ret" TODO | "ret void" | "unreachable"
+\end{grammar}
+
+\section{Commands}
+\begin{grammar}
+<cmd> ::= TODO
+\end{grammar}
