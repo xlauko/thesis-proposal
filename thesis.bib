@@ -970,9 +970,9 @@ $$
   doi       = {10.1080/00207168908803778},
   eprint    = {https://doi.org/10.1080/00207168908803778},
   publisher = {Taylor \& Francis},
-  url       = { 
+  url       = {
         https://doi.org/10.1080/00207168908803778
-    
+
 },
 }
 
@@ -1493,6 +1493,127 @@ $$
   publisher = {Springer Berlin Heidelberg},
   abstract  = {Real-world data structures are often enhanced with additional pointers capturing alternative paths through a basic inductive skeleton (e.g., back pointers, head pointers). From the static analysis point of view, we must obtain several interlocking shape invariants. At the same time, it is well understood in abstract interpretation design that supporting a separation of concerns is critically important to designing powerful static analyses. Such a separation of concerns is often obtained via a reduced product on a case-by-case basis. In this paper, we lift this idea to abstract domains for shape analyses, introducing a domain combination operator for memory abstractions. As an example, we present simultaneous separating shape graphs, a product construction that combines instances of separation logic-based shape domains. The key enabler for this construction is a static analysis on inductive data structure definitions to derive relations between the skeleton and the alternative paths. From the engineering standpoint, this construction allows each component to reason independently about different aspects of the data structure invariant and then separately exchange information via a reduction operator. From the usability standpoint, we enable describing a data structure invariant in terms of several inductive definitions that hold simultaneously.},
   isbn      = {978-3-642-35873-9},
+}
+
+@InProceedings{Cousot2007,
+  author    = {Cousot, Patrick and Cousot, Radhia and Feret, J{\'e}r{\^o}me and Mauborgne, Laurent and Min{\'e}, Antoine and Monniaux, David and Rival, Xavier},
+  title     = {Combination of Abstractions in the ASTR{\'E}E Static Analyzer},
+  booktitle = {Advances in Computer Science - ASIAN 2006. Secure Software and Related Issues},
+  year      = {2007},
+  editor    = {Okada, Mitsu and Satoh, Ichiro},
+  pages     = {272--300},
+  address   = {Berlin, Heidelberg},
+  publisher = {Springer Berlin Heidelberg},
+  abstract  = {We describe the structure of the abstract domains in the Astr{\'e}e static analyzer, their modular organization into a hierarchical network, their cooperation to over-approximate the conjunction/reduced product of different abstractions and to ensure termination using collaborative widenings and narrowings. This separation of the abstraction into a combination of cooperative abstract domains makes Astr{\'e}e extensible, an essential feature to cope with false alarms and ultimately provide sound formal verification of the absence of runtime errors in very large software.},
+  isbn      = {978-3-540-77505-8},
+}
+
+@Article{Bouzaziz2012,
+  author   = {Mehdi Bouaziz},
+  title    = {TreeKs: A Functor to Make Numerical Abstract Domains Scalable},
+  journal  = {Electronic Notes in Theoretical Computer Science},
+  year     = {2012},
+  volume   = {287},
+  pages    = {41 - 52},
+  issn     = {1571-0661},
+  note     = {Proceedings of the Fourth International Workshop on Numerical and Symbolic Abstract Domains, NSAD 2012},
+  abstract = {Relational numerical abstract domains do not scale up. To ensure a linear cost of abstract domains, abstract interpretation-based tools analyzing large programs generally split the set of variables into independent smaller sets, sometimes sharing some non-relational information. We present a way to gain precision by keeping fully expressive relations between the subsets of variables, whilst retaining a linear complexity ensuring scalability.},
+  doi      = {https://doi.org/10.1016/j.entcs.2012.09.005},
+  keywords = {Abstract interpretation, abstract numerical domains, weakly relational domains},
+  url      = {http://www.sciencedirect.com/science/article/pii/S1571066112000576},
+}
+
+@Book{Muchnick1981,
+  title     = {Program Flow Analysis: Theory and Application},
+  publisher = {Prentice Hall Professional Technical Reference},
+  year      = {1981},
+  author    = {Muchnick, Steven S. and Jones, Neil D.},
+  isbn      = {0137296819},
+}
+
+@Article{Bertrane2015,
+  author     = {Bertrane, Julien and Cousot, Patrick and Cousot, Radhia and Feret, J{\'e}r\^{o}me and Mauborgne, Laurent and Min{\'e}, Antoine and Rival, Xavier},
+  title      = {Static Analysis and Verification of Aerospace Software by Abstract Interpretation},
+  journal    = {Found. Trends Program. Lang.},
+  year       = {2015},
+  volume     = {2},
+  number     = {2-3},
+  pages      = {71--190},
+  month      = dec,
+  issn       = {2325-1107},
+  acmid      = {2900404},
+  address    = {Hanover, MA, USA},
+  doi        = {10.1561/2500000002},
+  issue_date = {12 2015},
+  numpages   = {120},
+  publisher  = {Now Publishers Inc.},
+  url        = {http://dx.doi.org/10.1561/2500000002},
+}
+
+@Article{Cousot2010,
+  author  = {Bertrane, Julien and Cousot, Patrick and Cousot, Radhia and Feret, Jérôme and Mauborgne, Laurent and Miné, Antoine and Rival, Xavier},
+  title   = {Static Analysis and Verification of Aerospace Software by Abstract Interpretation},
+  journal = {American Institue of Aeronautics and Astronautics (AIAA) Infotech@Aerospace 2010},
+  year    = {2010},
+  volume  = {2},
+  month   = {04},
+  doi     = {10.2514/6.2010-3385},
+}
+
+@InBook{Cousot2010a,
+  pages     = {72--95},
+  title     = {A Scalable Segmented Decision Tree Abstract Domain},
+  publisher = {Springer Berlin Heidelberg},
+  year      = {2010},
+  author    = {Cousot, Patrick and Cousot, Radhia and Mauborgne, Laurent},
+  editor    = {Manna, Zohar and Peled, Doron A.},
+  address   = {Berlin, Heidelberg},
+  isbn      = {978-3-642-13754-9},
+  abstract  = {The key to precision and scalability in all formal methods for static program analysis and verification is the handling of disjunctions arising in relational analyses, the flow-sensitive traversal of conditionals and loops, the context-sensitive inter-procedural calls, the interleaving of concurrent threads, etc. Explicit case enumeration immediately yields to combinatorial explosion. The art of scalable static analysis is therefore to abstract disjunctions to minimize cost while preserving weak forms of disjunctions for expressivity.},
+  booktitle = {Time for Verification: Essays in Memory of Amir Pnueli},
+  doi       = {10.1007/978-3-642-13754-9_5},
+  url       = {https://doi.org/10.1007/978-3-642-13754-9_5},
+}
+
+@InProceedings{Urban2010,
+  author    = {Urban, Caterina and Min{\'e}, Antoine},
+  title     = {A Decision Tree Abstract Domain for Proving Conditional Termination},
+  booktitle = {Static Analysis},
+  year      = {2014},
+  editor    = {M{\"u}ller-Olm, Markus and Seidl, Helmut},
+  pages     = {302--318},
+  address   = {Cham},
+  publisher = {Springer International Publishing},
+  abstract  = {We present a new parameterized abstract domain able to refine existing numerical abstract domains with finite disjunctions. The elements of the abstract domain are decision trees where the decision nodes are labeled with linear constraints, and the leaf nodes belong to a numerical abstract domain.},
+  isbn      = {978-3-319-10936-7},
+}
+
+@InProceedings{Bagnara2004,
+  author    = {Bagnara, Roberto and Hill, Patricia M. and Zaffanella, Enea},
+  title     = {Widening Operators for Powerset Domains},
+  booktitle = {Verification, Model Checking, and Abstract Interpretation},
+  year      = {2004},
+  editor    = {Steffen, Bernhard and Levi, Giorgio},
+  pages     = {135--148},
+  address   = {Berlin, Heidelberg},
+  publisher = {Springer Berlin Heidelberg},
+  abstract  = {The finite powerset construction upgrades an abstract domain by allowing for the representation of finite disjunctions of its elements. In this paper we define two generic widening operators for the finite powerset abstract domain. Both widenings are obtained by lifting any widening operator defined on the base-level abstract domain and are parametric with respect to the specification of a few additional operators. We illustrate the proposed techniques by instantiating our widenings on powersets of convex polyhedra, a domain for which no non-trivial widening operator was previously known.},
+  isbn      = {978-3-540-24622-0},
+}
+
+@Article{Bagnara2010,
+  author   = {Roberto Bagnara and Patricia M. Hill and Enea Zaffanella},
+  title    = {Exact join detection for convex polyhedra and other numerical abstractions},
+  journal  = {Computational Geometry},
+  year     = {2010},
+  volume   = {43},
+  number   = {5},
+  pages    = {453 - 473},
+  issn     = {0925-7721},
+  abstract = {Deciding whether the union of two convex polyhedra is itself a convex polyhedron is a basic problem in polyhedral computations; having important applications in the field of constrained control and in the synthesis, analysis, verification and optimization of hardware and software systems. In such application fields though, general convex polyhedra are just one among many, so-called, numerical abstractions, which range from restricted families of (not necessarily closed) convex polyhedra to non-convex geometrical objects. We thus tackle the problem from an abstract point of view: for a wide range of numerical abstractions that can be modeled as bounded join-semilattices—that is, partial orders where any finite set of elements has a least upper bound—we show necessary and sufficient conditions for the equivalence between the lattice-theoretic join and the set-theoretic union. For the case of closed convex polyhedra—which, as far as we know, is the only one already studied in the literature—we improve upon the state-of-the-art by providing a new algorithm with a better worst-case complexity. The results and algorithms presented for the other numerical abstractions are new to this paper. All the algorithms have been implemented, experimentally validated, and made available in the Parma Polyhedra Library.},
+  doi      = {https://doi.org/10.1016/j.comgeo.2009.09.002},
+  keywords = {Polyhedron, Union, Convexity, Abstract interpretation, Numerical abstraction, Powerset domain},
+  url      = {http://www.sciencedirect.com/science/article/pii/S0925772109001357},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}

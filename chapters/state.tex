@@ -814,11 +814,12 @@ and refine them automatically on the fly when a spurious counter-example is
 encountered. The first approach of refinement is based on the observation that
 also abstraction form a lattice (see \autoref{fig:latticeabs}). In the lattice
 of domains we can refine two domains by a meet operation on them -- also known
-as reduced product construction \cite{Toubhans2013, Cousot2011b}.
+as reduced product construction \cite{Toubhans2013, Cousot2011b}. A broader
+study of large-scale reduced-products is presented in \cite{Cousot2007}.
 
 Many abstract domains are not closed under union. Usually, the approximation
 induced by abstract unions is a major source of precision loss. Disjunctive
-completion methods address this problem \cite{File1999}. This complementation
+completion methods address this problem \cite{File1999}. The complementation
 introduces to abstraction \domain{} all those concrete disjunctions of elements
 of \domain{} initially missing in \domain{}. The resulting domain is the most
 abstract domain that is exact on disjunctions of abstract properties in
@@ -830,6 +831,21 @@ On the other hand, the fixpoint completion is a program dependent refinement,
 which improves the abstract domain by introducing all the properties which
 would make the fixpoint iteration imprecise \cite{Giacobazzi2000,
 Giacobazzi2001}.
+
+The powerset construction \cite{Cousot1979} is also refined in later works \cite{File1999} and extended by efficient widening operators \cite{Bagnara2004} and exacts joins of numerical elements \cite{Bagnara2010}.
+
+The problem with relational abstract domains is that they do not generally
+scale-up. A general technique to ensure the linear cost of abstract domains is
+to split variables into independent smaller sets -- also know as variable
+packing technique \cite{Mine2006}. The variable packing can be refined by
+keeping relations between the sets of variables \cite{Bouzaziz2012}.
+
+The state partitioning techniques \cite{Muchnick1981} facilitate the use of
+decision-tree data structures (based on binary decision diagrams) which are
+used in the state of the art tools \cite{Cousot2010, Bertrane2015}.
+Similarly, there are abstract domains that incorporate the decision trees to
+handle disjunctions in the programs \cite{Cousot2010a} or to prove conditional
+termination \cite{Urban2010}.
 
 \add{ todo investigate more approaches }
 
