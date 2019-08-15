@@ -69,16 +69,6 @@
   keywords  = {computability;parallel programming;program verification;temporal logic;LTL model checking;explicit approach;input variables;linear temporal logic;noncanonical representations;parallel program model checking;parallel program verification;quantified bit-vector formulae;quantifier-free satisfiability;state matching;state space representation;state space searching;symbolic approach;Concrete;Educational institutions;Input variables;Model checking;Protocols;Scalability;Standards;bit-vector theory;concurrency verification;ltl model checking;satisfiability modulo theories},
 }
 
-@InProceedings{Cousot79,
-  author    = {Cousot, Patrick and Cousot, Radhia},
-  title     = {Systematic design of program analysis frameworks},
-  booktitle = {Conference Record of the Sixth Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
-  year      = {1979},
-  pages     = {269--282},
-  address   = {San Antonio, Texas},
-  publisher = {ACM Press, New York, NY},
-}
-
 @InProceedings{Lattner04,
   author    = {Lattner, Chris and Adve, Vikram},
   title     = {LLVM: A Compilation Framework for Lifelong Program Analysis \& Transformation},
@@ -478,7 +468,6 @@ been verified using special techniques.},
     publisher="Springer International Publishing",
     address="Cham",
     pages="133--155",
-    abstract="This report describes the 2019 Competition on Software Verification (SV-COMP), the 8{\$}{\$}^{\{}{\backslash}text {\{}th{\}}{\}}{\$}{\$}edition of a series of comparative evaluations of fully automatic software verifiers for C programs, and now also for Java programs. The competition provides a snapshot of the current state of the art in the area, and has a strong focus on replicability of its results. The repository of benchmark verification tasks now supports a new, more flexible format for task definitions (based on YAML), which was a precondition for conveniently benchmarking Java programs in the same controlled competition setting that was successfully applied in the previous years. The competition was based on 10 522 verification tasks for C programs and 368 verification tasks for Java programs. Each verification task consisted of a program and a property (reachability, memory safety, overflows, termination). SV-COMP 2019 had 31 participating verification systems from 14 countries.",
     isbn="978-3-030-17502-3"
 }
 
@@ -506,7 +495,7 @@ been verified using special techniques.},
 }
 
 @InCollection{Yang2008,
-  author    = {Yang, Hongseok and Lee, Oukseh and Berdine, Josh and Calcagno, Cristiano and Cook, Byron and Distefano, Dino and O’Hearn, Peter},
+  author    = {Yang, Hongseok and Lee, Oukseh and Berdine, Josh and Calcagno, Cristiano and Cook, Byron and Distefano, Dino and O'Hearn, Peter},
   title     = {Scalable Shape Analysis for Systems Code},
   booktitle = {Computer Aided Verification},
   publisher = {Springer},
@@ -548,12 +537,11 @@ been verified using special techniques.},
 }
 
 @Article{Majumdar2018,
-  author    = {Majumdar, Rupak and Raskin, Jean-François},
+  author    = {Majumdar, Rupak and Raskin, Jean-Francois},
   title     = {Symbolic Model Checking in Non-Boolean Domains},
   journal   = {Handbook of Model Checking},
   year      = {2018},
   month     = jan,
-  abstract  = {We consider symbolic model checking as a general procedure to compute fixed points on general lattices. We show that this view provides a unified approach for formal reasoning about systems that is applicable to many different classes of systems and properties. Our unified view is based on the notion of region algebras together with appropriate generalizations of the modal μ$\mu$-calculus. We show applications of our general approach to problems in infinite-state verification, reactive synthesis, and the analysis of probabilistic systems.},
   date      = {2018-01-01},
   doi       = {10.1007/978-3-319-10575-8_31},
   publisher = {Springer},
@@ -574,12 +562,12 @@ been verified using special techniques.},
 }
 
 @Article{Payet2018,
-  author    = {Payet, Étienne and Spoto, Fausto},
+  author    = {Payet, Etienne and Spoto, Fausto},
   title     = {Checking Array Bounds by Abstract Interpretation and Symbolic Expressions},
   journal   = {Automated Reasoning},
   year      = {2018},
   month     = jan,
-  abstract  = {Array access out of bounds is a typical programming error. From the ’70s, static analysis has been used to identify where such errors actually occur at runtime, through abstract interpretation into linear constraints. However, feasibility and scalability to modern object-oriented code has not been established yet. This article builds on previous work on linear constraints and shows that the result does not scale, when polyhedra implement the linear constraints, while the more abstract zones scale to the analysis of medium-size applications. Moreover, this article formalises the inclusion of symbolic expressions in the constraints and shows that this improves its precision. Expressions are automatically selected on-demand. The resulting analysis applies to code with dynamic memory allocation and arrays held in expressions. It is sound, also in the presence of arbitrary side-effects. It is fully defined in the abstract interpretation framework and does not use any code instrumentation. Its proof of correctness, its implementation inside the commercial Julia analyzer and experiments on third-party code complete the work.},
+  abstract  = {Array access out of bounds is a typical programming error. From the '70s, static analysis has been used to identify where such errors actually occur at runtime, through abstract interpretation into linear constraints. However, feasibility and scalability to modern object-oriented code has not been established yet. This article builds on previous work on linear constraints and shows that the result does not scale, when polyhedra implement the linear constraints, while the more abstract zones scale to the analysis of medium-size applications. Moreover, this article formalises the inclusion of symbolic expressions in the constraints and shows that this improves its precision. Expressions are automatically selected on-demand. The resulting analysis applies to code with dynamic memory allocation and arrays held in expressions. It is sound, also in the presence of arbitrary side-effects. It is fully defined in the abstract interpretation framework and does not use any code instrumentation. Its proof of correctness, its implementation inside the commercial Julia analyzer and experiments on third-party code complete the work.},
   date      = {2018-01-01},
   doi       = {10.1007/978-3-319-94205-6_46},
   publisher = {Springer},
@@ -657,7 +645,7 @@ been verified using special techniques.},
   journal   = {The Future of Software Engineering},
   year      = {2011},
   month     = jan,
-  abstract  = {We give semantic foundations to abstract domains consisting in first order logic formulæ in a theory, as used in verification tools or methods using SMT-solvers or theorem provers.We exhibit conditions for a sound usage of such methods with respect to multi-interpreted semantics and extend their usage to automatic invariant generation by abstract interpretation.},
+  abstract  = {We give semantic foundations to abstract domains consisting in first order logic formulae in a theory, as used in verification tools or methods using SMT-solvers or theorem provers.We exhibit conditions for a sound usage of such methods with respect to multi-interpreted semantics and extend their usage to automatic invariant generation by abstract interpretation.},
   date      = {2011-01-01},
   doi       = {10.1007/978-3-642-15187-3_3},
   publisher = {Springer},
@@ -698,7 +686,6 @@ been verified using special techniques.},
   pages     = {299},
   month     = mar,
   issn      = {1573-0670},
-  abstract  = {After many years of successful development of new approaches for software verification, there is a need to consolidate the knowledge about the different abstract domains and algorithms. The goal of this paper is to provide a compact and accessible presentation of four SMT-based verification approaches in order to study them in theory and in practice. We present and compare the following different “schools of thought” of software verification: bounded model checking, k-induction, predicate abstraction, and lazy abstraction with interpolants. Those approaches are well-known and successful in software verification and have in common that they are based on SMT solving as the back-end technology. We reformulate all four approaches in the unifying theoretical framework of configurable program analysis and implement them in the verification framework CPAchecker. Based on this, we can present an evaluation that thoroughly compares the different approaches, where the core differences are expressed in configuration parameters and all other variables are kept constant (such as parser front end, SMT solver, used theory in SMT formulas). We evaluate the effectiveness and the efficiency of the approaches on a large set of verification tasks and discuss the conclusions.},
   date      = {2018-03-01},
   doi       = {10.1007/s10817-017-9432-6},
   publisher = {Springer},
@@ -711,7 +698,6 @@ been verified using special techniques.},
   journal   = {Handbook of Model Checking},
   year      = {2018},
   month     = jan,
-  abstract  = {Until recently, model checking and data-flow analysis—two traditional approaches to software verification—were used independently and in isolation for solving similar problems. Theoretically, the two different approaches are equivalent; they are two different ways to compute the same solution to a problem. In recent years, new practical approaches have shown how to combine the approaches and how to make them benefit from each other—model-checking techniques can make data-flow analyses more precise, and data-flow-analysis techniques can make model checking more efficient. This chapter starts by discussing the relationship (differences and similarities) between type checking, data-flow analysis, and model checking. Then we define algorithms for data-flow analysis and model checking in the same formal setting, called configurable program analysis. This identifies key differences that make us call an algorithm a “model-checking” algorithm or a “data-flow-analysis” algorithm. We illustrate the effect of using different algorithms for running certain classic example analyses and point out the reason for one algorithm being “better” than the other. The chapter presents combined verification techniques in the framework of configurable program analysis, in order to emphasize techniques used in data-flow analysis and in model checking. Besides the iterative algorithm that is used to illustrate the similarities and differences between data-flow analysis and model checking, we discuss different algorithmic approaches for constructing program invariants. To show that the border between data-flow analysis and model checking is blurring and disappearing, we also discuss directions in tool implementations for combined verification approaches.},
   date      = {2018-01-01},
   doi       = {10.1007/978-3-319-10575-8_16},
   publisher = {Springer},
@@ -724,7 +710,6 @@ been verified using special techniques.},
   journal   = {Leveraging Applications of Formal Methods, Verification and Validation. Verification},
   year      = {2018},
   month     = jan,
-  abstract  = {Block summarization is an efficient technique in software verification to decompose a verification problem into separate tasks and to avoid repeated exploration of reusable parts of a program. In order to benefit from abstraction at the same time, block summarization can be combined with counterexample-guided abstraction refinement (CEGAR). This causes the following problem: whenever CEGAR instructs the model checker to refine the abstraction along a path, several block summaries are affected and need to be updated. There exist two different refinement strategies: a destructive in-place approach that modifies the existing block abstractions and a constructive copy-on-write approach that does not change existing data. While the in-place approach is used in the field for several years, our new approach of copy-on-write refinement has the following important advantage: A complete exportable proof of the program is available after the analysis has finished. Due to the benefit from avoiding recomputations of missing information as necessary for in-place updates, the new approach causes almost no computational overhead overall. We perform a large experimental evaluation to compare the new approach with the previous one to show that full proofs can be achieved without overhead.},
   date      = {2018-01-01},
   doi       = {10.1007/978-3-030-03421-4_14},
   publisher = {Springer},
@@ -750,7 +735,6 @@ been verified using special techniques.},
   journal   = {Verified Software. Theories, Tools, and Experiments},
   year      = {2016},
   month     = jan,
-  abstract  = {After many years of successful development of new algorithms for software model checking, there is a need to consolidate the knowledge about the different algorithms and approaches. This paper gives a coarse overview in terms of effectiveness and efficiency of four algorithms. We compare the following different “schools of thought” of algorithms: bounded model checking, k-induction, predicate abstraction, and lazy abstraction with interpolants. Those algorithms are well-known and successful in software verification. They have in common that they are based on SMT solving as the back-end technology, using the theories of uninterpreted functions, bit vectors, and floats as underlying theory. All four algorithms are implemented in the verification framework CPAchecker. Thus, we can present an evaluation that really compares only the core algorithms, and keeps the design variables such as parser front end, SMT solver, used theory in SMT formulas, etc. constant. We evaluate the algorithms on a large set of verification tasks, and discuss the conclusions.},
   date      = {2016-01-01},
   doi       = {10.1007/978-3-319-48869-1_14},
   publisher = {Springer},
@@ -927,8 +911,6 @@ been verified using special techniques.},
   number        = {1},
   pages         = {31},
   month         = mar,
-  __markedentry = {[heno:6]},
-  abstract      = {This article presents the octagon abstract domain, a relational numerical abstract domain for static analysis by abstract interpretation. It allows representing conjunctions of constraints of the form ± X ± Y ≤ c where X and Y range among program variables and c is a constant in ℤ, ℚ, or ℝ automatically inferred. Abstract elements are represented using modified Difference Bound Matrices and we use a normalization algorithm loosely based on the shortest-path closure to compute canonical representations and construct best-precision abstract transfer functions. We achieve a quadratic memory cost per abstract element and a cubic worst-case time cost per abstract operation, with respect to the number of program variables.In terms of cost and precision, our domain is in between the well-known fast but imprecise interval domain and the costly polyhedron domain. We show that it is precise enough to treat interesting examples requiring relational invariants, and hence, out of the reach of the interval domain. We also present a packing strategy that allows scaling our domain up to large programs by tuning the amount of relationality. The octagon domain was incorporated into the ASTRÉE industrial-strength static analyzer and was key in proving the absence of run-time errors in large critical embedded flight control software for Airbus planes.},
   date          = {2006-03-01},
   doi           = {10.1007/s10990-006-8609-1},
   publisher     = {Springer},
@@ -943,17 +925,6 @@ been verified using special techniques.},
   year          = {2002},
   month         = jan,
   isbn          = {978-3-540-44235-6},
-  __markedentry = {[heno:6]},
-  abstract      = {This article presents the systematic design of a class of relational numerical abstract domains from non-relational ones. Constructed domains represent sets of invariants of the form (vj - vi∈ C), where vj and vi are two variables, and C lives in an abstraction of $$
-\mathcal{P}(\mathbb{Z})
-$$
-, $$
-\mathcal{P}(\mathbb{Q})
-$$
-, or $$
-\mathcal{P}(\mathbb{R})
-$$
-. We will call this family of domains weakly relational domains. The underlying concept allowing this construction is an extension of potential graphs and shortest-path closure algorithms in exotic-like algebras. Example constructions are given in order to retrieve well-known domains as well as new ones. Such domains can then be used in the Abstract Interpretation framework in order to design various static analyses. A major benefit of this construction is its modularity, allowing to quickly implement new abstract domains from existing ones.},
   date          = {2002-01-01},
   doi           = {10.1007/3-540-45789-5_11},
   url           = {http://dx.doi.org/10.1007/3-540-45789-5_11},
@@ -1059,7 +1030,6 @@ $$
   pages    = {3 - 13},
   issn     = {1571-0661},
   note     = {Proceedings of the Tools for Automatic Program AnalysiS (TAPAS)},
-  abstract = {In this paper, we present Aspic, an automatic polyhedral invariant generation tool for flowcharts programs. Aspic implements an improved Linear Relation Analysis on numeric counter automata. The “accelerated” method improves precision by computing locally a precise overapproximation of a loop without using the widening operator. c2fsm is a C preprocessor that generates automata in the format required by Aspic. The experimental results show the performance and precision of the tools.},
   doi      = {https://doi.org/10.1016/j.entcs.2010.09.014},
   keywords = {Abstract interpretation, polyhedral abstract domain, acceleration, fixpoint iteration, flowchat programs, compilation, tools},
   url      = {http://www.sciencedirect.com/science/article/pii/S157106611000143X},
@@ -1234,7 +1204,6 @@ $$
   pages     = {309--325},
   address   = {Berlin, Heidelberg},
   publisher = {Springer Berlin Heidelberg},
-  abstract  = {We introduce a new numerical abstract domain, so-called interval polyhedra (itvPol), to infer and propagate interval linear constraints over program variables. itvPol, which allows to represent constraints of the form ∑{\thinspace}k[ak,bk]xk{\thinspace}≤{\thinspace}c, is more expressive than the classic convex polyhedra domain and allows to express certain non-convex (even unconnected) properties. The implementation of itvPol can be constructed based on interval linear programming and an interval variant of Fourier-Motzkin elimination. The preliminary experimental results of our prototype are encouraging, especially for programs affected by interval uncertainty, e.g., due to uncertain input data or interval-based abstractions of disjunctive, non-linear, or floating-point expressions. To our knowledge, this is the first application of interval linear algebra to static analysis.},
   isbn      = {978-3-642-03237-0},
 }
 
@@ -1278,7 +1247,6 @@ $$
   pages    = {796 - 807},
   issn     = {0167-6423},
   note     = {Special Issue on Object-Oriented Programming Languages and Systems (OOPS 2008), A Special Track at the 23rd ACM Symposium on Applied Computing},
-  abstract = {We introduce Pentagons (Pntg), a weakly relational numerical abstract domain useful for the validation of array accesses in byte-code and intermediate languages (IL). This abstract domain captures properties of the form of x∈[a,b]∧x<y. It is more precise than the well known Interval domain, but it is less precise than the Octagon domain. The goal of Pntg is to be a lightweight numerical domain useful for adaptive static analysis, where Pntg is used to quickly prove the safety of most array accesses, restricting the use of more precise (but also more expensive) domains to only a small fraction of the code. We implemented the Pntg abstract domain in Clousot, a generic abstract interpreter for.NET assemblies. Using it, we were able to validate 83% of array accesses in the core runtime library mscorlib.dll in a little bit more than 3 minutes.},
   doi      = {https://doi.org/10.1016/j.scico.2009.04.004},
   keywords = {Abstract domains, Abstract interpretation, Bounds checking, Numerical domains, Static analysis, .NET framework},
   url      = {http://www.sciencedirect.com/science/article/pii/S0167642309000719},
@@ -1293,7 +1261,6 @@ $$
   pages     = {312--327},
   address   = {Berlin, Heidelberg},
   publisher = {Springer Berlin Heidelberg},
-  abstract  = {An interesting area in static analysis is the study of numeric properties. Complex properties can be analyzed using abstract interpretation, provided that an adequate abstract domain is defined. Each domain can represent and manipulate a family of properties, providing a different trade-off between the precision and complexity of the analysis. The contribution of this paper is a new numeric abstract domain called octahedron that represents constraints of the form ({\textpm} xj{\textpm} ... {\textpm} xk≥ c), where xiare numerical variables such that xi≥ 0. The implementation of octahedra is based on a new kind of decision diagrams called Octahedron Decision Diagrams (OhDD).},
   isbn      = {978-3-540-27864-1},
 }
 
@@ -1610,7 +1577,6 @@ $$
   number   = {5},
   pages    = {453 - 473},
   issn     = {0925-7721},
-  abstract = {Deciding whether the union of two convex polyhedra is itself a convex polyhedron is a basic problem in polyhedral computations; having important applications in the field of constrained control and in the synthesis, analysis, verification and optimization of hardware and software systems. In such application fields though, general convex polyhedra are just one among many, so-called, numerical abstractions, which range from restricted families of (not necessarily closed) convex polyhedra to non-convex geometrical objects. We thus tackle the problem from an abstract point of view: for a wide range of numerical abstractions that can be modeled as bounded join-semilattices—that is, partial orders where any finite set of elements has a least upper bound—we show necessary and sufficient conditions for the equivalence between the lattice-theoretic join and the set-theoretic union. For the case of closed convex polyhedra—which, as far as we know, is the only one already studied in the literature—we improve upon the state-of-the-art by providing a new algorithm with a better worst-case complexity. The results and algorithms presented for the other numerical abstractions are new to this paper. All the algorithms have been implemented, experimentally validated, and made available in the Parma Polyhedra Library.},
   doi      = {https://doi.org/10.1016/j.comgeo.2009.09.002},
   keywords = {Polyhedron, Union, Convexity, Abstract interpretation, Numerical abstraction, Powerset domain},
   url      = {http://www.sciencedirect.com/science/article/pii/S0925772109001357},
@@ -1666,9 +1632,6 @@ $$
   publisher = {Elsevier},
 }
 
-@Article{mycroft1993completeness,
-}
-
 @InProceedings{Mycroft1993,
   author       = {Mycroft, Alan},
   title        = {Completeness and predicate-based abstract interpretation},
@@ -1714,9 +1677,6 @@ $$
   url      = {https://doi.org/10.1007/s10703-016-0257-4},
 }
 
-@InProceedings{,
-}
-
 @InProceedings{Gange2013,
   author       = {Gange, Graeme and Navas, Jorge A and Schachte, Peter and S{\o}ndergaard, Harald and Stuckey, Peter J},
   title        = {Abstract interpretation over non-lattice abstract domains},
@@ -1760,6 +1720,286 @@ $$
   year         = {2018},
   pages        = {768--778},
   organization = {ACM},
+}
+
+@InProceedings{Cornish2015,
+  author    = {Cornish, J. Robert M. and Gange, Graeme and Navas, Jorge A. and Schachte, Peter and S{\o}ndergaard, Harald and Stuckey, Peter J.},
+  title     = {Analyzing Array Manipulating Programs by Program Transformation},
+  booktitle = {Logic-Based Program Synthesis and Transformation},
+  year      = {2015},
+  editor    = {Proietti, Maurizio and Seki, Hirohisa},
+  pages     = {3--20},
+  address   = {Cham},
+  publisher = {Springer International Publishing},
+  abstract  = {We explore a transformational approach to the problem of verifying simple array-manipulating programs. Traditionally, verification of such programs requires intricate analysis machinery to reason with universally quantified statements about symbolic array segments, such as ``every data item stored in the segment A[i] to A[j] is equal to the corresponding item stored in the segment B[i] to B[j].'' We define a simple abstract machine which allows for set-valued variables and we show how to translate programs with array operations to array-free code for this machine. For the purpose of program analysis, the translated program remains faithful to the semantics of array manipulation. Based on our implementation in LLVM, we evaluate the approach with respect to its ability to extract useful invariants and the cost in terms of code size.},
+  isbn      = {978-3-319-17822-6},
+}
+
+@Article{Gopan2005,
+  author    = {Gopan, Denis and Reps, Thomas and Sagiv, Mooly},
+  title     = {A framework for numeric analysis of array operations},
+  journal   = {ACM SIGPLAN Notices},
+  year      = {2005},
+  volume    = {40},
+  number    = {1},
+  pages     = {338--350},
+  publisher = {ACM},
+}
+
+@Article{Cousot2011p,
+  author    = {Cousot, Patrick and Cousot, Radhia and Logozzo, Francesco},
+  title     = {A parametric segmentation functor for fully automatic and scalable array content analysis},
+  journal   = {ACM SIGPLAN Notices},
+  year      = {2011},
+  volume    = {46},
+  number    = {1},
+  pages     = {105--118},
+  publisher = {ACM},
+}
+
+@InProceedings{Halbwachs2008,
+  author       = {Halbwachs, Nicolas and P{\'e}ron, Mathias},
+  title        = {Discovering properties about arrays in simple programs},
+  booktitle    = {ACM SIGPLAN Notices},
+  year         = {2008},
+  volume       = {43},
+  number       = {6},
+  pages        = {339--348},
+  organization = {ACM},
+}
+
+@InProceedings{Gulwani2008,
+  author       = {Gulwani, Sumit and McCloskey, Bill and Tiwari, Ashish},
+  title        = {Lifting abstract interpreters to quantified logical domains},
+  booktitle    = {ACM SIGPLAN Notices},
+  year         = {2008},
+  volume       = {43},
+  number       = {1},
+  pages        = {235--246},
+  organization = {ACM},
+}
+
+@InProceedings{Alberti2012,
+  author       = {Alberti, Francesco and Bruttomesso, Roberto and Ghilardi, Silvio and Ranise, Silvio and Sharygina, Natasha},
+  title        = {Lazy abstraction with interpolants for arrays},
+  booktitle    = {International Conference on Logic for Programming Artificial Intelligence and Reasoning},
+  year         = {2012},
+  pages        = {46--61},
+  organization = {Springer},
+}
+
+@InProceedings{Kovacs2009,
+  author       = {Kov{\'a}cs, Laura and Voronkov, Andrei},
+  title        = {Finding loop invariants for programs over arrays using a theorem prover},
+  booktitle    = {International Conference on Fundamental Approaches to Software Engineering},
+  year         = {2009},
+  pages        = {470--485},
+  organization = {Springer},
+}
+
+@InProceedings{Seghir2009,
+  author       = {Seghir, Mohamed Nassim and Podelski, Andreas and Wies, Thomas},
+  title        = {Abstraction refinement for quantified array assertions},
+  booktitle    = {International Static Analysis Symposium},
+  year         = {2009},
+  pages        = {3--18},
+  organization = {Springer},
+}
+
+@InProceedings{Christensen2003,
+  author       = {Christensen, Aske Simon and M{\o}ller, Anders and Schwartzbach, Michael I},
+  title        = {Precise analysis of string expressions},
+  booktitle    = {International Static Analysis Symposium},
+  year         = {2003},
+  pages        = {1--18},
+  organization = {Springer},
+}
+
+@InProceedings{Costantini2011,
+  author       = {Costantini, Giulia and Ferrara, Pietro and Cortesi, Agostino},
+  title        = {Static analysis of string values},
+  booktitle    = {International Conference on Formal Engineering Methods},
+  year         = {2011},
+  pages        = {505--521},
+  organization = {Springer},
+}
+
+@Article{Halder2012,
+  author    = {Halder, Raju and Cortesi, Agostino},
+  title     = {Abstract interpretation of database query languages},
+  journal   = {Computer Languages, Systems \& Structures},
+  year      = {2012},
+  volume    = {38},
+  number    = {2},
+  pages     = {123--157},
+  publisher = {Elsevier},
+}
+
+@TechReport{Sharma2013,
+  author      = {Sharma, Tushar and Thakur, Aditya and Reps, Thomas},
+  title       = {An abstract domain for bit-vector inequalities},
+  institution = {TR-1789, Computer Science Department, University of Wisconsin, Madison, WI},
+  year        = {2013},
+}
+
+@InProceedings{Reps2010,
+  author       = {Reps, Thomas and Lim, Junghee and Thakur, Aditya and Balakrishnan, Gogul and Lal, Akash},
+  title        = {There’s plenty of room at the bottom: Analyzing and verifying machine code},
+  booktitle    = {International Conference on Computer Aided Verification},
+  year         = {2010},
+  pages        = {41--56},
+  organization = {Springer},
+}
+
+@InProceedings{Thakur2012,
+  author       = {Thakur, Aditya and Reps, Thomas},
+  title        = {A method for symbolic computation of abstract operations},
+  booktitle    = {International Conference on Computer Aided Verification},
+  year         = {2012},
+  pages        = {174--192},
+  organization = {Springer},
+}
+
+@InProceedings{Dan2013,
+  author       = {Dan, Andrei Marian and Meshman, Yuri and Vechev, Martin and Yahav, Eran},
+  title        = {Predicate abstraction for relaxed memory models},
+  booktitle    = {International Static Analysis Symposium},
+  year         = {2013},
+  pages        = {84--104},
+  organization = {Springer},
+}
+
+@InProceedings{Reynolds2002,
+  author       = {Reynolds, John C},
+  title        = {Separation logic: A logic for shared mutable data structures},
+  booktitle    = {Proceedings 17th Annual IEEE Symposium on Logic in Computer Science},
+  year         = {2002},
+  pages        = {55--74},
+  organization = {IEEE},
+}
+
+@InProceedings{Distefano2006l,
+  author       = {Distefano, Dino and O’hearn, Peter W and Yang, Hongseok},
+  title        = {A local shape analysis based on separation logic},
+  booktitle    = {International Conference on Tools and Algorithms for the Construction and Analysis of Systems},
+  year         = {2006},
+  pages        = {287--302},
+  organization = {Springer},
+}
+
+@InProceedings{Chang2008,
+  author       = {Chang, Bor-Yuh Evan and Rival, Xavier},
+  title        = {Relational inductive shape analysis},
+  booktitle    = {ACM SIGPLAN Notices},
+  year         = {2008},
+  volume       = {43},
+  number       = {1},
+  pages        = {247--260},
+  organization = {ACM},
+}
+
+@InProceedings{Magill2010,
+  author       = {Magill, Stephen and Tsai, Ming-Hsien and Lee, Peter and Tsay, Yih-Kuen},
+  title        = {Automatic numeric abstractions for heap-manipulating programs},
+  booktitle    = {ACM Sigplan Notices},
+  year         = {2010},
+  volume       = {45},
+  number       = {1},
+  pages        = {211--222},
+  organization = {ACM},
+}
+
+@InProceedings{Nanevski2010,
+  author    = {Nanevski, Aleksandar and Vafeiadis, Viktor and Berdine, Josh},
+  title     = {Structuring the Verification of Heap-manipulating Programs},
+  booktitle = {Proceedings of the 37th Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  year      = {2010},
+  series    = {POPL '10},
+  pages     = {261--274},
+  address   = {New York, NY, USA},
+  publisher = {ACM},
+  acmid     = {1706331},
+  doi       = {10.1145/1706299.1706331},
+  isbn      = {978-1-60558-479-9},
+  keywords  = {hoare logic, monads, separation logic, type theory},
+  location  = {Madrid, Spain},
+  numpages  = {14},
+  url       = {http://doi.acm.org/10.1145/1706299.1706331},
+}
+
+@InProceedings{Malik2018,
+  author    = {V. {Malík} and M. {Hruska} and P. {Schrammel} and T. {Vojnar}},
+  title     = {Template-Based Verification of Heap-Manipulating Programs},
+  booktitle = {2018 Formal Methods in Computer Aided Design (FMCAD)},
+  year      = {2018},
+  pages     = {1-9},
+  month     = {Oct},
+  doi       = {10.23919/FMCAD.2018.8603009},
+  keywords  = {data structures;inference mechanisms;program verification;reachability analysis;template-based verification;abstract template domain;SMT solver;automatic invariant inference;shape analysis;heap-manipulating programs;unbounded data structures;combined reasoning;Software Verification Competition;2LS framework;dynamic data structures;reachability properties;memory safety;Data structures;Shape;Tools;Cognition;Dynamic scheduling;Reactive power;Software},
+}
+
+@InProceedings{Jaffar2013,
+  author    = {Jaffar, Joxan and Murali, Vijayaraghavan and Navas, Jorge A},
+  title     = {Boosting concolic testing via interpolation.},
+  booktitle = {ESEC/SIGSOFT FSE},
+  year      = {2013},
+  pages     = {48--58},
+}
+
+@InProceedings{Gurfinkel2015,
+  author       = {Gurfinkel, Arie and Kahsai, Temesghen and Komuravelli, Anvesh and Navas, Jorge A},
+  title        = {The SeaHorn verification framework},
+  booktitle    = {International Conference on Computer Aided Verification},
+  year         = {2015},
+  pages        = {343--361},
+  organization = {Springer},
+}
+
+@InProceedings{,
+  author    = {Journault, Matthieu and Min{\'e}, Antoine and Ouadjaout, Abdelraouf},
+  title     = {An Abstract Domain for Trees with Numeric Relations},
+  booktitle = {Programming Languages and Systems},
+  year      = {2019},
+  editor    = {Caires, Lu{\'i}s},
+  pages     = {724--751},
+  address   = {Cham},
+  publisher = {Springer International Publishing},
+  abstract  = {We present an abstract domain able to infer invariants on programs manipulating trees. Trees considered in the article are defined over a finite alphabet and can contain unbounded numeric values at their leaves. Our domain can infer the possible shapes of the tree values of each variable and find numeric relations between: the values at the leaves as well as the size and depth of the tree values of different variables. The abstract domain is described as a product of (1) a symbolic domain based on a tree automata representation and (2) a numerical domain lifted, for the occasion, to describe numerical maps with potentially infinite and heterogeneous definition set. In addition to abstract set operations and widening we define concrete and abstract transformers on these environments. We present possible applications, such as the ability to describe memory zones, or track symbolic equalities between program variables. We implemented our domain in a static analysis platform and present preliminary results analyzing a tree-manipulating toy-language.},
+  isbn      = {978-3-030-17184-1},
+}
+
+@InProceedings{Journault2019,
+  author    = {Journault, Matthieu and Min{\'e}, Antoine and Ouadjaout, Abdelraouf},
+  title     = {An Abstract Domain for Trees with Numeric Relations},
+  booktitle = {Programming Languages and Systems},
+  year      = {2019},
+  editor    = {Caires, Lu{\'i}s},
+  pages     = {724--751},
+  address   = {Cham},
+  publisher = {Springer International Publishing},
+  abstract  = {We present an abstract domain able to infer invariants on programs manipulating trees. Trees considered in the article are defined over a finite alphabet and can contain unbounded numeric values at their leaves. Our domain can infer the possible shapes of the tree values of each variable and find numeric relations between: the values at the leaves as well as the size and depth of the tree values of different variables. The abstract domain is described as a product of (1) a symbolic domain based on a tree automata representation and (2) a numerical domain lifted, for the occasion, to describe numerical maps with potentially infinite and heterogeneous definition set. In addition to abstract set operations and widening we define concrete and abstract transformers on these environments. We present possible applications, such as the ability to describe memory zones, or track symbolic equalities between program variables. We implemented our domain in a static analysis platform and present preliminary results analyzing a tree-manipulating toy-language.},
+  isbn      = {978-3-030-17184-1},
+}
+
+@InProceedings{McMillan2006,
+  author    = {McMillan, Kenneth L.},
+  title     = {Lazy Abstraction with Interpolants},
+  booktitle = {Computer Aided Verification},
+  year      = {2006},
+  editor    = {Ball, Thomas and Jones, Robert B.},
+  pages     = {123--136},
+  address   = {Berlin, Heidelberg},
+  publisher = {Springer Berlin Heidelberg},
+  abstract  = {We describe a model checker for infinite-state sequential programs, based on Craig interpolation and the lazy abstraction paradigm. On device driver benchmarks, we observe a speedup of up to two orders of magnitude relative to a similar tool using predicate abstraction.},
+  isbn      = {978-3-540-37411-4},
+}
+
+@InProceedings{Hyvarinen2017,
+  author = {Hyvarinen, Antti and Asadi, Sepideh and Even Mendoza, Karine and Fedyukovich, Grigory and Chockler, Hana and Sharygina, Natasha},
+  title  = {Theory Refinement for Program Verification},
+  year   = {2017},
+  month  = {09},
+  doi    = {10.1007/978-3-319-66263-3_22},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
