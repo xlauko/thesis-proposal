@@ -732,12 +732,14 @@ increase the precision of the analysis.
 So far, we have presented only domains, which abstract only scalar values -- we call
 them numerical abstract domains.  Overall a \emph{numerical abstract domain} is
 determined by three ingredients:
+
+\phantomsection
+\label{sec:ingredients}
 \begin{enumerate}
     \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretization and abstraction function,
     \item effective and sound abstract operators,
     \item an iteration strategy.
 \end{enumerate}
-
 
 \subsection{Non-numerical abstract domains}
 
@@ -817,6 +819,11 @@ of domains we can refine two domains by a meet operation on them -- also known
 as reduced product construction \cite{Toubhans2013, Cousot2011b}. A broader
 study of large-scale reduced-products is presented in \cite{Cousot2007}.
 
+The powerset construction of domains \cite{Cousot1979} is also refined in later works
+\cite{File1999} and extended by efficient widening operators \cite{Bagnara2004}
+and exacts joins of numerical elements \cite{Bagnara2010}.
+
+
 Many abstract domains are not closed under union. Usually, the approximation
 induced by abstract unions is a major source of precision loss. Disjunctive
 completion methods address this problem \cite{File1999}. The complementation
@@ -832,8 +839,6 @@ which improves the abstract domain by introducing all the properties which
 would make the fixpoint iteration imprecise \cite{Giacobazzi2000,
 Giacobazzi2001}.
 
-The powerset construction \cite{Cousot1979} is also refined in later works \cite{File1999} and extended by efficient widening operators \cite{Bagnara2004} and exacts joins of numerical elements \cite{Bagnara2010}.
-
 The problem with relational abstract domains is that they do not generally
 scale-up. A general technique to ensure the linear cost of abstract domains is
 to split variables into independent smaller sets -- also know as variable
@@ -846,8 +851,6 @@ used in the state of the art tools \cite{Cousot2010, Bertrane2015}.
 Similarly, there are abstract domains that incorporate the decision trees to
 handle disjunctions in the programs \cite{Cousot2010a} or to prove conditional
 termination \cite{Urban2010}.
-
-\add{ todo investigate more approaches }
 
 \subsection{ Tools }
 
