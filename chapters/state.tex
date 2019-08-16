@@ -44,7 +44,7 @@ semantics description see \autoref{ch:llvm}.}
 The entire program in \llvm consists of global variables and functions.  A
 function is a directed graph of basic blocks. A basic block is a sequence of
 non-terminal instructions terminated by a terminal instruction.\sidenote{A
-terminal instruction is either branching or return instruction.}
+terminal instruction are for example branching or return instruction.}
 
 For a more accessible representation of an \llvm program, we will use a
 \emph{control flow automaton} (CFA), which is a directed graph with \llvm
@@ -61,9 +61,7 @@ instructions attached to its edges (see \autoref{fig:cfa}).
 \end{definition}
 
 The set of all variables that occur in the \llvm program is denoted by
-$\mathcal{V}$.\sidenote{In addition to program variables, we will also consider
-\llvm registers as variables. Even though \llvm registers are only assigned
-ones in the \ssa.} A \emph{concrete state} $\sigma : \mathcal{V} \rightarrow
+$\mathcal{V}$. A \emph{concrete state} $\sigma : \mathcal{V} \rightarrow
 \mathsf{C}$ is a mapping from program variables to concrete values. We denote
 the set of all concrete states as $\Sigma$. Thus, the concrete state can be
 viewed as a state of program's memory that holds the value for each program
@@ -81,7 +79,7 @@ $\xrightarrow{g} \: \subseteq \Sigma \times \{g\} \times \Sigma$. The
 transition relation is a union over all edges $\rightarrow \bigcup_{g
 \in\mathcal{G}} \xrightarrow{g}$.
 
-A \emph{program path} $\pi$ is a sequence of consecutive edges $\langle
+A \emph{path} $\pi$ is a sequence of consecutive edges $\langle
 \rightarrow_1, \rightarrow_2, \dots, \rightarrow_n \rangle$ such that all edges
 form in continuous path in transition system induced by $\mathcal{G}$.  A path
 is called a \emph{program path} if it starts from initial program location
@@ -773,6 +771,11 @@ determined by three ingredients:
 
 \subsection{Non-numerical abstract domains}
 
+Generally known as symbolic abstractions they abstract infinite sets of
+in/finite functions \cite{Cousot14}, graphs and other constructs of programming languages like
+arrays~\cite{Cousot2011p}, trees~\cite{Mauborgne2000}, heaps (non sharing
+\cite{Cousot1977static, Cousot1977rec} or shape analysis~\cite{Reps2002, Chang2008}).
+
 \subsubsection{Memory abstraction}
 % see https://www-apr.lip6.fr/~mine/enseignement/mpri/current/05-mpri-0-mem.pdf
 \add{ memory models }
@@ -929,31 +932,111 @@ the quasi-join operation~\cite{Gange2013}.
 \section{Abstraction based techniques}
 \label{sec:techniques}
 
+Utilization of abstraction techniques is versatile; in addition to traditional
+abstract interpretation, we can find many flavors of its application. In this
+section, we outline the various use-cases of abstraction in the program
+verification.
+
 \subsection{Abstraction-based model checking}
 
-\add{ Abstraction is used in model checking to make model smaller. In general we are talking about overapproximating abstraction, wham mean that if an abstract model is correct the concrete model is also. However there is no guarantee that there is an error when ... }
+In model checking, abstraction is used to reduce the size of state space~\cite{Pelnek2006}.
+Instead of performing exploration of concrete state space, algorithms group a
+set of concrete states together according to some abstraction to explore a
+reduces state space (see \autoref{fig:mcabstraction}). Model checkers also use
+abstraction or symbolic representation to handle non-deterministic data instead
+of exhaustive enumeration of all possible values~\cite{Mrazek2016}.
 
-% reachability algorithm
+\begin{marginfigure}
 
-\subsection{Refinement}
+\add{ picture }
 
-\section{Counterexample-guided abstraction refinement}
+\caption{State space abstraction.}
+\label{fig:mcabstraction}
+\end{marginfigure}
 
-% algorithm
+In general, we are talking about overapproximating abstraction; which means
+that if an abstract model is correct, the concrete model is also. However,
+there is no guarantee that reachable error state in the abstract model is also
+reachable in concrete one; if not so, we are talking about the spurious error.
 
-% picture
+\subsection{Counterexample-guided abstraction refinement}
 
-\add{ \cite{Beyer2018b} }
+A common technique to handle spurious counterexamples is counterexample guided
+abstraction refinement (\cegar), first time presented in~\cite{Clarke2000}.
+The idea of the \cegar approach is to examine counterexample and if it is spurious,
+refine the abstraction. Subsequently, we restart the analysis with abstraction
+which is more precise and avoids the spurious error (see \autoref{fig:cegar}).
+% A Practical and Complete Approach to Predicate Refinement
 
-\add{ \cite{Beyer2018e} }
+\begin{figure}[h]
 
-\section{Lazy abstraction}
+    \add{ picture }
 
-\add{ \cite{Alberti2012} }
+\caption{\cegar loop}
+\label{fig:cegar}
+\end{figure}
 
-\section{Eager Abstraction}
+The interesting task of \cegar is how to refine abstraction. In predicate
+abstraction-based techniques a refinement introduces new predicates, however to
+gain a more information from refinement, predicates are interpolated
+\cite{Jhala2006} -- see \autoref{sec:interpolation}. The predicate abstraction
+is an exceptionally successful abstraction technique for software model
+checking, because its symbolic state representation combines well with
+strongest post-conditions, and abstractions can be computed efficiently with
+\smt solvers~\cite{Beyer2013}.
 
-\add{ \cite{McMillan2018} }
+As listed in the \autoref{tab:svcomp}, many state-of-art tools apply \cegar in
+their analysis. Other worth mentioning applications are: predicate-based model
+checker \textsc{blast}~\cite{Henzinger2003, Beyer2005checking}, which
+implements a lazy predicate abstraction (see \autoref{sec:lazya}) on control
+flow automaton of a program; \textsc{satabs} that extends the previous approach
+with a \sat solver for bit-precise predicate abstraction~\cite{Clarke2005satabs};
+and combination with other techniques like explicit-value analysis in
+CPAchecker~\cite{Beyer2013, Beyer2018e}.
+
+A unified approach to abovementioned techniques was presented in the recent
+work of Beyer et al.~\cite{Beyer2018b} as a combination of model checking and
+data-flow analysis. The unified framework enables an easy combination of
+abstract domains, no matter whether they were invented for data-flow analysis
+or for model checking.
+
+Alternatively, we can perform the refinement of abstraction
+on-the-fly~\cite{Beyer2008program}.
+
+\subsection{Lazy abstraction}
+\label{sec:lazya}
+
+A bottleneck of \cegar loop is in its repeated analysis of the program. This
+problem tries to solve a lazy abstraction technique. The lazy abstraction
+refines a single abstract model on-demand, so that different parts of the model
+may exhibit a different level of abstraction~\cite{Henzinger2002}.\sidenote{Lazy
+abstraction maintains different degrees of precision for different parts of the
+program by keeping track of both the control-flow graph, which describes how
+the program locations are traversed and the data-flow, which describes what
+holds at a program location.  The control-flow is represented explicitly, while
+the data-flow is encoded symbolically~\cite{Alberti2012}.} The application of
+interpolants further improved it in~\cite{McMillan2006}. The lazy
+interpolant-based model checking refines according to refuting program paths
+instead of the predicate refinement as in the previous approach. By doing so,
+the refinement avoids the high cost of a postcondition evaluation in the
+predicate approach.
+
+This technique had particular success in shape analysis where it enables to
+refine shapes only locally~\cite{Henzinger2003,Beyer2006a} as well as in array
+abstractions~\cite{Alberti2012, Alberti2012b}.
+
+\subsection{Eager Abstraction}
+
+On the contrary to lazy abstraction, which has used a refinement of abstraction
+on demand, the eager abstraction~\cite{McMillan2018} is inspired by eager
+theory explication used in \smt solvers. Eager strategy in \smt solvers
+abstract formula to its propositional skeleton -- to compensate the loss of
+information \smt solver adds tautologies to the formula before abstraction.
+Whereas the lazy approach produces tautologies retroactively after abstraction.
+In the case of model checking, we apply the eager abstraction on the level of
+atomic propositions. The eager abstraction separates propositional and theory
+reasoning about program states -- by the skeletal abstraction of symbolically
+described states and a transition function.
 
 \section{Symbolic Abstraction}
 
@@ -966,10 +1049,29 @@ the quasi-join operation~\cite{Gange2013}.
 \add{ \cite{Hyvarinen2017} }
 
 \section{Interpolation}
+\label{sec:interpolation}
 
 \add{ \cite{Cimatti2016} }
 
 \add{ \cite{Namjoshi2018} }
 
 \add{ \cite{Jaffar2013} }
-% policy iteration
+
+\add{ \cite{Gulavani2008} DAGGER [17] improves the verification of C programs by applying
+interpolation-based refinement to octagon and polyhedra domains. To avoid imprecision due to widening in the join-based data-flow analysis, DAGGER replaces the standard
+widen operator by a so called interpolated-widen operator, which increases the precision of the data-flow analysis and thus avoids false alarms. }
+
+\add{ \cite{Albarghouthi2012} The algorithm VINTA [2] applies
+interpolation-based refinement to interval-like abstract domains. If the state
+Explicit-State Software Model Checking Based on CEGAR and Interpolation 149
+exploration finds an error path, then VINTA performs a feasibility check using
+bounded model checking (BMC), and if the error path is infeasible, it computes
+interpolants. The interpolants are used to refine the invariants that the
+abstract domain operates on. VINTA requires an SMT solver for feasibility
+checks and interpolation}
+
+\cite{Henzinger2004abstractions}
+
+\cite{Mcmillan2003interpolation}
+
+\cite{Jhala2007array}

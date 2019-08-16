@@ -9,13 +9,8 @@
 % of the postcards I received so far is available online at
 % http://postcards.miede.de
 % ****************************************************************************************************
-%\PassOptionsToPackage{utf8}{inputenc}
-%\usepackage{inputenc}
-
-\PassOptionsToPackage{T1}{fontenc} % T2A for cyrillics
-  \usepackage{fontenc}
-
-\usepackage{fontspec}
+\PassOptionsToPackage{utf8}{inputenc}
+\usepackage{inputenc}
 
 \usepackage[dvipsnames]{xcolor}  % Coloured text etc.
 \definecolor{orioles}{HTML}{F6511D}
@@ -88,7 +83,7 @@
 \usepackage{adjustbox}
 
 \usepackage{minted}
-\usepackage[default]{sourcecodepro}
+%\usepackage{inconsolata}
 \setminted{
     frame=lines,
     rulecolor=pruss,
@@ -163,6 +158,7 @@
 % ********************************************************************
 \PassOptionsToPackage{T1}{fontenc} % T2A for cyrillics
 \usepackage{fontenc}
+%\usepackage{fontspec}
 \usepackage{textcomp} % fix warning with missing font shapes
 \usepackage{scrhack} % fix warnings when using KOMA with listings package
 \usepackage{xspace} % to get the spacing after macros right
@@ -204,9 +200,10 @@
 % ****************************************************************************************************
 % 6. PDFLaTeX, hyperreferences and citation backreferences
 % ****************************************************************************************************
+\PassOptionsToPackage{pdftex,hyperfootnotes=false,pdfpagelabels}{hyperref}
 \usepackage{hyperref}  % backref linktocpage pagebackref
-%\pdfcompresslevel=9
-%\pdfadjustspacing=1
+\pdfcompresslevel=9
+\pdfadjustspacing=1
 \PassOptionsToPackage{pdftex}{graphicx}
 \usepackage{graphicx}
 
@@ -336,7 +333,7 @@
 % Changing the text area
 % ********************************************************************
 \linespread{1.05} % a bit more for Palatino
-\areaset[current]{312pt}{761pt} % 686 (factor 2.2) + 33 head + 42 head \the\footskip
+\areaset[current]{312pt}{700pt} % 686 (factor 2.2) + 33 head + 42 head \the\footskip
 \setlength{\marginparwidth}{9em}%
 \setlength{\marginparsep}{2em}%
 
@@ -344,12 +341,11 @@
 % Using different fonts
 % ********************************************************************
 
-\usepackage{unicode-math}
+%\usepackage{unicode-math}
 
-\setmainfont[Numbers={OldStyle,Proportional},SmallCapsFeatures={LetterSpace=6}]{Minion Pro}
-\setmathfont[Scale=MatchLowercase]{STIX2Math.otf}
-\setmonofont[Scale=MatchLowercase]{Inconsolata}
-
+%\setmainfont[Numbers={OldStyle,Proportional},SmallCapsFeatures={LetterSpace=6}]{Minion Pro}
+%\setmathfont[Scale=MatchLowercase]{STIX2Math.otf}
+%\setmonofont[Scale=MatchLowercase]{Inconsolata}
 
 %\usepackage[oldstylenums]{kpfonts} % oldstyle notextcomp
 %\usepackage[osf]{libertine}
