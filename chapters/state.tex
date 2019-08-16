@@ -969,9 +969,29 @@ which is more precise and avoids the spurious error (see \autoref{fig:cegar}).
 % A Practical and Complete Approach to Predicate Refinement
 
 \begin{figure}[h]
+\resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[node distance = 4.5em, every text node part/.style={align=center}]
+        \node[] (input) {\textit{program}};
+        \node[component, minimum width = 8em, minimum height = 3em, right = 1em of input] (abstraction) {Abstraction};
+        \node[component, minimum width = 8em, minimum height = 3em, right = of abstraction] (mc) {Model\\checking};
+        \node[component, minimum width = 8em, minimum height = 3em, below = of abstraction] (refinement) {Abstraction\\Refinement};
+        \node[component, minimum width = 8em, minimum height = 3em, right = of refinement] (ce) {Feasibility\\Check};
+        \node[minimum height = 3em, right = of mc] (correct) {\color{apple}\textit{Correct}};
+        \node[minimum height = 3em, right = of ce] (error) {\color{orioles}\textit{Error}};
 
-    \add{ picture }
+        \node[fit=(abstraction) (mc) (ce) (refinement), draw, dashed] (cegar) {};
 
+        \draw [->, >=stealth] (input) -- (abstraction);
+        \draw [->, >=stealth] (abstraction) -- (mc);
+        \draw [->, >=stealth] (mc) -- (correct);
+        \draw [->, >=stealth] (mc) to node[right] {\textit{counter-}\\\textit{example}} (ce);
+        \draw [->, >=stealth] (ce) to node[above] {\textit{feasible}} (error);
+        \draw [->, >=stealth] (ce) to node[above] {\textit{spurious}} (refinement);
+
+        \draw [->, >=stealth] (refinement) -- (abstraction);
+    \end{tikzpicture}
+}
+\add{ fit page width }
 \caption{\cegar loop}
 \label{fig:cegar}
 \end{figure}
