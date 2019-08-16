@@ -12,9 +12,10 @@ information for the program analysis. The similar shifting of responsibilities
 is already known technique in computer science -- an example are compiled and
 interpreted languages, that shifts various tasks between compilation time and
 actual run time. In my work, I investigate how much it is possible to move
-abstraction to the compilation. Naturally, there exist many possible boundaries
-between abstraction and execution engine -- each defined by how much of the
-actual abstract interpretation is performed by the program or executor.
+abstraction from the interpreter to the compilation. Naturally, there exist
+many possible boundaries between abstraction and execution engine -- each
+defined by how much of the actual abstract interpretation is performed by the
+program or executor.
 
 As listed in \autoref{sec:ingredients} the abstract domain is determined by
 three components (value representation, operators, and iteration strategy).
@@ -80,50 +81,113 @@ out of the execution engine for our purpose.
 
 \subsection{Data flow analysis}
 
-\subsubsection{Memory-aware data flow analysis}
+To be able to instrument abstraction into the program, first of all, we need to
+perform a data flow analysis to detect wherever abstract values might appear.
+Such analysis needs to be efficient and fast, and it needs to handle data flow
+through program memory, indirect calls as well as perform pointer analyses. Even though we can
+overapproximate its result, we want to minimize the amount of instrumented
+abstraction to retain precision of further analysis.
 
-\subsubsection{Indirect calls analysis}
+The contemporary techniques are usually imprecise or they handle only a subset of use
+cases of real progras. Hence the first goal of successful abstraction is a
+\emph{memory aware data flow analysis}. To achieve better results, I want to
+investigate a different approach of approximated data flow analysis, which will
+combine refinement and program transformation.  We propose to use refinement
+and transformation to ease the analysis of imprecise (hard to analyze) points
+in the program, e.g., indirect calls and memory manipulations.
 
 \subsection{Trivially constrainable domains}
 
-\subsubsection{SMT inspired refinement techniques}
-
-\add{ bitwidth abstraction }
-
-\add{ theory refinement}
-
-\add{ function summarization }
+The next goal to reusable abstraction is to implement a trivially constrainable
+abstraction. It is an abstraction which does not require any refinement for its
+use. One such abstraction is a symbolic abstraction -- in the symbolic
+abstraction all data are represented by formulas and constraints are maintained
+in a path condition. I have already implemented a symbolic abstraction as
+program transformation, and it is published in~\cite{Lauko2018SymComp}.
+It is further summarized in my achieved results -- \autoref{ch:results}.
 
 \subsection{Non-relational abstract domains}
 
-\add{ backward constraint propagation }
+In comparison to an abstract interpreter, a program, that executes abstract
+computation by itself, cannot perform interpretation to some fixpoint. Hence,
+to achieve an extended precision, we need to instrument some precision
+mechanism into the program. In the transformed program, abstract data flows
+forward as if an interpreter propagated them. However, an imprecision arises on
+the conditional branching that depends on an abstract value. When such a branch
+is executed, both outcomes might be admissible, in that case, we need to
+examine both possibilities. \add{ nondeterministic choice TODO note }
+Furthermore, continuing one way does not ensure that values were constrained
+according to the branch condition. Accordingly, we need to instrument an assume
+operation that will recompute a constrained value. Moreover, other values might
+be relationally dependent on the constrained values -- therefore we need to
+propagate constraints to some extent of precision backward. Eventually, we
+might use some global relational structure as is used in symbolic execution --
+path condition.
 
-\subsection{ Domain categories }
+In my work, I want to investigate \emph{backward constraints propagation} and
+its adaptation to \cegar-based techniques with the application of predicate
+abstraction. For this use case, I would like to repurpose the bucketing
+techniques from abstract interpretation to simplify sets of possibly related
+variables.
 
-\add{ scalar domains }
-
-\add{ aggregate domains }
-
-% aggregate domains (abstract only offset)
-
-\add{ pointer domains }
-
-% pointer domains (abstract address/offset)
+\add{ example }
 
 \subsection{Abstraction refinement}
 
-\add{ refinement steps }
 
-\add{ counterexample encoding }
+A final challenge of my research would be to define a general \cegar loop in the
+means of transformation based abstraction. The main challenge here is how to
+remap counterexample back to instrumentation.
 
+Hand-in-hand with \cegar comes multiple possible refinement techniques inspired
+by the \smt community: program variables bitwidth abstraction, theory refinement
+or lazy abstraction approaches. The final symbolic approach might be extended
+to function summarization and bottom-up program verification.
+
+% \add{ refinement steps }
+% \add{ counterexample encoding }
 % refinement techniques from chapter 2
-
 % variables packing
-
 % abstraction encoding
+
+
+% \subsubsection{SMT inspired refinement techniques}
+%\add{ bitwidth abstraction }
+%\add{ theory refinement}
+%\add{ function summarization }
+
+\subsection{ Domain categories }
+
+In addition to numeric abstract domains we want to cover other techniques like
+shape analysis and heap abstractions -- here I want to focus on how to
+generalize these abstractions. In our transformation framework, we distinguish
+three categories of abstract domains:
+
+\begin{itemize}
+    \item \emph{scalar domains} that abstract program integers and floating-point values (correspond to numeric abstract domains),
+    \item \emph{aggregate domains} that abstract a program objects and memory content like arrays and strings,
+
+    \item \emph{pointer domains} that enable to abstract program pointers.
+\end{itemize}
+
+In the next chapter I present my achieved results in the instrumentation of scalar and aggregate domains.
+
+\add{ automatic testing of abstract domains \cite{Bugariu2018} }
+
+% aggregate domains (abstract only offset)
+% \add{ pointer domains }
+% pointer domains (abstract address/offset)
 
 \subsection{ Executable abstraction }
 
-% automatic testing of abstract domains \cite{Bugariu2018}
+Hitherto the instrumented abstraction relies on the underlying execution engine
+which maintains abstraction metadata and enables nondeterministic program
+branching. However, for the future, I plan to investigate a possibility of a
+runnable abstraction for a particular run of nondeterministic choices with the
+use of data flow sanitizer [TODO] -- such program provides an option of
+executable counterexample to be analyzed by general-purpose analysis of \llvm
+programs (e.g., debuggers).
 
 \section{Progression Schedule}
+
+\add{ TODO }
