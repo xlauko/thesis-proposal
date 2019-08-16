@@ -9,8 +9,13 @@
 % of the postcards I received so far is available online at
 % http://postcards.miede.de
 % ****************************************************************************************************
-\PassOptionsToPackage{utf8}{inputenc}
-\usepackage{inputenc}
+%\PassOptionsToPackage{utf8}{inputenc}
+%\usepackage{inputenc}
+
+\PassOptionsToPackage{T1}{fontenc} % T2A for cyrillics
+  \usepackage{fontenc}
+
+\usepackage{fontspec}
 
 \usepackage[dvipsnames]{xcolor}  % Coloured text etc.
 \definecolor{orioles}{HTML}{F6511D}
@@ -83,10 +88,11 @@
 \usepackage{adjustbox}
 
 \usepackage{minted}
+\usepackage[default]{sourcecodepro}
 \setminted{
     frame=lines,
     rulecolor=pruss,
-    framesep=2mm,
+    framesep=1mm,
     baselinestretch=1.2,
     fontsize=\footnotesize,
     escapeinside=||,
@@ -167,7 +173,7 @@
 %\renewcommand*{\acsfont}[1]{\textsc{#1}}
 \renewcommand*{\aclabelfont}[1]{\acsfont{#1}}
 
-\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\usepackage{microtype}
 
 \clubpenalty  = 8000        % help suppress orphans, default = 4,000 (?), from 0 to 10 000 (from 300 to 1 000 recommended, 10 000 not recommended)
 \widowpenalty = 8000        % help suppress widows,  default = 4,000 (?), from 0 to 10 000 (from 300 to 1 000 recommended, 10 000 not recommended)
@@ -198,10 +204,9 @@
 % ****************************************************************************************************
 % 6. PDFLaTeX, hyperreferences and citation backreferences
 % ****************************************************************************************************
-\PassOptionsToPackage{pdftex,hyperfootnotes=false,pdfpagelabels}{hyperref}
 \usepackage{hyperref}  % backref linktocpage pagebackref
-\pdfcompresslevel=9
-\pdfadjustspacing=1
+%\pdfcompresslevel=9
+%\pdfadjustspacing=1
 \PassOptionsToPackage{pdftex}{graphicx}
 \usepackage{graphicx}
 
@@ -338,6 +343,14 @@
 % ********************************************************************
 % Using different fonts
 % ********************************************************************
+
+\usepackage{unicode-math}
+
+\setmainfont[Numbers={OldStyle,Proportional},SmallCapsFeatures={LetterSpace=6}]{Minion Pro}
+\setmathfont[Scale=MatchLowercase]{STIX2Math.otf}
+\setmonofont[Scale=MatchLowercase]{Inconsolata}
+
+
 %\usepackage[oldstylenums]{kpfonts} % oldstyle notextcomp
 %\usepackage[osf]{libertine}
 %\usepackage[light,condensed,math]{iwona}
