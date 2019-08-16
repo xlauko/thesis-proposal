@@ -1036,17 +1036,33 @@ Whereas the lazy approach produces tautologies retroactively after abstraction.
 In the case of model checking, we apply the eager abstraction on the level of
 atomic propositions. The eager abstraction separates propositional and theory
 reasoning about program states -- by the skeletal abstraction of symbolically
-described states and a transition function.
+described states and transition function.
 
 \section{Symbolic Abstraction}
 
-\add{ \cite{Beyer2018} }
-\add{ KLEE }
-\add{ KLEE extensions }
+A different approach to abstract a set of states is to use symbolic methods --
+symbolic execution~\cite{King76, Cadar2013symbolic, Baldoni2018survey}, symbolic model
+checking~\cite{Clarke96, McMillan93, Cimatti20}, bounded model
+checking~\cite{Biere2003bounded} or control-explicit data-symbolic model
+checking (\ceds)~\cite{Mrazek2016}.
 
-\add{ \cite{Thakur2012} }
+In between symbolic execution tools, a prominent position represents
+\textsc{klee}~\cite{Cadar2008klee}. It is a symbolic executor based on \llvm,
+which enjoys widespread adoption and a lot of tools are built on top of
+it~\cite{Beyer2018Klee, Chalupa2018, Chen2018, Menezes2018}, mainly because it
+has a robust engine for system verification and support of \llvm as input
+language.
 
-\add{ \cite{Hyvarinen2017} }
+Similarly, as in abstract interpretation, symbolic methods employ refinement
+techniques~\cite{Beyer2016}. As many of these techniques are primarily based on
+\smt theories~\cite{Beyer2018}, the symbolic verification may apply abstraction
+strategies from solvers -- for example a bitwidth
+abstractions~\cite{Jonavs2018} or theory refinements~\cite{Hyvarinen2017}
+
+As in the case of abstraction with uninterpreted functions, smt is also used to
+a better approximation of abstract operations via symbolic abstraction~\cite{Thakur2012}.
+
+\add{ extend symbolic abstraction technique }
 
 \section{Interpolation}
 \label{sec:interpolation}

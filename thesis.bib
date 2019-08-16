@@ -1955,19 +1955,6 @@ been verified using special techniques.},
   organization = {Springer},
 }
 
-@InProceedings{,
-  author    = {Journault, Matthieu and Min{\'e}, Antoine and Ouadjaout, Abdelraouf},
-  title     = {An Abstract Domain for Trees with Numeric Relations},
-  booktitle = {Programming Languages and Systems},
-  year      = {2019},
-  editor    = {Caires, Lu{\'i}s},
-  pages     = {724--751},
-  address   = {Cham},
-  publisher = {Springer International Publishing},
-  abstract  = {We present an abstract domain able to infer invariants on programs manipulating trees. Trees considered in the article are defined over a finite alphabet and can contain unbounded numeric values at their leaves. Our domain can infer the possible shapes of the tree values of each variable and find numeric relations between: the values at the leaves as well as the size and depth of the tree values of different variables. The abstract domain is described as a product of (1) a symbolic domain based on a tree automata representation and (2) a numerical domain lifted, for the occasion, to describe numerical maps with potentially infinite and heterogeneous definition set. In addition to abstract set operations and widening we define concrete and abstract transformers on these environments. We present possible applications, such as the ability to describe memory zones, or track symbolic equalities between program variables. We implemented our domain in a static analysis platform and present preliminary results analyzing a tree-manipulating toy-language.},
-  isbn      = {978-3-030-17184-1},
-}
-
 @InProceedings{Journault2019,
   author    = {Journault, Matthieu and Min{\'e}, Antoine and Ouadjaout, Abdelraouf},
   title     = {An Abstract Domain for Trees with Numeric Relations},
@@ -2221,6 +2208,108 @@ been verified using special techniques.},
   publisher = {Springer Berlin Heidelberg},
   abstract  = {We present SAFARI, a model checker designed to prove (possibly universally quantified) safety properties of imperative programs with arrays of unknown length. SAFARI is based on an extension of lazy abstraction capable of handling existentially quantified formul{\ae} for symbolically representing states. A heuristics, called term abstraction, favors the convergence of the tool by ``tuning'' interpolants and guessing additional quantified variables of invariants to prune the search space efficiently.},
   isbn      = {978-3-642-31424-7},
+}
+
+@Article{Cadar2013symbolic,
+  author  = {Cadar, Cristian and Sen, Koushik},
+  title   = {Symbolic execution for software testing: three decades later.},
+  journal = {Commun. ACM},
+  year    = {2013},
+  volume  = {56},
+  number  = {2},
+  pages   = {82--90},
+}
+
+@Article{Biere2003bounded,
+  author  = {Biere, Armin and Cimatti, Alessandro and Clarke, Edmund M and Strichman, Ofer and Zhu, Yunshan and others},
+  title   = {Bounded model checking.},
+  journal = {Advances in computers},
+  year    = {2003},
+  volume  = {58},
+  number  = {11},
+  pages   = {117--148},
+}
+
+@Article{Baldoni2018survey,
+  author    = {Baldoni, Roberto and Coppa, Emilio and D’elia, Daniele Cono and Demetrescu, Camil and Finocchi, Irene},
+  title     = {A survey of symbolic execution techniques},
+  journal   = {ACM Computing Surveys (CSUR)},
+  year      = {2018},
+  volume    = {51},
+  number    = {3},
+  pages     = {50},
+  publisher = {ACM},
+}
+
+@InProceedings{Cadar2008klee,
+  author    = {Cadar, Cristian and Dunbar, Daniel and Engler, Dawson R and others},
+  title     = {KLEE: Unassisted and Automatic Generation of High-Coverage Tests for Complex Systems Programs.},
+  booktitle = {OSDI},
+  year      = {2008},
+  volume    = {8},
+  pages     = {209--224},
+}
+
+@InProceedings{Beyer2018Klee,
+  author    = {Beyer, Dirk and Lemberger, Thomas},
+  title     = {CPA-SymExec: Efficient Symbolic Execution in CPAchecker},
+  booktitle = {Proceedings of the 33rd ACM/IEEE International Conference on Automated Software Engineering},
+  year      = {2018},
+  series    = {ASE 2018},
+  pages     = {900--903},
+  address   = {New York, NY, USA},
+  publisher = {ACM},
+  acmid     = {3240478},
+  doi       = {10.1145/3238147.3240478},
+  isbn      = {978-1-4503-5937-5},
+  keywords  = {Program Analysis, Symbolic Execution, Test-Case Generation},
+  location  = {Montpellier, France},
+  numpages  = {4},
+  url       = {http://doi.acm.org/10.1145/3238147.3240478},
+}
+
+@InProceedings{Chalupa2018,
+  author       = {Chalupa, Marek and Vitovsk{\'a}, Martina and Strej{\v{c}}ek, Jan},
+  title        = {SYMBIOTIC 5: boosted instrumentation},
+  booktitle    = {International Conference on Tools and Algorithms for the Construction and Analysis of Systems},
+  year         = {2018},
+  pages        = {442--446},
+  organization = {Springer},
+}
+
+@InProceedings{Chen2018,
+  author    = {Chen, Bo and Havlicek, Christopher and Yang, Zhenkun and Cong, Kai and Kannavara, Raghudeep and Xie, Fei},
+  title     = {CRETE: A Versatile Binary-Level Concolic Testing Framework},
+  booktitle = {Fundamental Approaches to Software Engineering},
+  year      = {2018},
+  editor    = {Russo, Alessandra and Sch{\"u}rr, Andy},
+  pages     = {281--298},
+  address   = {Cham},
+  publisher = {Springer International Publishing},
+  abstract  = {In this paper, we present crete, a versatile binary-level concolic testing framework, which features an open and highly extensible architecture allowing easy integration of concrete execution frontends and symbolic execution engine backends. crete's extensibility is rooted in its modular design where concrete and symbolic execution is loosely coupled only through standardized execution traces and test cases. The standardized execution traces are llvm-based, self-contained, and composable, providing succinct and sufficient information for symbolic execution engines to reproduce the concrete executions. We have implemented crete with klee as the symbolic execution engine and multiple concrete execution frontends such as qemu and 8051 Emulator. We have evaluated the effectiveness of crete on GNU Coreutils programs and TianoCore utility programs for UEFI BIOS. The evaluation of Coreutils programs shows that crete achieved comparable code coverage as klee directly analyzing the source code of Coreutils and generally outperformed angr. The evaluation of TianoCore utility programs found numerous exploitable bugs that were previously unreported.},
+  isbn      = {978-3-319-89363-1},
+}
+
+@InProceedings{Menezes2018,
+  author    = {Menezes, Rafael and Rocha, Herbert and Cordeiro, Lucas and Barreto, Raimundo},
+  title     = {Map2Check Using LLVM and KLEE},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems},
+  year      = {2018},
+  editor    = {Beyer, Dirk and Huisman, Marieke},
+  pages     = {437--441},
+  address   = {Cham},
+  publisher = {Springer International Publishing},
+  abstract  = {Map2Check is a bug hunting tool that automatically checks safety properties in C programs. It tracks memory pointers and variable assignments to check user-specified assertions, overflow, and pointer safety. Here, we extend Map2Check to: (i) simplify the program using Clang/LLVM; (ii) perform a path-based symbolic execution using the KLEE tool; and (iii) transform and instrument the code using the LLVM dynamic information flow. The SVCOMP'18 results show that Map2Check can be effective in generating and checking test cases related to memory management of C programs.},
+  isbn      = {978-3-319-89963-3},
+}
+
+@InProceedings{Jonavs2018,
+  author       = {Jon{\'a}{\v{s}}, Martin and Strej{\v{c}}ek, Jan},
+  title        = {Abstraction of Bit-Vector Operations for BDD-Based SMT Solvers},
+  booktitle    = {International Colloquium on Theoretical Aspects of Computing},
+  year         = {2018},
+  pages        = {273--291},
+  organization = {Springer},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
