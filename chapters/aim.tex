@@ -41,31 +41,75 @@ the feasibility of a program path. One can argue that it can also be extracted
 out of the execution engine for our purpose.
 
 \begin{figure}[h]
-    \begin{minipage}[t]{0.45\textwidth}
-        test
-    \begin{tikzpicture}
-    \end{tikzpicture}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.45\textwidth}
-        test
-    \begin{tikzpicture}
-    \end{tikzpicture}
-    \end{minipage}
+%    \begin{minipage}[t]{0.45\textwidth}
+%        pure program + abstract interpreter
+%    \begin{tikzpicture}
+%    \end{tikzpicture}
+%    \end{minipage}
+%    \hfill
+%    \begin{minipage}[t]{0.45\textwidth}
+%        program with abstract data + interpreter with metadata
+%    \begin{tikzpicture}
+%    \end{tikzpicture}
+%    \end{minipage}
 
-    \begin{minipage}[t]{0.45\textwidth}
-        test
-    \begin{tikzpicture}
-    \end{tikzpicture}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{0.45\textwidth}
-        test
-    \begin{tikzpicture}
-    \end{tikzpicture}
-    \end{minipage}
+%    \begin{minipage}[t]{0.45\textwidth}
+%        program with abstract data and metadata + concrete interpreter with decision precedure
+%    \begin{tikzpicture}
+%    \end{tikzpicture}
+%    \end{minipage}
+%    \hfill
+%    \begin{minipage}[t]{0.45\textwidth}
+%        fully instrumented abstraction with decision procedure + concrete interpreter
+%    \begin{tikzpicture}
+%    \end{tikzpicture}
+%    \end{minipage}
 
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[node distance=1.2em]
+    \node [] (program) {\textsc{program}};
+    \node [component, minimum width = 20em, inner sep = 3pt, below = of program] (p1) {concrete data};
+    \node [component, minimum width = 20em, inner sep = 3pt, below = 2em of p1.west, anchor = west] (p2) {concrete + abstract data};
+    \node [component, minimum width = 12em, inner sep = 3pt, below = 2em of p2.west, anchor = west] (p3) {concrete + abstract data};
+    \node [component, minimum width = 8em, inner sep = 3pt, right = 0em of p3] (p3meta) {meta};
+
+    \node [component, minimum width = 12em, inner sep = 3pt, below = 2em of p3.west, anchor = west] (p4) {concrete + abstract data};
+    \node [component, minimum width = 4em, inner sep = 3pt, right = 0em of p4] (p4meta) {meta};
+    \node [component, minimum width = 4em, inner sep = 3pt, right = 0em of p4meta] (p4dp) {\textsc{DP}};
+
+    %\node [right = 15em of program] (vm) {\textsc{interpreter}};
+    \node [component, minimum width = 15em, inner sep = 3pt, right = of p4dp] (ai4) {explicit data};
+    \node [component, minimum width = 11em, inner sep = 3pt, above = 2em of ai4.west, anchor = west] (ai3) {explicit data};
+    \node [right = 0.5em of ai3] (ai3dpp) {+};
+    \node [right = 0.25em of ai3dpp] (ai3dp) {\textsc{dp}};
+
+    \node [component, minimum width = 7em, inner sep = 3pt, above = 2em of ai3.west, anchor = west] (ai2) {explicit data};
+    \node [component, minimum width = 4em, inner sep = 3pt, right = 0em of ai2] (ai2meta) {meta};
+    \node [right = 0.5em of ai2meta] (ai2dpp) {+};
+    \node [right = 0.25em of ai2dpp] (ai2dp) {\textsc{dp}};
+
+    \node [component, minimum width = 7em, inner sep = 3pt, above = 2em of ai2.west, anchor = west] (ai1) {abstract data};
+    \node [component, minimum width = 4em, inner sep = 3pt, right = 0em of ai1] (ai1meta) {meta};
+    \node [right = 0.5em of ai1meta] (ai1dpp) {+};
+    \node [right = 0.25em of ai1dpp] (ai1dp) {\textsc{dp}};
+
+    \node (interpreter) at (program -| ai4.north) {\textsc{interpreter}};
+
+    \node (top) at ($(program.north)!0.57!(interpreter.north)$) {};
+    \node (bot) at (top |- ai4.south) {};
+
+    \node [left = of p1] (l1) {1.};
+    \node [left = of p2] (l2) {2.};
+    \node [left = of p3] (l3) {3.};
+    \node [left = of p4] (l4) {4.};
+
+    \draw [dashed] (top.north) -- (bot.south);
+\end{tikzpicture}
+}
+\add{description}
 \caption{Abstraction boundaries}
+
 \end{figure}
 
 % TODO nondeterministic control flow
@@ -78,6 +122,11 @@ out of the execution engine for our purpose.
 
 \section{Objectives and Expected Results}
 \label{sec:objectives}
+
+Similarly, as many successful state-of-the-arts tools do, we will devise our
+techniques on top of \llvm intermediate representation. The \llvm framework
+provides an easily instrumantable input language but also enables many other
+tools to use our analysis further, what is our primary goal.
 
 \subsection{Data flow analysis}
 
@@ -181,13 +230,17 @@ In the next chapter I present my achieved results in the instrumentation of scal
 
 \subsection{ Executable abstraction }
 
-Hitherto the instrumented abstraction relies on the underlying execution engine
-which maintains abstraction metadata and enables nondeterministic program
+The hitherto presented abstraction relied on the underlying execution engine,
+which maintained abstraction metadata and enabled nondeterministic program
 branching. However, for the future, I plan to investigate a possibility of a
 runnable abstraction for a particular run of nondeterministic choices with the
 use of data flow sanitizer [TODO] -- such program provides an option of
 executable counterexample to be analyzed by general-purpose analysis of \llvm
 programs (e.g., debuggers).
+
+\add{ \cite{Gennari2018} }
+
+\add{ seahorn - bing seahorn capabilities to other tools }
 
 \section{Progression Schedule}
 

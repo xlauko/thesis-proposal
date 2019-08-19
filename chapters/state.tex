@@ -777,37 +777,65 @@ arrays~\cite{Cousot2011p}, trees~\cite{Mauborgne2000}, heaps (non sharing
 \cite{Cousot1977static, Cousot1977rec} or shape analysis~\cite{Reps2002, Chang2008}).
 
 \subsubsection{Memory abstraction}
-% see https://www-apr.lip6.fr/~mine/enseignement/mpri/current/05-mpri-0-mem.pdf
-\add{ memory models }
 
-\add{ \cite{Dan2013} }
+To perform memory abstractions, we extend our model to consider a program heap.
+In memory aware analysis, we have a set of values $\mathcal{C}$; memory addresses are
+values $C_{\textit{addr}} \subseteq C$. The environment $e \in \mathcal{E}$
+maps program variables into their addresses: $\mathcal{E} = \mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$.
+Then heap $h \in \mathcal{H}$ is a partial function that map addresses into
+values: $\mathcal{H} = \mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C}$.
+A particular environment and heap describe a memory state $\sigma_m \in
+\mathcal{M}$ where $\mathcal{M} = \mathcal{E} \times \mathcal{H}$.
 
-\add{ pointer abstractions }
+\change{ zjednotit s uvodom }
 
-\add{ separation logic in abstraction }
+\add{ maybe create memory example }
 
-\add{ \cite{Reynolds2002} }
+\subsubsection{Pointer abstraction}
 
-\add{ shape abstract domains }
+In the memory-aware analysis, we may perform a separate abstraction of
+pointers. A simplest of them are non-relational pointer abstractions (see null
+pointer abstraction \autoref{fig:nulldomain}). A pointer abstraction is defined
+in the same way as a scalar abstraction; it is given as a set of abstract
+pointer values $A_{\textit{ptr}}$; concretization function
+$\gamma_{\textit{ptr}} : A_{\textit{ptr}} \rightarrow
+\mathcal{P}(\mathcal{C}_{\textit{addr}})$ and abstraction function
+$\alpha_{\textit{ptr}} : \mathcal{P}(\mathcal{C}_{\textit{addr}}) \rightarrow
+A _{\textit{ptr}}$.
 
-\add{ \cite{Distefano2006} }
+\begin{marginfigure}
 
-\add{ \cite{Chang2008} }
+    \add{ add lattice }
+    \caption{Null pointer domain keeps information about null-pointers.}
+    \label{fig:nulldomain}
+\end{marginfigure}
 
-\add{ \cite{Magill2010} }
-\add{ \cite{Nanevski2010} }
+Non-Relational pointer domains have disadvantage because of their imprecision -- as soon as a points-to set of pointers contain several elements, the abstract interpretation performs imprecise updates. Moreover, they are not able to express well-structured invariants about memory objects (e.g., lists, tree).
 
-\add{ \cite{Malik2018} }
+For more precise updates, pointer abstraction leverage separation logic principle. It allows performing local reasoning about memory (i.e., consider only part of memory). In separation logic, the memory relations are described by points-to predicates and separating conjunctions on heaps~\cite{Reynolds2002}.
 
-\add{ \cite{Journault2019} }
+Just separation logic is too expressive to be tractable as an abstract domain because it is not efficient for manipulation. In static analysis, separation logic is usually used in combination with shape analysis. Shape graphs are used to generalize abstract data structures (e.g., lists or trees). The shape graph can summarize inductive data structures into simple shapes~\cite{Distefano2006}. Similarly to scalar analysis, shape analysis can be refined by widening or by keeping shape relations~\cite{Chang2008}.
+Reduced products to shape analysis was introduced in~\cite{Toubhans2013}.
 
-\subsubsection{Shape analysis}
+More recent approaches leverage \smt solvers and reduce problems from
+separational logic to propositional logics~\cite{Piskac2013, Itzhaky2014,
+Itzhaky2014b}.  Also, template-based domains~\cite{Malik2018} delegates
+semantic reasoning to \smt solvers and concentrates on the design of
+appropriate shape templates.  In comparison to traditional predicate analysis
+where a user needs to supply a set of predicates, template-based domains use a
+set of parametrized predicates which are further gradually refined via \smt.
+Moreover, the \smt representation enables a straightforward combination with
+value analysis -- hence allows reasoning about the shape and their contents at
+the same time.
 
-\add{ three value logic }
+To reason only about numeric properties of heap manipulating programs, we can omit a lot of shape analysis. Magill et al. present an abstraction~\cite{Magill2010} that instruments only numeric abstraction of shape properties into the program, hence allow cheaper reasoning about properties like a length of linked-lists or distance between two elements of the list. Other domains extend the relational numeric analysis of the content of particular shapes, for example, trees~\cite{Journault2019}.
 
-\add{ combination with value abstraction }
+Many tools specialize in the analysis of a single type of data-structure. To name a few: Predator is a tool for automated verification of programs with dynamic linked data structures using a separation logic and shape graphs~\cite{Dudka2012}; Forester leverage tree automata in combination with shape analysis to verify programs with various types of lists or trees~\cite{Holik2015}; Space Invader~\cite{Yang2008}.
 
-\add{ \cite{Toubhans2013} }
+\add{ extend }
+
+For an extended survey of heap abstractions, we refer to~\cite{Kanvar2016}
+
 \subsubsection{Array abstraction}
 
 \add{ Analyzing Array Manipulating Programs by Program Transformation \cite{Cornish2015} }
@@ -834,20 +862,27 @@ arrays~\cite{Cousot2011p}, trees~\cite{Mauborgne2000}, heaps (non sharing
 
 \add{ \cite{Costantini2011} }
 
+\add{ \cite{Costantini2015} }
+
 \subsection{Real-world programs dedicated abstractions}
 
-\add{ floats abstraction }
+In addition to general-purpose domains presented so far, verification of
+real-world programs delivered many domain-specific abstractions. Many numerical
+domains work with unbounded numbers. However, we would like to reflect the
+properties of bit-precise arithmetic like overflows.
 
-\add{ An Abstract Domain for Bit-Vector Inequalities \cite{Sharma2013} }
+Recent domains are based on bit-vector arithmetic and reproduce integer program semantics~\cite{Sharma2013, Sharma2017}. Similar domains were also designed for floating-point arithmetic~\cite{Putot2004}.
 
-\add{ Sound Bit-Precise Numerical Domains \cite{Sharma2017} }
+\add{ extend + example of difference ? }
 
+The paper~\cite{Reps2010} outlines challenges that arise when analyzing machine code and what can be done about them.
+\add{ describe challenges }
 
-\add{ \cite{Reps2010} }
+More domain-specific abstractions are used to analyze database querying languages~\cite{Halder2012} or system components like filters~\cite{Feret2004} or synchronous clocks~\cite{Feret2005}.
 
-\add{ \cite{Majumdar2018} }
-
-\add{ \cite{Halder2012} }
+A real-world program analysis also requires to reflect memory model of the program under test. To describe memory model properties, analysis usually leverage dedicated predicate abstraction~\cite{Dan2013}.
+%\add{ \cite{Majumdar2018} }
+\add{extend memory model abstraction}
 
 \subsection{Domain Refinement}
 \label{sec:domainrefinement}
@@ -919,15 +954,32 @@ termination \cite{Urban2010}.
 
 Further in the pursuit of increased precision, some techniques step out of the
 lattice-based approach and develop a weaker formalism for abstract domains with
-the quasi-join operation~\cite{Gange2013}.
+the quasi-join ope\-ra\-tion~\cite{Gange2013}.
 
 \subsection{ Tools }
 
-\add{ ASTREE }
+Most of the presented abstractions are developed as part of some abstract
+interpretation framework. The prominent abstract interpreter is
+Astrée~\cite{Astree}. It is a real-time embedded software static analyzer. It
+can analyze C programs but without dynamic memory allocation and recursion.
+Therefore, it is primarily aimed for embedded synchronous systems of electric
+flight control~\cite{Delmas2007, Souyris2007, Bouissou2009, Bertrane2015}.
+Astrée is based on fixpoint iteration, and combines various trace semantics
+(i.e., non-relational and weakly relational abstract domains) with reduced
+product refinement and widening and narrowing techniques. Astrée precision
+comes from smart handling of disjunctions~\cite{Blanchet2003,
+Mauborgne2005} and domain-specific abstract domains~\cite{Feret2004,
+Feret2005}.
 
-\add{ \cite{Bertrane2015} }
-
-\add{ SeaHorn \cite{Gurfinkel2015} }
+Another tool SeaHorn~\cite{Gurfinkel2015} is a software verification framework
+built on top of \llvm.  It is closely related to our curse, mainly because it
+provides an abstract interpretation module \textsc{crab} (language-agnostic
+library for static analysis) which is suited for the generation of invariants
+into \llvm programs~\cite{Gershuni2019}. The underlying abstract interpreter
+for \textsc{crab} library is \textsc{ikos}~\cite{Ikos}. SeaHorn faces
+limitation in its usage: most \textsc{crab} domains reason only about linear
+arithemtic; it lacks any pointer or shape analysis and provides only limited
+support of array abstractions.
 
 \section{Abstraction based techniques}
 \label{sec:techniques}
@@ -1087,27 +1139,32 @@ a better approximation of abstract operations via symbolic abstraction~\cite{Tha
 \section{Interpolation}
 \label{sec:interpolation}
 
-\add{ \cite{Cimatti2016} }
+Another technique used to improve abstraction-based techniques is an
+interpolation. The core idea of the interpolation is to take feasible and
+infeasible abstract paths, where the latter subsumes the first one, and refine
+the feasible path to abstract more concrete paths but remaining still feasible
+(i.e., subsumed by the infeasible state)~\cite{Mcmillan2003interpolation}.  The
+interpolation is usually a part of \cegar loop as a refinement procedure for
+spurious counterexamples. It has wide variety of use cases: in generation of
+relevant predicates for predicate abstraction~\cite{Henzinger2004abstractions,
+Cimatti2016}; range predicates in array abstraction~\cite{Jhala2007array} or
+as refinement for symbolic~\cite{Ibing2016} and concolic execution~\cite{Jaffar2013}.
 
-\add{ \cite{Namjoshi2018} }
+The interpolation was also applied in non-symbolic abstractions -- in the tool
+DAGGER~\cite{Gulavani2008}, the interpolation is used to improve the precision
+of widening of octagon and polyhedra domains to avoid false alarms. Similarly,
+in VINTA~\cite{Albarghouthi2012}, the interpolation is used to refine the interval domain.
 
-\add{ \cite{Jaffar2013} }
+\section{Static analysis and transformation}
 
-\add{ \cite{Gulavani2008} DAGGER [17] improves the verification of C programs by applying
-interpolation-based refinement to octagon and polyhedra domains. To avoid imprecision due to widening in the join-based data-flow analysis, DAGGER replaces the standard
-widen operator by a so called interpolated-widen operator, which increases the precision of the data-flow analysis and thus avoids false alarms. }
+A static analysis often uses code transformation and instrumentation to
+simplify its duties. A common technique is to reduce code size either directly
+by a compiler~\cite{Namjoshi2018} or by program slicing~\cite{Chalupa2018}.
 
-\add{ \cite{Albarghouthi2012} The algorithm VINTA [2] applies
-interpolation-based refinement to interval-like abstract domains. If the state
-Explicit-State Software Model Checking Based on CEGAR and Interpolation 149
-exploration finds an error path, then VINTA performs a feasibility check using
-bounded model checking (BMC), and if the error path is infeasible, it computes
-interpolants. The interpolants are used to refine the invariants that the
-abstract domain operates on. VINTA requires an SMT solver for feasibility
-checks and interpolation}
+Another possibility is to use static analyzers to generate program invariants into the code for dynamic analysis~\cite{Gurfinkel2015} or instrument dynamic checks for memory safety analysis~\cite{Chalupa2019}.
+Memory analysis also leverages instrumentation to keep numeric properties of heap-based data structures (e.g., the height of the tree, maximal element in the linked-list)~\cite{Magill2010}.
 
-\cite{Henzinger2004abstractions}
-
-\cite{Mcmillan2003interpolation}
-
-\cite{Jhala2007array}
+The closest approach to what we will describe in the following chapters is
+concolic testing presented in CUTE~\cite{Sen2005}. CUTE instruments concolic
+execution into the program, but it is restricted just to symbolic abstraction
+in compare to our generic approach.

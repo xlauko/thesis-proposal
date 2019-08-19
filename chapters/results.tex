@@ -3,28 +3,92 @@
 
 % Povinné pro rigorózní práci, 3-5 stran.
 
+As a reasonable boundary for reusable abstraction, we have selected a design
+where metadata and decision procedure are part of the execution engine (see
+\autoref{fig:boundaries}). This choice balances an effort required to integrate the
+transformation-based technique and load on execution engine, where the
+instrumented code needs to be interpreted.
+
+Up till now, I have focused on the general design of trans\-for\-mation-based
+abstraction without refinement (\emph{trivially constrainable domains}). The
+main concern of the first prototype was to design a general-purpose analysis
+for instrumentation. The goal of this transformation was to allow coexistence
+of concrete and abstract values in a single program. In this way, I was able to
+extend model checker \divine~\cite{Divine17} with symbolic
+computation~\cite{Lauko2019Sym, Lauko2018SymComp}.
+
+All analysis presented in my up-to-date work are implemented in a tool named
+\lart -- \llvm Abstraction and Refinement Tool, that is a part of the \divine
+project. \lart based on top of the open-source \llvm compiler infrastructure.
+The latter is a well-maintained, well-documented, and continuously improving
+framework. It allows \lart to easily integrate program analyses,
+transformations, and other tools that target \llvm.
+
 \section{Symbolic computation via Program Transformation}
 \label{sec:symbolic}
 
 \subsection{Abstraction Design}
 
-\add{ verification image }
+The overall symbolic abstraction consists of two parts: preprocessing (\emph{static
+analysis}) which performs instrumentation of abstraction into the program; and
+verification (\emph{dynamic analysis}) that explores the state space of the
+system under test.
+
+The instrumentation performs dataflow analysis of non-de\-ter\-ministic values and
+replaces operations on them by their abstract counterparts. The instrumented
+program is subsequently linked with a library that implements abstract
+operations and provides definitions of abstract data representation.
+
+During verification, virtual machine (\textsc{vm}) executes the abs\-trac\-ted
+program and generates state space for a model checking algorithm (\textsc{mc}).
+The model checking algorithm extracts symbolic data and path condition directly
+from program memory, whenever it needs to decide whether the state is feasible
+or is equal to some previously visited state. An external \smt solver solves
+feasibility and equality queries. Notice that the virtual machine has no clue
+about abstract values present in the program.
+
+\begin{figure}
+    \centering
+    \input{img/approaches.tikz}
+    \caption{Components of symbolic computation in \divine.}
+    \label{fig:design}
+\end{figure}
 
 \subsection{Term domain}
 
-\subsection{ Program Execution }
-
-\add{ program state }
-
-\add{ path condition + data definitions }
-
+The abstract domain used for the symbolic computation was inspired by the
+domain of uninterpreted functions~\cite{Gange2016} -- we call it a term domain.
+In the term domain, the arithmetic operations build term trees (data
+definitions) that represent relations between ground variables and constants,
+whereas the branching conditions extends the global path condition.  For
+further details, see papers in the attachments of the thesis
+proposal~\cite{Lauko2018SymComp, Lauko2019Sym}.
 
 \section{String Abstraction}
 \label{sec:string}
 
-\add{ aggregate abstraction }
+My following publication has focused on the extension of the
+transformation-based approach to non-scalar domains (i.e., aggregate domains).
+An example of such domain is a string domain. In cooperation with Martina
+Olliaro, I have adapted her string domain (\textsc{mstring})~\cite{Olliaro2018}
+as \lart domain. A \lart domain is a C or C++ library that provides
+definitions of abstract values and implementation of supported operations on
+them.
 
-\add{ parametric domains }
+\textsc{Mstring} domain represents C strings by segmentation abstract domain
+that keeps track of terminal zeros in the underlying array. It is a
+parametrizable domain in the means of array segments\sidenote{Array segment
+represents a consecutive area of the same characters.} length and array
+content.  Hence, we have repurposed a symbolic domain from previous work to
+abstract lengths of string segments.
+
+To support aggregate domains \lart, I have adapted its data\-flow analysis to
+support multiple domains and manipulations with \llvm arrays. Moreover, I have
+extended the instrumentation to support abstraction of larger operations than
+just \llvm instructions -- these occur in C string manipulating programs in the
+form of functions (\texttt{strlen}, \texttt{strcmp}, \texttt{strcat}). The
+transformation-based string abstraction is further presented in attached paper
+[TODO].
 
 \section{Publications}
 \label{sec:publications}
