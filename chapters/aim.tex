@@ -15,7 +15,7 @@ actual run time. In my work, I investigate how much it is possible to move
 abstraction from the interpreter to the compilation. Naturally, there exist
 many possible boundaries between abstraction and execution engine -- each
 defined by how much of the actual abstract interpretation is performed by the
-program or executor.
+program or executor (see \autoref{fig:bounds}).
 
 As listed in \autoref{sec:ingredients} the abstract domain is determined by
 three components (value representation, operators, and iteration strategy).
@@ -107,8 +107,37 @@ out of the execution engine for our purpose.
     \draw [dashed] (top.north) -- (bot.south);
 \end{tikzpicture}
 }
-\add{description}
-\caption{Abstraction boundaries}
+
+\bigskip
+\prule
+
+\begin{enumerate}
+    \item The first boundary is a common approach to abstract
+        interpretation where, the interpreter takes carer of whole abstraction
+        (maintaining abstract data, additional metadata and optionally uses
+        decision procedure \textsc{dp}).
+    \item In the second approach, we let the program to take care of abstract
+        data (this can be achieved by instrumentation as described
+        in~\autoref{sec:symbolic}).  However, interpreter still keeps metadata
+        that keeps track for each value, whether it is abstract or concrete.
+        This information is used when interpreter needs to decide how to
+        interpret program memory -- whether to perform an explicit or abstract
+        comparison of states.
+    \item The third approach shifts responsibility about metadata to
+        the program (they can be kept as shadow memory of the program -- a
+        similar approach is used by sanitizers~\cite{Stepanov2015}), consequently the
+        interpreter needs to extract metadata from the program.
+    \item The latter approach let full responsibility about abstraction to the
+        program, and the interpreter executes program explicitly. The decision
+        procedure needs to take care of non-deterministic execution and
+        determine what path to take when a non-deterministic branch occurs. Or
+        the responsibility of the non-determinism can be left to the
+        interpreter. Alternatively, one can encode the vector of decisions to
+        the program and create an executable abstract program.
+\end{enumerate}
+
+\caption{Possible division of abstraction responsibilities between program and interpreter.}
+\label{fig:bounds}
 
 \end{figure}
 
@@ -231,12 +260,15 @@ In the next chapter I present my achieved results in the instrumentation of scal
 \subsection{ Executable abstraction }
 
 The hitherto presented abstraction relied on the underlying execution engine,
-which maintained abstraction metadata and enabled nondeterministic program
+which maintained abstraction metadata and enabled non-deterministic program
 branching. However, for the future, I plan to investigate a possibility of a
-runnable abstraction for a particular run of nondeterministic choices with the
-use of data flow sanitizer [TODO] -- such program provides an option of
-executable counterexample to be analyzed by general-purpose analysis of \llvm
-programs (e.g., debuggers).
+runnable abstraction for a particular run of non-deterministic choices with the
+use of data flow sanitizer [TODO] (see fourth option of \autoref{fig:bounds})
+-- such program provides an option of executable counterexample to be analyzed
+by general-purpose analysis of \llvm programs (e.g., debuggers).  The data flow
+sanitizer enables program to keep track of metadata and propagates them during
+execution -- allows to perform a taint analysis, where taints identify abstract
+values in the program.
 
 \add{ \cite{Gennari2018} }
 
