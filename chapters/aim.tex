@@ -3,19 +3,23 @@
 
 % Stanovení cílů a metodologie disertační práce ("co, proč, jak"), očekávané výsledky, dosažené výsledky, časový harmonogram dalšího postupu, alespoň 2 strany.
 
+\add{ add motivation + context -- summarize previous chapter }
+
 Generally, techniques presented in the previous chapter are implemented as
 dynamic analysis (i.e. the abstraction is performed on the fly inside of the
 program interpreter).  In my research I focus on the development of
 repurposable abstraction techniques. To achieve this, we need to extract
 abstraction out of the tools and redesign the algorithms to provide sufficient
 information for the program analysis. The similar shifting of responsibilities
-is already known technique in computer science -- an example are compiled and
+is already a known technique in computer science -- an example are compiled and
 interpreted languages, that shifts various tasks between compilation time and
 actual run time. In my work, I investigate how much it is possible to move
-abstraction from the interpreter to the compilation. Naturally, there exist
+abstraction from the interpreter to the compilation. Naturally, there exists
 many possible boundaries between abstraction and execution engine -- each
 defined by how much of the actual abstract interpretation is performed by the
 program or executor (see \autoref{fig:bounds}).
+
+\change{ rewrite repurposable }
 
 As listed in \autoref{sec:ingredients} the abstract domain is determined by
 three components (value representation, operators, and iteration strategy).
@@ -38,7 +42,9 @@ or not.
 
 Another part of abstraction execution is a decision procedure which determines
 the feasibility of a program path. One can argue that it can also be extracted
-out of the execution engine for our purpose.
+out of the execution engine for our purpose, however, in reality, it is hardly
+realizable that whole \smt solver would be compiled into the program and
+reinterpreted by further analysis.
 
 \begin{figure}[h]
 %    \begin{minipage}[t]{0.45\textwidth}
@@ -152,10 +158,12 @@ out of the execution engine for our purpose.
 \section{Objectives and Expected Results}
 \label{sec:objectives}
 
-Similarly, as many successful state-of-the-arts tools do, we will devise our
-techniques on top of \llvm intermediate representation. The \llvm framework
-provides an easily instrumantable input language but also enables many other
-tools to use our analysis further, what is our primary goal.
+\add{ rewrite }
+
+We will devise our techniques on top of \llvm intermediate representation such
+as many successful state-of-the-arts tools have been shown to do. The \llvm
+framework provides an easily instrumantable input language but also enables
+many other tools to use our analysis further, which is our primary goal.
 
 \subsection{Data flow analysis}
 
@@ -167,7 +175,7 @@ overapproximate its result, we want to minimize the amount of instrumented
 abstraction to retain precision of further analysis.
 
 The contemporary techniques are usually imprecise or they handle only a subset of use
-cases of real progras. Hence the first goal of successful abstraction is a
+cases of real progress. Hence the first goal of successful abstraction is a
 \emph{memory aware data flow analysis}. To achieve better results, I want to
 investigate a different approach of approximated data flow analysis, which will
 combine refinement and program transformation.  We propose to use refinement
@@ -237,14 +245,14 @@ to function summarization and bottom-up program verification.
 
 \subsection{ Domain categories }
 
-In addition to numeric abstract domains we want to cover other techniques like
+In addition to numeric abstract domains, we want to cover other techniques like
 shape analysis and heap abstractions -- here I want to focus on how to
 generalize these abstractions. In our transformation framework, we distinguish
 three categories of abstract domains:
 
 \begin{itemize}
     \item \emph{scalar domains} that abstract program integers and floating-point values (correspond to numeric abstract domains),
-    \item \emph{aggregate domains} that abstract a program objects and memory content like arrays and strings,
+    \item \emph{aggregate domains} that abstract program objects and memory content like arrays and strings,
 
     \item \emph{pointer domains} that enable to abstract program pointers.
 \end{itemize}

@@ -5,11 +5,11 @@
 
 As a reasonable boundary for reusable abstraction, we have selected a design
 where metadata and decision procedure are part of the execution engine (see
-\autoref{fig:boundaries}). This choice balances an effort required to integrate the
+\autoref{fig:bounds}). This choice balances an effort required to integrate the
 transformation-based technique and load on execution engine, where the
 instrumented code needs to be interpreted.
 
-Up till now, I have focused on the general design of trans\-for\-mation-based
+Up until now, I have focused on the general design of trans\-for\-mation-based
 abstraction without refinement (\emph{trivially constrainable domains}). The
 main concern of the first prototype was to design a general-purpose analysis
 for instrumentation. The goal of this transformation was to allow coexistence
@@ -17,7 +17,7 @@ of concrete and abstract values in a single program. In this way, I was able to
 extend model checker \divine~\cite{Divine17} with symbolic
 computation~\cite{Lauko2019Sym, Lauko2018SymComp}.
 
-All analysis presented in my up-to-date work are implemented in a tool named
+All analyses presented in my up-to-date work are implemented in a tool named
 \lart -- \llvm Abstraction and Refinement Tool, that is a part of the \divine
 project. \lart based on top of the open-source \llvm compiler infrastructure.
 The latter is a well-maintained, well-documented, and continuously improving
@@ -30,7 +30,7 @@ transformations, and other tools that target \llvm.
 \subsection{Abstraction Design}
 
 The overall symbolic abstraction consists of two parts: preprocessing (\emph{static
-analysis}) which performs instrumentation of abstraction into the program; and
+analysis}), which performs instrumentation of abstraction into the program; and
 verification (\emph{dynamic analysis}) that explores the state space of the
 system under test.
 
@@ -69,7 +69,7 @@ proposal~\cite{Lauko2018SymComp, Lauko2019Sym}.
 
 My following publication has focused on the extension of the
 transformation-based approach to non-scalar domains (i.e., aggregate domains).
-An example of such domain is a string domain. In cooperation with Martina
+An example of such a domain is a string domain. In cooperation with Martina
 Olliaro, I have adapted her string domain (\textsc{mstring})~\cite{Olliaro2018}
 as \lart domain. A \lart domain is a C or C++ library that provides
 definitions of abstract values and implementation of supported operations on
