@@ -33,13 +33,32 @@ under test satisfies a given specification.  Nevertheless, the verification
 task is undecidable; many verifiers can reason about complex systems. This
 would not be possible without the abstraction of system behaviors.
 
-% TODO what i will present in my thesis
+In the verification, the abstraction is applied on many levels of the system.
+One of them is a model on which the verifier operates. In general, it would be
+impractical if not impossible to verify the whole software stack, from the
+bottom of the hardware layer, throughout an operating system environment to the
+top -- the actual program under test. Hence the verifier abstract from the
+environment and reason only about the program. The program representation can
+also be abstracted; the verifier process either the original form of it or
+translates the program to more verifier friendly format (e.g., byte-code
+intermediate representation or program graph).
 
-% In order to contribute to the solution of the software reliability problem, tools have been designed to analyze statically the run-time
-% behavior of programs. Because the correctness problem is undecidable,
-% some form of approximation is needed. The purpose of abstract interpretation is to formalize this idea of approximation. We illustrate informally
-% the application of abstraction to the semantics of programming languages
-% as well as to static program analysis. [Abstract Interpretation Based Formal Methods and Future Challenges]
+However, the abstraction that we will be interested in this thesis proposal is
+a non-deterministic data abstraction. It is required to examine the
+unpredictable behavior of interaction with the program environment. To soundly
+handle the non-determinism, the verifier needs to explore all possible program
+behaviors (e.g., program inputs). To manage an enormous amount of
+possibilities, verifiers utilize abstraction to group similar behaviors and
+reason about a reduced amount of options. Or they use the abstraction to
+preserve only those behaviors that are interesting for a verified property.
+
+As we have noted before, the abstraction techniques are broadly employed in
+state-of-the-art tools. However, their design is usually not well suited for
+sharing among the tools. Hence in this thesis proposal, we are going to
+investigate how to adapt existing abstraction techniques to become reusable.
+Moreover, we will aim at a design of abstraction that will allow researchers to
+develop abstractions and reevaluate them across multiple tools without being
+implementation-dependent.
 
 \begin{table}[h]
 
@@ -121,35 +140,17 @@ would not be possible without the abstraction of system behaviors.
 \label{tab:svcomp}
 \end{table}
 
-%\change{ REWRITE: Notwithstanding the amount of work required many tools reinvent the wheel and adapt the existing algorithms.
-%The main success of abovementioned techniques is in their indispensability.
-%Since program verification is generally undecidable, the automatic computer-aided verification tools rely on the approximation techniques.
-%Either they provide only partial algorithms, requires human interaction (in the case of theorem provers) or consider a restricted form of programs and their properties. }
-%\add{ add introduction to the rest of introduction }
-%\add{ introduce abstractions }
-
-The model on which the verifier operates introduces the first approximation of the real environment.
-In general, it would be impractical if not almost impossible to verify the whole environment, starting from the underlying hardware and ending with an operating system and user interactions.
-Hence, verifiers assume the correctness of underlying layers of the program and focus only on the system undergoing test.
-Another approximation made by verifiers is on the level of program semantics.  When verifying a program (for example in C), one can decide whether to perform atomic semantic steps by program lines or based on the compiled assembly code. Whereas the first may preserve a piece of information about the behavior of the program, the letter is closer to the real execution.
-The last approximation of our concern is data abstraction that is used to represent non-deterministic values in the program and tackles the state-space explosion problem.
-
-In this thesis proposal, we present essential as well as contemporary abstraction and symbolic techniques. We identify their common specifics and present a potential design for reausable
-abstraction across tools.
-
 The rest of the proposal is organized as follows: \autoref{ch:state} summarizes the state of the art of approximation techniques, the \autoref{sec:preliminaries} present a common notation used in following chapters, followed by introduction to an abstraction (\autoref{sec:abstraction}) and summary of abstract domains \autoref{sec:domains}. The second half of \autoref{ch:state} investigates abstraction-based techniques used in computer-aided verification (\autoref{sec:techniques}).
 
 The following \autoref{ch:aim} examines the presented approaches and states the
-challenges of reusable abstraction design. We introduce a notion of a
-transformation-based abstraction, which is one of the possible solutions for
-the stated objectives. Further, we present possible directions for the thesis
-in \autoref{sec:objectives}.
+challenges of reusable abstraction design, as well as aims of my thesis. We
+introduce a notion of a transformation-based abstraction, which is one of the
+possible solutions for the stated objectives.
 
 The last chapter (\autoref{ch:results}) presents already achieved results in
-transformation-based approach.  \autoref{sec:symbolic} investigates how we
-have repurposed a symbolic computation for explicit-based model checking
+transformation-based approach.  \autoref{sec:symbolic} investigates how we have
+adapted a symbolic abstraction for explicit-based model checking
 \cite{Lauko2019Sym, Lauko2018SymComp}. Further in \autoref{sec:string}, we
-present a technique for string and parametrizable abstract domains which were
-integrated into the transformation-based approach [TODO].  In the end
-(\autoref{sec:publications}), the chapter lists my already published papers
-related to abstraction techniques.
+pre\-sent an extended transformation-based abstraction for string-ma\-ni\-pu\-la\-ting
+programs~\cite{Lauko2019String}.  In the end (\autoref{sec:publications}), the
+chapter lists my already published papers related to abstraction techniques.
