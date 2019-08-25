@@ -1,18 +1,19 @@
 \chapter{\llvm syntax \& semantics}
 \label{ch:llvm}
 
-\llvm syntax
-
+\textsc{\llvm syntax}
 \section{Types}
 \begin{grammar}
 
-<n> ::= $i \in \mathbb{N}^+$
-
 <float> ::= "half" | "float" | "double" | "fp80" | "fp128"
 
-<type> ::= "void" | "i"<n> | <float> | <type>* | "[" <n> $\times$ <type> "]" | { <type> } | "id"
+<type> ::= "void" | "i"<sz> | <float> | <type>* | "[" <sz> $\times$ <type> "]"
+    \alt { $<type>^n$ } | "id"
 
 \end{grammar}
+
+where $sz \in \mathbb{N}^+$ is a natural number.
+
 
 \section{Operations}
 \begin{grammar}

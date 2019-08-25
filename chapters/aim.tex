@@ -3,23 +3,41 @@
 
 % Stanovení cílů a metodologie disertační práce ("co, proč, jak"), očekávané výsledky, dosažené výsledky, časový harmonogram dalšího postupu, alespoň 2 strany.
 
-\add{ add motivation + context -- summarize previous chapter }
+An abstraction in program verification is indispensable for successful
+verification of complex systems. One of its applications is to simplify
+reasoning about non-deterministic data, i.e., interactions with a program
+environment. The computation with non-de\-ter\-mi\-nistic data, also known as
+abstract interpretation, represents data in an abstract domain. Such a domain
+drops some information about program variables to reduce the amount of
+potential variable states, hence simplifies the reasoning about all possible
+program inputs. In order to simplify abstract computation even further, many
+techniques have been developed to refine abstraction on demand, e.g.,
+counterexample-guided abstraction refinement~\cite{Clarke2000} or lazy abstraction
+techniques~\cite{Henzinger2002}.
 
-Generally, techniques presented in the previous chapter are implemented as
-dynamic analysis (i.e. the abstraction is performed on the fly inside of the
-program interpreter).  In my research I focus on the development of
-repurposable abstraction techniques. To achieve this, we need to extract
-abstraction out of the tools and redesign the algorithms to provide sufficient
-information for the program analysis. The similar shifting of responsibilities
-is already a known technique in computer science -- an example are compiled and
-interpreted languages, that shifts various tasks between compilation time and
-actual run time. In my work, I investigate how much it is possible to move
-abstraction from the interpreter to the compilation. Naturally, there exists
-many possible boundaries between abstraction and execution engine -- each
+Most of these techniques are implemented as dynamic analysis inside of a
+verification tools, i.e., they are performed during the interpretation of a
+program. Even though the abstraction techniques share a common foundation, each
+of the tools reimplements the analyses by itself. Moreover, the integration of
+abstraction into a robust verification engine might introduce undesirable
+complexity and can be a cause of faulty analysis. Hence in my research, I focus
+on the design of reusable abstraction techniques, that are independent of an
+execution engine.
+
+The core idea of independent abstraction is to extract it from the interpreter.
+This includes extracting of abstract data representation and computation with
+them, as well as the redesign of the refinement algorithms. Aside from
+redesigned algorithms, the reusable abstraction needs to provide sufficient and
+easy to access information for the program analysis.
+
+The similar shifting of responsibilities is already a known technique in
+computer science -- for example the compiled and interpreted languages move
+various tasks between compilation time and actual run time. In my work, I
+investigate how much it is possible to move abstraction from the interpreter to
+the compilation (static) part of the verification analysis. Naturally, there
+exist many possible boundaries between abstraction and execution engine -- each
 defined by how much of the actual abstract interpretation is performed by the
-program or executor (see \autoref{fig:bounds}).
-
-\change{ rewrite repurposable }
+program or the executor (see \autoref{fig:bounds}).
 
 As listed in \autoref{sec:ingredients} the abstract domain is determined by
 three components (value representation, operators, and iteration strategy).
@@ -31,8 +49,8 @@ instrument abstract operations into the program (realize them as a concrete
 code). Therefore the execution engine will be only responsible for iteration
 strategy and refinement.
 
-To minimize the loss of precision, we usually only want to abstract
-nondeterministic data of the program. Hence the analysis needs to decide which
+To minimize the loss of precision, we naturally only want to abstract
+nondeterministic data of the program. Hence, the analysis needs to decide which
 operations will be abstracted. Another possibility is to dynamically determine
 whether to perform an abstract or concrete operation. This decision can also be
 moved between the program under analysis and execution engine. Usually, to
@@ -47,29 +65,6 @@ realizable that whole \smt solver would be compiled into the program and
 reinterpreted by further analysis.
 
 \begin{figure}[h]
-%    \begin{minipage}[t]{0.45\textwidth}
-%        pure program + abstract interpreter
-%    \begin{tikzpicture}
-%    \end{tikzpicture}
-%    \end{minipage}
-%    \hfill
-%    \begin{minipage}[t]{0.45\textwidth}
-%        program with abstract data + interpreter with metadata
-%    \begin{tikzpicture}
-%    \end{tikzpicture}
-%    \end{minipage}
-
-%    \begin{minipage}[t]{0.45\textwidth}
-%        program with abstract data and metadata + concrete interpreter with decision precedure
-%    \begin{tikzpicture}
-%    \end{tikzpicture}
-%    \end{minipage}
-%    \hfill
-%    \begin{minipage}[t]{0.45\textwidth}
-%        fully instrumented abstraction with decision procedure + concrete interpreter
-%    \begin{tikzpicture}
-%    \end{tikzpicture}
-%    \end{minipage}
 
 \centering
 \resizebox{\textwidth}{!}{
@@ -82,7 +77,7 @@ reinterpreted by further analysis.
 
     \node [component, minimum width = 12em, inner sep = 3pt, below = 2em of p3.west, anchor = west] (p4) {concrete + abstract data};
     \node [component, minimum width = 4em, inner sep = 3pt, right = 0em of p4] (p4meta) {meta};
-    \node [component, minimum width = 4em, inner sep = 3pt, right = 0em of p4meta] (p4dp) {\textsc{DP}};
+    \node [component, minimum width = 4em, inner sep = 3pt, right = 0em of p4meta] (p4dp) {\textsc{dp}};
 
     %\node [right = 15em of program] (vm) {\textsc{interpreter}};
     \node [component, minimum width = 15em, inner sep = 3pt, right = of p4dp] (ai4) {explicit data};
@@ -119,10 +114,10 @@ reinterpreted by further analysis.
 
 \begin{enumerate}
     \item The first boundary is a common approach to abstract
-        interpretation where, the interpreter takes carer of whole abstraction
+        interpretation where, the interpreter takes care of whole abstraction
         (maintaining abstract data, additional metadata and optionally uses
         decision procedure \textsc{dp}).
-    \item In the second approach, we let the program to take care of abstract
+    \item In the second approach, we let the program to maintain abstract
         data (this can be achieved by instrumentation as described
         in~\autoref{sec:symbolic}).  However, interpreter still keeps metadata
         that keeps track for each value, whether it is abstract or concrete.
@@ -147,25 +142,40 @@ reinterpreted by further analysis.
 
 \end{figure}
 
-% TODO nondeterministic control flow
-
-% describe boundaries between program and execution engine
-% 1. pure program + abstract engine
-% 2. abstract program + engine with metadata
-% 3. abstracted program with metadata  +  concrete engine
-% 4. abstracted program with decision procedure + concrete execution
-
 \section{Objectives and Expected Results}
 \label{sec:objectives}
 
-\add{ rewrite }
+The ultimate goal of my research is to develop an approach to abstraction,
+which will be independent of the underlying execution engine. The demanded
+properties of the extracted abstraction are to preserve efficiency and
+capabilities of dynamic abstraction techniques and furthermore provide a
+minimal interface for the execution engine to explore abstract state-space.
+Moreover, I aim at easy to use abstract domain design that will be independent
+of the abstraction execution. Overall my goals are summarized in the following
+points:
 
-We will devise our techniques on top of \llvm intermediate representation such
-as many successful state-of-the-arts tools have been shown to do. The \llvm
-framework provides an easily instrumantable input language but also enables
-many other tools to use our analysis further, which is our primary goal.
+\begin{enumerate}
+    \item general-purpose analyses for autonomous abstraction and refinement,
+    \item easy to design reusable abstract domains of all kinds,
+    \item completely independent abstraction -- executable abstract programs.
+\end{enumerate}
 
-\subsection{Data flow analysis}
+\noindent
+In the following sections, I will state the main obstacles and objectives of
+these goals. Further, I will explain how they relate to state-of-the-art
+research.
+
+\subsection{General-purpose analyses for autonomous abstraction}
+
+The expected result of this objective is a tool \lart: \llvm abstraction and
+refinement tool. Its primary responsibilities are to perform data-flow analysis
+to identify wherever non-deterministic data might occur and further instrument
+a provided abstraction to those locations.  The instrumentation is to be
+performed on \llvm intermediate representation, which is widely used in the
+contemporary verification tools. Hence, the results of instrumentation can be
+easily used by these tools.
+
+\subsubsection{Data flow analysis}
 
 To be able to instrument abstraction into the program, first of all, we need to
 perform a data flow analysis to detect wherever abstract values might appear.
@@ -175,79 +185,106 @@ overapproximate its result, we want to minimize the amount of instrumented
 abstraction to retain precision of further analysis.
 
 The contemporary techniques are usually imprecise or they handle only a subset of use
-cases of real progress. Hence the first goal of successful abstraction is a
+cases of real programs. Hence, the first goal of successful abstraction is a
 \emph{memory aware data flow analysis}. To achieve better results, I want to
 investigate a different approach of approximated data flow analysis, which will
-combine refinement and program transformation.  We propose to use refinement
+combine refinement and program transformation. I propose to use refinement
 and transformation to ease the analysis of imprecise (hard to analyze) points
 in the program, e.g., indirect calls and memory manipulations.
 
-\subsection{Trivially constrainable domains}
+\subsection{Abstract domains}
 
-The next goal to reusable abstraction is to implement a trivially constrainable
-abstraction. It is an abstraction which does not require any refinement for its
+Even though there exist tools that aim at accessible design of abstract domains
+: SeaHorn~\cite{Gurfinkel2015}, CPAchecker~\cite{Beyer2013}, or
+Astrée~\cite{Astree}; their disadvantage is in their dependency on the
+execution engine.  On the contrary, abstract domains, in combination with \lart
+instrumentation, allow reuse of abstracted programs across various tools. For
+the accessible design of abstract domains, I propose to implement them in a
+higher-level programming language\sidenote{An abstract domain consists of data
+representation and implementation of its operations.} which is then compiled to
+\llvm and linked with instrumented bitcode from \lart.  Moreover, I intend to
+generalize analyses for abstract domains in such a way that all of then can be
+instrumented into the program: this includes numerical abstraction (no matter
+whether it is relational or not), memory abstraction including shape
+abstractions and pointer abstractions. In contrast, tools like SeaHorn or
+Astrée aim only at numerical analyses.
+
+\subsubsection{Trivially constrainable domains}
+
+The first goal of reusable abstract domain is to implement a trivially constrainable
+domain. It is an abstract domain which does not require any refinement for its
 use. One such abstraction is a symbolic abstraction -- in the symbolic
 abstraction all data are represented by formulas and constraints are maintained
 in a path condition. I have already implemented a symbolic abstraction as
 program transformation, and it is published in~\cite{Lauko2018SymComp}.
-It is further summarized in my achieved results -- \autoref{ch:results}.
+It is further summarized in my achieved results presented in \autoref{ch:results}.
 
-\subsection{Non-relational abstract domains}
+\subsubsection{Non-relational abstract domains}
 
 In comparison to an abstract interpreter, a program, that executes abstract
-computation by itself, cannot perform interpretation to some fixpoint. Hence,
+computation by itself, cannot simply perform interpretation to some fixpoint. Hence,
 to achieve an extended precision, we need to instrument some precision
-mechanism into the program. In the transformed program, abstract data flows
-forward as if an interpreter propagated them. However, an imprecision arises on
-the conditional branching that depends on an abstract value. When such a branch
-is executed, both outcomes might be admissible, in that case, we need to
-examine both possibilities. \add{ nondeterministic choice TODO note }
+mechanism into the program.
+
+\begin{marginfigure}
+\begin{minted}[linenos]{c}
+int i = input();
+int a = i + 10;
+if (a < 0)
+  ...
+else
+  ...
+\end{minted}
+
+    \footnotesize
+    Instrumentation of this program replaces all operations dependent on variable
+    \ccode{i}.  Therefore, the result of condition \ccode{a < 0} might be
+    either \ccode{true} or \ccode{false}.  For sound exploration, an executor
+    needs to explore both ways. This is achieved by instrumentation of
+    non-deterministic choice in the control flow, which is supported by most of
+    the verification tools. Moreover, the value of \ccode{a} needs to be
+    restricted in each of the executions, as well as all values dependent on
+    the condition (in this case variable \ccode{i}):
+\begin{minted}[linenos]{c}
+int i = input();
+int a = i + 10;
+if (choice())
+  a = assume(a < 0);
+  ...
+else
+  a = assume(a >= 0);
+  ...
+\end{minted}
+
+\caption{Branching on non-deterministic value.}
+\label{fig:branch}
+\end{marginfigure}
+
+In the transformed program, abstract data flow forward as if an interpreter
+propagated them. However, an imprecision arises on the conditional branching
+that depends on an abstract value. When such a branch is executed, both
+outcomes might be admissible, in that case, we need to examine both
+possibilities (see \autoref{fig:branch}).
 Furthermore, continuing one way does not ensure that values were constrained
-according to the branch condition. Accordingly, we need to instrument an assume
-operation that will recompute a constrained value. Moreover, other values might
-be relationally dependent on the constrained values -- therefore we need to
-propagate constraints to some extent of precision backward. Eventually, we
-might use some global relational structure as is used in symbolic execution --
-path condition.
+according to the branch condition. Accordingly, we need to instrument an
+\emph{assume} operation that will recompute a constrained value. Moreover,
+other values might be relationally dependent on the constrained values --
+therefore we need to propagate constraints to some extent of precision
+backward. Eventually, we might use some global relational structure as is used
+in symbolic execution -- path condition.
 
 In my work, I want to investigate \emph{backward constraints propagation} and
 its adaptation to \cegar-based techniques with the application of predicate
-abstraction. For this use case, I would like to repurpose the bucketing/state
+abstraction. For this use case, I would like to reuse the bucketing/state
 partitioning techniques from abstract interpretation to simplify sets of
-possibly related variables.
+possibly related variables. Furthermore, I would like to investigate an
+adaptation of on-the-fly refinement techniques like widening and narrowing.
 
-\add{ incorporate widening/narrowing into the refinement }
+\subsubsection{ Domain categories }
 
-\add{ example }
-
-\subsection{Abstraction refinement}
-
-
-A final challenge of my research would be to define a general \cegar loop in the
-means of transformation based abstraction. The main challenge here is how to
-remap counterexample back to instrumentation.
-
-Hand-in-hand with \cegar comes multiple possible refinement techniques inspired
-by the \smt community: program variables bitwidth abstraction, theory refinement
-or lazy abstraction approaches. The final symbolic approach might be extended
-to function summarization and bottom-up program verification.
-
-% \add{ refinement steps }
-% \add{ counterexample encoding }
-% refinement techniques from chapter 2
-% variables packing
-% abstraction encoding
-
-% \subsubsection{SMT inspired refinement techniques}
-%\add{ bitwidth abstraction }
-%\add{ theory refinement}
-%\add{ function summarization }
-
-\subsection{ Domain categories }
-
-In addition to numeric abstract domains, we want to cover other techniques like
+In addition to numeric abstract domains, I want to cover other techniques like
 shape analysis and heap abstractions -- here I want to focus on how to
-generalize these abstractions. In our transformation framework, we distinguish
+generalize these abstractions. In the transformation framework, I distinguish
 three categories of abstract domains:
 
 \begin{itemize}
@@ -257,43 +294,84 @@ three categories of abstract domains:
     \item \emph{pointer domains} that enable to abstract program pointers.
 \end{itemize}
 
-In the next chapter I present my achieved results in the instrumentation of scalar and aggregate domains.
+\noindent
+Each of these categories requires a slightly different analysis. Moreover,  the
+analyses need to able to work with a combination of domains as well as transfer
+between them, e.g., when an abstract array is accessed, the result might
+be an abstract scalar.  In the next chapter, I present my achieved results in
+the instrumentation of scalar and aggregate domains.
 
-\add{ automatic testing of abstract domains \cite{Bugariu2018} }
+Another interesting direction would be to explore how to transfer between
+abstract domains of the same category. It might be useful to treat values from
+various sources in different abstract domains (e.g., interval domain and
+predicate domain). However, when these two values meet in the execution, the
+abstraction needs to resolve their join somehow.
 
-% aggregate domains (abstract only offset)
-% \add{ pointer domains }
-% pointer domains (abstract address/offset)
+\subsubsection{Abstraction refinement}
+
+
+A final challenge of my research would be to define a general \cegar loop in the
+means of transformation based abstraction. The main challenge here is how to
+remap counterexample back to instrumentation.
+
+Hand-in-hand with \cegar comes multiple possible refinement techniques inspired
+by the \smt community: program variables bitwidth
+abstraction~\cite{Jonavs2018}, theory refinement~\cite{Hyvarinen2017} or lazy
+abstraction approaches~\cite{Henzinger2002}. Moreover, the final symbolic
+approach might be extended by function summarization and bottom-up program
+verification.
 
 \subsection{ Executable abstraction }
 
 The hitherto presented abstraction relied on the underlying execution engine,
 which maintained abstraction metadata and enabled non-deterministic program
 branching. However, for the future, I plan to investigate a possibility of a
-runnable abstraction for a particular run of non-deterministic choices with the
-use of data flow sanitizer [TODO] (see fourth option of \autoref{fig:bounds})
--- such program provides an option of executable counterexample to be analyzed
-by general-purpose analysis of \llvm programs (e.g., debuggers).  The data flow
+runnable abstraction for a particular run of non-deterministic choices.  With
+the use of clang data flow sanitizer, that manages program shadow memory, the
+abstraction can store its metadata in the program and be completely independent
+of the execution enginei (see fourth option of \autoref{fig:bounds}) -- such
+program provides an option of executable counterexample to be analyzed by
+general-purpose analyses of \llvm programs (e.g., debuggers).  The data flow
 sanitizer enables program to keep track of metadata and propagates them during
 execution -- allows to perform a taint analysis, where taints identify abstract
 values in the program.
 
-\add{ \cite{Gennari2018} }
-
-\add{ seahorn - bing seahorn capabilities to other tools }
-
+\newpage
 \section{Progression Schedule}
 
-\add{ TODO }
+The plan of my future study and research activities is following:
 
-% DFA
+\begin{description}[style=nextline,leftmargin=0.8cm]
+    \item [now -- January 2022]
+        Maintenance of \lart and compilation-based abstractions.
+    \item [now -- January 2020]
+        Extending data flow analysis to be memory-aware and finalize aggregate
+        and pointer domains related analyses. Prepare a tool paper on
+        \lart and domain design.
+    \item [January 2020]
+        Doctoral exam and defense of this thesis proposal.
+    \item [February 2020 -- Jun 2020]
+        Design of instrumentation friendly counterexamples and \cegar
+        implementation for predicate abstraction.
 
-% Cegar
+    \item [Jun 2020 -- December 2020]
+        Investigation of \smt-based refinements and lazy abstraction.
 
-% SMT based refinements
+    \item[January 2021 -- August 2021]
+        Implementing instrumentation of executable abstract counterexamples.
 
-% Domain tutorial + testing
+    \item[September 2021 -- January 2022]
+        Summarizing my research and writing of the PhD thesis.
+    \item[January 2022]
+        Defense of the PhD thesis.
+\end{description}
 
-% Executable domain
+\prule
+\bigskip
 
-% Thesis
+\noindent
+Moreover, throughout my PhD study, I plan to advise bachelor and master
+students, that will implement various abstract domains into the \lart. In
+addition to classical domains, I plan with them to craft domain-specific abstractions
+for verification of real-world software (e.g., abstractions of the file system,
+system clocks).
