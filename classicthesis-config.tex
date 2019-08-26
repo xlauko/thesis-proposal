@@ -54,6 +54,7 @@
 \newcommand{\Logo}{img/fi-logo}
 \newcommand{\Author}{Henrich Lauko\xspace}
 \newcommand{\Supervisor}{prof. RNDr. Jiří Barnat, Ph.D.\xspace}
+\newcommand{\Consultant}{RNDr. Petr Ročkai, Ph.D.\xspace}
 \newcommand{\Department}{Faculty of Informatics\xspace}
 \newcommand{\University}{Masaryk University\xspace}
 \newcommand{\Year}{September 2019\xspace}
@@ -90,6 +91,8 @@
     frame=lines,
     rulecolor=pruss,
     framesep=1mm,
+    autogobble,
+    numbersep=8pt,
     baselinestretch=1.2,
     fontsize=\footnotesize,
     escapeinside=||,
@@ -194,10 +197,10 @@
 
 \newcolumntype{g}{>{\columncolor{pruss!10}}c}
 
-\usepackage[strict]{changepage}%to know on which page we are (left or right)
 \usepackage{xkeyval}
 \usepackage{subfig}
 \usepackage{graphicx}
+\usepackage{calc}
 
 % ****************************************************************************************************
 % 6. PDFLaTeX, hyperreferences and citation backreferences

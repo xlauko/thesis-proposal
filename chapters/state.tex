@@ -70,8 +70,7 @@ called a \emph{context} $\mathcal{C}_l \subseteq \mathcal{P}(\Sigma)$.
 
 The semantics of instruction $i \in \mathcal{I}$ is defined by \emph{strongest
 post condition} $\textsf{SP}_{i}(\cdot)$, i.e. it is executed on a particular program
-state and accordingly updates values of program variables -- for further details
-see \autoref{ch:llvm}.
+state and accordingly updates values of program variables.
 
 A set of all edges $\mathcal{G}$ induces a transition relation $\rightarrow$ on
 the set of states $\Sigma$, such that for each $g \in \mathcal{G}$ there is
@@ -183,7 +182,7 @@ is a set of states, $\sqcup$, $\sqcap$ are meet and join operators,
 $\sqsubseteq$ ordering of a lattice, $\top$ is the greatest element and $\bot$
 it the least element of the lattice. Throughout the rest of the thesis proposal,
 we will assume familiarity with the basic notions of lattice theory
-\cite{Birkhoff1940}.
+\cite{Birkhoff1940} and abstract interpretation~\cite{Cousot1977}.
 
 Given the concrete contexts from previous definitions, the \emph{concrete
 semantic domain} is a complete lattice $(\mathcal{P}(\Sigma), \cap, \cup,
@@ -221,8 +220,10 @@ undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
 sign of variable and $\top$ is for an arbitrary value (i.e., variable can be
 either negative, positive or zero).
 
-\begin{figure}%
-\begin{minipage}[t]{0.3\textwidth}
+\begin{figure}[!ht]
+\begin{adjustwidth}{-\oddsidemargin-1in}{-\rightmargin}
+\centering
+\begin{minipage}[t]{0.3\textwidth +  0.3\marginparsep + 0.3\marginparwidth}
 \strut\vspace*{-\baselineskip}\newline\centering
 \resizebox{\textwidth}{!}{
 \begin{tikzpicture}[node distance=1.1em]
@@ -271,7 +272,7 @@ either negative, positive or zero).
 }
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.3\textwidth}
+\begin{minipage}[t]{0.3\textwidth +  0.3\marginparsep + 0.3\marginparwidth}
 \strut\vspace*{-\baselineskip}\newline\centering
 \resizebox{\textwidth}{!}{
 \begin{tikzpicture}[node distance=1.1em]
@@ -320,7 +321,7 @@ either negative, positive or zero).
 }
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.3\textwidth}
+\begin{minipage}[t]{0.3\textwidth +  0.3\marginparsep + 0.3\marginparwidth}
 \strut\vspace*{-\baselineskip}\newline\centering
 \resizebox{\textwidth}{!}{
 \begin{tikzpicture}[node distance=1.1em]
@@ -375,7 +376,7 @@ either negative, positive or zero).
     (\textbf{left}), after 5 iterations (\textbf{middle}), reached fixpoint
     (\textbf{right}).}
     \label{fig:signcomp}%
-    \add{todo page width}
+    \end{adjustwidth}
 \end{figure}%
 
 We say that $\mathsf{A}$ is an abstraction of $\mathsf{C}$ because it carries
@@ -428,7 +429,7 @@ well-defined domain is required to have an image for each concrete value, and
 \end{center}
 
 \noindent
-In abstract interpretation $C$ and $A$ are called \emph{concrete} respectivelly
+In abstract interpretation, $C$ and $A$ are called \emph{concrete} respectivelly
 \emph{abstract} domain and they are assumed to be complete lattices. We call
 $\alpha$ the \emph{abstraction} map and $\gamma$ the \emph{concretization} map.
 
@@ -438,6 +439,14 @@ fixpoint iteration\sidenote{For detailed algorithm see \cite{Cousot1977}} and
 by Knaster-Tarski theorem \cite{Tarski1955} we are guaranteed to obtain a
 solution, see \autoref{fig:signcomp}.
 
+Even though our example program in \autoref{fig:signcomp} is quite trivial, the
+sign domain \domain{sign} was not able to preserve any interesting properties,
+and all resulting contexts contains either $\top$ or $\bot$.  Sign domain belongs to
+the class of simple domains that reason only about single property of variables --
+also known as \emph{property domains}. Another famous example of a property
+domain is a \textbf{\emph{parity domain}}, which captures whether the
+variable is odd or even. The parity domain is just a special case of a
+\textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
 \begin{marginfigure}%
     \centering
 \resizebox{\textwidth}{!}{
@@ -463,28 +472,16 @@ solution, see \autoref{fig:signcomp}.
     \caption{\domain{cp} domain lattice.}
     \label{fig:cp}%
 \end{marginfigure}%
+A~\textbf{\emph{constant propagation domain}} \domain{cp}
+(see~\autoref{fig:cp}) is another example of property domain used in
+optimization techniques \cite{Kildall1973}.
 
-Even though our example program in \autoref{fig:signcomp} is quite trivial, the
-sign domain \domain{sign} was not able to preserve any interesting properties,
-and all resulting contexts contains either $\top$ or $\bot$.  Sign domain belongs to
-the class of simple domains that reason only about single property of variables --
-also known as \emph{property domains}. Another famous example of a property
-domain is a \textbf{\emph{parity domain}}, which captures whether the
-variable is odd or even. The parity domain is just a special case of a
-\textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
-
-The basic building block of these domains is \emph{basis} that expresses how to
-abstract one program variable and simple arithmetic operations. Thanks to
-the galois connection the rest of interpretation can be derived automatically
-\cite{Mine2004Thesis}.
-
-A~\textbf{\emph{constant propagation domain}} \domain{cp} (see
-\autoref{fig:cp}) is another example of property domain used in optimization
-techniques \cite{Kildall1973}.  It is possible to combine multiple domains to
-reason about multiple properties either by keeping each property separately or
-by reduced product of domains (see \autoref{fig:cpsign}), which is more precise
-and more efficient than multiple separate interpretations \cite{Cousot2011b}.
-For further information see \autoref{sec:domainrefinement}.
+Probably the simplest of domains is a \emph{definedness domain} \domain{D}, which only
+reason about definedness of values (see domain lattice \autoref{fig:unitd}).
+Despite its simplicity, it can be useful to detect reachability of program
+locations. Even simpler domain is a~single value domain \domain{U}. The single
+value domain is usefull if we want to omit a variable from the model of the
+program.
 
 \begin{marginfigure}%
     \centering
@@ -514,13 +511,6 @@ For further information see \autoref{sec:domainrefinement}.
     \label{fig:cpsign}%
 \end{marginfigure}%
 
-Probably the simplest of domains is a \emph{definedness domain} \domain{D}, which only
-reason about definedness of values (see domain lattice \autoref{fig:unitd}).
-Despite its simplicity, it can be useful to detect reachability of program
-locations. Even simpler domain is a~single value domain \domain{U}. The single
-value domain is usefull if we want to omit a variable from the model of the
-program.
-
 \begin{marginfigure}%
     \centering
     \begin{tikzpicture}[node distance=1em]
@@ -528,20 +518,31 @@ program.
     \node [below = of t] (b) {$\bot$};
     \draw [thin] (t) -- (b);
     \end{tikzpicture}
-    \caption{\domain{U} tracks only definedness of variables.}
+    \caption{\domain{U} keeps only information about definedness of variables.}
     \label{fig:unitd}%
 \end{marginfigure}%
+
+The basic building block of these domains is \emph{basis} that expresses how to
+abstract one program variable and simple arithmetic operations. Thanks to
+the galois connection the rest of interpretation can be derived automatically
+\cite{Mine2004Thesis}.
+
+Furthermore, it is possible to combine multiple domains to
+reason about multiple properties either by keeping each property separately or
+by reduced product of domains (see \autoref{fig:cpsign}), which is more precise
+and more efficient than multiple separate interpretations \cite{Cousot2011b}.
+For further information see \autoref{sec:domainrefinement}.
 
 Since the precision of an abstract domain highly depends on the program
 structure, many abstract domains were designed to track various program
 properties. Let us take it chronologically. The first domain presented in
 Cousot's paper \cite{Cousot1977} to achieve more precise results was an
 \textbf{\emph{interval domain}} \domain{I}. In the interval abstraction, a set of values
-is represented by its minimal and maximal value. Since in some cases, it is not
-possible to determine the boundary values, the interval domain utilizes
-infinities to denote arbitrary bound -- we represent arbitrary value
-$\top_{\textit{I}}$ by $[-\infty, \infty]$ and undetermined value $\bot_{\textit{I}}$
-by empty interval $\emptyset$.
+is represented by its minimal and maximal value (see \autoref{fig:interval}).
+Since in some cases, it is not possible to determine the boundary values, the
+interval domain utilizes infinities to denote arbitrary bound -- we represent
+arbitrary value $\top_{\textit{I}}$ by $[-\infty, \infty]$ and undetermined
+value $\bot_{\textit{I}}$ by empty interval $\emptyset$.
 
 \begin{marginfigure}
 \strut\vspace*{-\baselineskip}\newline\centering
@@ -549,33 +550,33 @@ by empty interval $\emptyset$.
 \begin{tikzpicture}[node distance=1.1em]
     \node [loc] (l1) {$l_1$};
     \node [lab, left = 0cm of l1] (entry) {\llvmint{entry:}};
-    \node [lab, right = 0cm of l1] (e1) {$(\bot, \bot, \bot, \bot)$};
+    \node [lab, right = 0cm of l1] (e1) {$\emptyset$};
 
     \node [loc, below = of l1] (l2) {$l_2$};
-    \node [lab, right = 0cm of l2] (e2) {$(\bot, \bot, \bot, \bot)$};
+    \node [lab, right = 0cm of l2] (e2) {$\emptyset$};
     \node [loc, below = of l2] (l3) {$l_3$};
     \node [lab, left = 0cm of l3] (loop) {\llvmint{loop:}};
-    \node [lab, right = 0cm of l3] (e3) {$([0,0], [0,0], [0,0], [0,0])$};
+    \node [lab, right = 0cm of l3] (e3) {$[0,4]$};
 
     %\node[fit=(l1) (l2), draw, dashed] (ebb) {};
 
     \node [loc, below = of l3] (l4) {$l_4$};
-    \node [lab, right = 0cm of l4] (e4) {$([0,0], [0,0], [1,1], [0,1])$};
+    \node [lab, right = 0cm of l4] (e4) {$[0,4]$};
     \node [loc, below = of l4] (l5) {$l_5$};
-    \node [lab, right = 0cm of l5] (e5) {$([0,0], [0,0], [1,1], [0,1])$};
+    \node [lab, right = 0cm of l5] (e5) {$[0,4]$};
     \node [loc, below = of l5] (l6) {$l_6$};
-    \node [lab, right = 0cm of l6] (e6) {$([1,1], [0,0], [1,1], [0,1])$};
+    \node [lab, right = 0cm of l6] (e6) {$[0,4]$};
     \node [loc, below = of l6] (l7) {$l_7$};
-    \node [lab, right = 0cm of l7] (e7) {$([1,1], [0,0], [1,1], [0,1])$};
+    \node [lab, right = 0cm of l7] (e7) {$[1,5]$};
 
     %\node[fit=(l3) (l4) (l5) (l6) (l7), draw, dashed] (lbb) {};
 
     \node [loc, below = of l7] (l8) {$l_8$};
     \node [lab, left = 0cm of l8] (loop) {\llvmint{end:}};
-    \node [lab, right = 0cm of l8] (e8) {$([0,0], [0,0], [0,0], [0,0])$};
+    \node [lab, right = 0cm of l8] (e8) {$[5,5]$};
 
     \node [loc, below = of l8] (l9) {$l_9$};
-    \node [lab, right = 0cm of l9] (e9) {$([0,0], [0,0], [0,0], [0,0])$};
+    \node [lab, right = 0cm of l9] (e9) {$[5,5]$};
 
     %\node[fit=(l8) (l9), draw, dashed] (lbb) {};
 
@@ -590,20 +591,20 @@ by empty interval $\emptyset$.
     \draw [->, >=stealth] (l8) -- node[midway, right] {\llvmint{ret 0}} (l9);
 \end{tikzpicture}
 }
-    \caption{TODO correct intervals: Interval abstraction example after fixpoint iteration.}
+    \caption{Result of interval abstraction for variable \llvmint{|\var{\%x}|} after fixpoint iteration.}
+    \label{fig:interval}
 \end{marginfigure}
-\add{ example of interval abstraction on example program }
 
 Unfortunately, with the infinite lattice of the interval
 domain,\sidenote{The interval domain does not meet ascending chain condition.} the
 abstract interpretation will obtain a possible infinite or impractically long
 executions (e.g., when the interpretation can not determine the bound of a loop
 it can increment the boundary of an interval indefinitely never reaching the
-fixpoint). For this reason, abstract interpreters employ widening and
-narrowing techniques to accelerate convergence \cite{Cousot1992a, Cortesi2011}.
-The idea of wi\-de\-ning is to overshoot the least fixpoint after few
-unsuccessful iterations of the interpretation and subsequently by narrowing to
-refine the over-approximated solution.
+fixpoint). Therefore, abstract interpreters employ \textbf{\emph{widening}} and
+\textbf{\emph{narrowing}} techniques to accelerate convergence \cite{Cousot1992a,
+Cortesi2011}.  The idea of wi\-de\-ning is to overshoot the least fixpoint
+after few unsuccessful iterations of the interpretation and subsequently by
+narrowing to refine the over-approximated solution.
 \begin{definition}
     \textbf{Widening operator} $\nabla$ for domain $(\mathcal{A},
     \sqsubseteq)$ fulfills:
@@ -612,6 +613,7 @@ refine the over-approximated solution.
         \item for each sequence $(v_k)_{k \in \mathbb{N}}$, the sequence $(v^{\nabla}_k)_{k \in \mathbb{N}}$ defined as $v^{\nabla}_0 = v_0$ and $v^{\nabla}_k = v^{\nabla}_{k-1} \nabla v_k$ reaches a fixpoint after finitely many steps.
     \end{enumerate}
 \end{definition}
+\vspace{-1em}
 \begin{definition}
     \textbf{Narrowing operator} $\Delta$ for domain $(\mathcal{A},
     \sqsubseteq)$ fulfills:
@@ -621,6 +623,7 @@ refine the over-approximated solution.
     \end{enumerate}
 \end{definition}
 
+\noindent
 By different implementation of widening and narrowing, abstract interpreters
 employ different strategies to achieve convergence -- for example widening
 with thresholds \cite{Blanchet2003, Lakhdar2011}, delayed widening, parma widening
@@ -650,11 +653,11 @@ while (i >= 0) {
 \end{marginfigure}
 
 The drawback of the domains presented uptil now is that they are not able to reason about
-relational properties between variables -- hence we address them as
-\emph{non-relational} abstract domains.
-However, many verification tasks require to take relations into account.
-For example, to show that $v \leq 11$ at line 7 in program of
-\autoref{fig:relationalc}, we need to prove a relational loop invariant $v + i
+relational properties between variables. Therefore, we address them as
+\emph{non-relational} abstract domains.  However, many verification tasks
+require to take variables relations into account.  For example, to show that $v \leq 11$
+at line 7 in program of \autoref{fig:relationalc}, we need to prove a
+relational loop invariant $v + i
 \leq 10$.
 
 %\add{other applications of relational domains: analysis of programs with
@@ -667,17 +670,19 @@ The simplest of the relational abstract domains is a \emph{linear equality
 domain} that captures information about affine relationships among program
 variables \cite{Karr1976}. In this domain, an abstract variable is represented
 by the affine subspace of program state space. The problem with the affine
-domain is in its nonunique minimal form; this problem is solved by combination
-with the congruence domain \cite{Granger1991}.
+domain is in its nonunique minimal form. Therefore, we can not easily determine
+whether two abstract values are equal. This problem is solved by combining
+the affine domain with the congruence domain \cite{Granger1991}.
 
 Another relational domain is a \emph{polyhedron abstract domain} which is
 inspired by the theory of linear programming and optimization \cite{Cousot1978, Venet2012}
-and provides a unique representation. Though, the manipulation with polyhedron
+and provides a unique representation. However, the manipulation with polyhedron
 abstract values involves costly computation of a simplex algorithm
-\cite{Schrijver1986}. Nowadays a polyhedron abstract domain is still
-extensively studied -- an abstraction of polyhedron by bounding boxes to
-simplify abstract operations \cite{Singh2017}, or in combination with interval
-domain to reason about interval linear properties \cite{Chen2009}.
+\cite{Schrijver1986}. Nowadays a~polyhedron abstract domain is still
+extensively studied: Singh et~al. present an abstraction of polyhedron by
+bounding boxes to simplify abstract operations in \cite{Singh2017};
+alternatively the combination with interval domain to reason about interval
+linear properties is examined in \cite{Chen2009}.
 
 \subsection{Weakly relational abstract domains}
 
@@ -695,24 +700,23 @@ is in its representation by potential graphs and difference-bound matrices
 \cite{Larsen1997}, which allows a unique minimal representation of abstract
 values. The octagon domain was further optimized by bucketing of octagons
 \cite{Blanchet2003, Venet2004} and modified to extend captured properties
-\cite{Claris2004, Mine2004}. Further restriction provides a zone domain
+\cite{Claris2004, Mine2004}. Further restriction provides a \emph{zone domain}
 \cite{Mine2001} which reasons only about invariants of form $x - y \leq c$ and
 $\pm x \leq c$.
 
-A less precise and lightweight relational domain of pentagons was introduced in
-\cite{Logozzo2010} with applicability on validation of array manipulating
+A less precise and lightweight relational domain of \emph{pentagons} was introduced in~\cite{Logozzo2010} with applicability on validation of array manipulating
 byte-code. The pentagon domain captures properties of the form of $x \in [a,b]
 \wedge x < y$.
 
-A recent abstract domain utilizes parallelotopes to encode any linear
+A recent abstract domain utilizes \emph{parallelotopes} to encode any linear
 constraint as the polyhedra, while it preserves the efficiency of weakly
 relational abstract domains \cite{Amato2017}.
 
 A disadvantageous aspect of relational abstract domains is their complicated
 representation and therefore computationally less efficient abstract
 operations. In addition to maintaining more properties about variables, the
-representation also needs to assure uniqueness of the representation. Hence the
-operations need to incorporate some sort of normalization (e.g., difference
+representation also needs to assure uniqueness of the representation. Hence,
+the operations need to incorporate some sort of normalization (e.g., difference
 bound matrices in the octagon domain \cite{Mine2006}, or generators of affine
 space in the linear equality domain \cite{Karr1976}).
 
