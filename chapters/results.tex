@@ -3,38 +3,49 @@
 
 % Povinné pro rigorózní práci, 3-5 stran.
 
-\add{ add short intro }
+In my research, I focus on the design of reusable abstraction for program
+verification. The main objective of this design is to determine how to extract
+abstraction out of dynamic analysis and still provide sufficient information
+for program state-space exploration. In my work, I propose to let the program
+under test take care of abstraction and maintain abstract data. This can be
+achieved by instrumentation of abstract operations directly into the program.
+Hence, the verifier does not need to perform abstract interpretation, but it
+can only perform a concrete interpretation of the program and extract abstract
+data from the program memory if it needs them.
 
-As a reasonable boundary for reusable abstraction, we have selected a design
-where metadata and decision procedure are part of the execution engine (see
-\autoref{fig:bounds}). This choice balances an effort required to integrate the
-transformation-based technique and load on execution engine, where the
-instrumented code needs to be interpreted.
+In the previous chapter, I have stated multiple alternatives of how much of the
+abstract interpretation is instrumented into the program and retained in the
+interpreter.  As a reasonable boundary for reusable abstraction, I have
+selected a design where metadata and decision procedure are part of the
+execution engine (see \autoref{fig:bounds}). This choice balances an effort
+required to integrate the transformation-based technique and load on execution
+engine, where the instrumented code needs to be interpreted.
 
 Up until now, I have focused on the general design of trans\-for\-mation-based
 abstraction without refinement (\emph{trivially constrainable domains}). The
 main concern of the first prototype was to design a general-purpose analysis
-for instrumentation. The goal of this transformation was to allow coexistence
+for instrumentation. The goal of these transformations was to allow coexistence
 of concrete and abstract values in a single program. In this way, I was able to
 extend model checker \divine~\cite{Divine17} with symbolic
 computation~\cite{Lauko2019Sym, Lauko2018SymComp}.
 
 All analyses presented in my up-to-date work are implemented in a tool named
-\lart -- \llvm Abstraction and Refinement Tool, that is a part of the \divine
-project. \lart based on top of the open-source \llvm compiler infrastructure.
-The latter is a well-maintained, well-documented, and continuously improving
-framework. It allows \lart to easily integrate program analyses,
-transformations, and other tools that target \llvm.
+\lart -- \llvm abstraction and refinement tool, that is a part of the \divine
+project. \lart is based on top of the open-source \llvm compiler
+infrastructure.  The latter is a well-maintained, well-documented, and
+continuously improving framework. It allows \lart to easily integrate program
+analyses, transformations, and other tools that target \llvm.
 
 \section{Symbolic computation via Program Transformation}
 \label{sec:symbolic}
 
 \subsection{Abstraction Design}
 
-The overall symbolic abstraction consists of two parts: preprocessing (\emph{static
-analysis}), which performs instrumentation of abstraction into the program; and
-verification (\emph{dynamic analysis}) that explores the state space of the
-system under test.
+The overall symbolic abstraction, depicted in \autoref{fig:design}, consists of
+two parts: preprocessing (\emph{static analysis}), which performs
+instrumentation of abstraction into the program; and verification
+(\emph{dynamic analysis}) that explores the state space of the system under
+test.
 
 The instrumentation performs dataflow analysis of non-de\-ter\-ministic values and
 replaces operations on them by their abstract counterparts. The instrumented
@@ -48,6 +59,13 @@ from program memory, whenever it needs to decide whether the state is feasible
 or is equal to some previously visited state. An external \smt solver solves
 feasibility and equality queries. Notice that the virtual machine has no clue
 about abstract values present in the program.
+
+However, it needs to recognize what parts of the memory contains abstract data,
+because they can not be compared explicitly when the model checker is
+determining equality of states.\sidenote{A dedicated decision procedure
+determines the equality of abstract values. In the case of symbolic values it is
+a \smt solver.} Therefore, the virtual machine keeps metadata that denotes what
+parts of memory hold abstract values.
 
 \begin{figure}
     \centering
@@ -152,6 +170,6 @@ I wrote parts of the paper and I have helped with a tool preparation for the
 by Mrázek J., P. Bauch, H. Lauko and J. Barnat.
 In: Model Checking Software -- SPIN 2016 -- 23rd International Symposium, Eindhoven, The Netherlands, April 7-8, 2016, Proceedings, pp. 208-213~\cite{Mrazek2016}
 
-I have helped with writing the final paper.
+I have helped with writing of the final paper.
 
 \end{itemize}
