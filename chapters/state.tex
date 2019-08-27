@@ -200,7 +200,7 @@ To obtain a computable model, we need to drop some information about program
 variables. For instance, to drop all the information about each program
 variable except whether it is positive, negative or zero. This can be achieved
 by replacement of values domain we are computing on $\mathsf{C}$ by an abstract
-domain $\domainm{sign} = \{ \bot, -, 0, +, \top)$ =, where $\bot$ represents an
+domain $\domainm{sign} = \{\bot, -, 0, +, \top\}$, where $\bot$ represents an
 undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
 \begin{marginfigure}%
     \centering
@@ -789,7 +789,7 @@ values $\mathcal{C}_{\textit{addr}} \subseteq \mathcal{C}$. The environment $e
 \mathcal{H}$ is a partial function that map addresses into values: $\mathcal{H}
 = \mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C}$.  A particular
 environment and heap describe a memory state $\sigma_m \in \mathcal{M}$ where
-$\mathcal{M} = \mathcal{E} \times \mathcal{H}$, fro better illustration see
+$\mathcal{M} = \mathcal{E} \times \mathcal{H}$, for better illustration see
 example in \autoref{fig:memory}.
 
 \begin{marginfigure}
