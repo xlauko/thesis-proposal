@@ -56,7 +56,7 @@ During verification, virtual machine (\textsc{vm}) executes the abs\-trac\-ted
 program and generates state space for a model checking algorithm (\textsc{mc}).
 The model checking algorithm extracts symbolic data and path condition directly
 from program memory, whenever it needs to decide whether the state is feasible
-or is equal to some previously visited state. An external \smt solver solves
+or is equal to some previously visited state. An external \textsc{smt} solver solves
 feasibility and equality queries. Notice that the virtual machine has no clue
 about abstract values present in the program.
 
@@ -64,7 +64,7 @@ However, it needs to recognize what parts of the memory contains abstract data,
 because they can not be compared explicitly when the model checker is
 determining equality of states.\sidenote{A dedicated decision procedure
 determines the equality of abstract values. In the case of symbolic values it is
-a \smt solver.} Therefore, the virtual machine keeps metadata that denotes what
+a \textsc{smt} solver.} Therefore, the virtual machine keeps metadata that denotes what
 parts of memory hold abstract values.
 
 \begin{figure}

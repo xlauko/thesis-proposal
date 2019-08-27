@@ -735,7 +735,7 @@ a prominent technique used to handle infinite state-spaces (see
 over program variables. The interpretation of predicates is a set of program
 states (i.e., the states of abstracted system correspond to truth assignments
 to a set of predicates). Because the predicate abstraction is restricted to a
-finitary domain, its transition function can be computed by \smt solver/theorem
+finitary domain, its transition function can be computed by \textsc{smt} solver/theorem
 prover~\cite{Cousot2003, Ball2001}. The predicates used in abstraction are
 generated in a heuristic manner from the program under test or by a refinement
 loop (see \autoref{fig:cegar}) \cite{Flanagan2002}. In contrast to previous
@@ -819,88 +819,113 @@ is a \emph{null pointer} domain illustrated in \autoref{fig:nulldomain}.
     \node [below = of null] (b) {$\bot$};
         \draw [thin] (t) -- (null) -- (b);
     \end{tikzpicture}
-    \caption{Null pointer domain keeps information whether a pointer might be \emph{null}. Where
+    \caption{The null pointer domain keeps information whether a pointer might be \emph{null}:
     $\gamma_{\textit{ptr}}(\top) = \mathcal{C}_{\textit{addr}}$ and
     $\gamma_{\textit{ptr}}(\textit{non-null}) = \mathcal{C}_{\textit{addr}} \setminus 0$. }
     \label{fig:nulldomain}
 \end{marginfigure}
 
-Non-Relational pointer domains have a disadvantage because of their imprecision -- as soon as a points-to set of pointers contain several elements, the abstract interpretation performs imprecise updates. Moreover, they are not able to express well-structured invariants about memory objects (e.g., lists, tree).
+Non-Relational pointer domains have a disadvantage because of their imprecision
+-- as soon as a points-to set of pointers contain several elements, the
+abstract interpretation performs imprecise updates. Moreover, they are not able
+to express well-structured invariants about memory objects (e.g., lists or trees).
 
-For more precise updates, pointer abstraction leverage \emph{separation logic}. It allows performing local reasoning about memory (i.e., consider only a part of memory). In separation logic, the memory relations are described by points-to predicates and separating conjunctions on heaps~\cite{Reynolds2002}.
+For more precise updates, pointer abstraction leverage \emph{separation logic}.
+It allows performing local reasoning about memory (i.e., consider only a part
+of memory). In separation logic, the memory relations are described by
+points-to predicates and separating conjunctions on heaps~\cite{Reynolds2002}.
 
-However, just separation logic is too expressive to be tractable as an abstract domain because it is not efficient manipulation. In static analysis, separation logic is usually used in combination with shape analysis. Shape graphs are used to generalize abstract data structures (e.g., lists or trees). The shape graph can summarize inductive data structures into simple shapes~\cite{Distefano2006}. Similarly to scalar analysis, shape analysis can be refined by widening or by keeping shape relations~\cite{Chang2008}.
-Reduced products to shape analysis was introduced in~\cite{Toubhans2013}.
+However, just separation logic is too expressive to be tractable as an abstract
+domain because it is not efficient manipulation. In static analysis, separation
+logic is usually used in combination with shape analysis. Shape graphs are used
+to generalize abstract data structures (e.g., lists or trees). The shape graph
+can summarize inductive data structures into simple
+shapes~\cite{Distefano2006}. Similarly to scalar analysis, shape analysis can
+be refined by widening or by keeping shape relations~\cite{Chang2008}.  Reduced
+products to shape analysis was introduced in~\cite{Toubhans2013}.
 
-More recent approaches leverage \smt solvers and reduce problems from
+More recent approaches leverage \textsc{smt} solvers and reduce problems from
 separational logic to propositional logics~\cite{Piskac2013, Itzhaky2014,
 Itzhaky2014b}.  Also, template-based domains~\cite{Malik2018} delegates
-semantic reasoning to \smt solvers and concentrates on the design of
+semantic reasoning to \textsc{smt} solvers and concentrates on the design of
 appropriate shape templates.  In comparison to traditional predicate analysis
 where a user needs to supply a set of predicates, template-based domains use a
-set of parametrized predicates which are further gradually refined via \smt.
-Moreover, the \smt representation enables a straightforward combination with
+set of pa/-ra/-me/-trized predicates which are further gradually refined via \textsc{smt}.
+Moreover, the \textsc{smt} representation enables a straightforward combination with
 value analysis -- hence allows reasoning about the shape and their contents at
 the same time.
 
-To reason only about numeric properties of heap manipulating programs, we can omit a lot of shape analysis. Magill et al. present an abstraction~\cite{Magill2010} that instruments only numeric abstraction of shape properties into the program, hence allow cheaper reasoning about properties like a length of linked-lists or distance between two elements of the list. Other domains extend the relational numeric analysis of the content of particular shapes, for example, trees~\cite{Journault2019}.
+To reason only about numeric properties of heap manipulating programs, we can
+omit a lot of shape analysis. Magill et al. present an
+abstraction~\cite{Magill2010} that instruments only numeric abstraction of
+shape properties into the program, hence allow cheaper reasoning about
+properties like a length of linked-lists or distance between two elements of
+the list. Other domains extend the relational numeric analysis of the content
+of particular shapes, for example, trees~\cite{Journault2019}.
 
-Many tools specialize in the analysis of a single type of data-structure. To name a few: Predator is a tool for automated verification of programs with dynamic linked data structures using a separation logic and shape graphs~\cite{Dudka2012}; Forester leverage tree automata in combination with shape analysis to verify programs with various types of lists or trees~\cite{Holik2015}; Space Invader~\cite{Yang2008}.
+Many tools specialize in the analysis of a single type of data-structures. To
+name a few: Predator is a tool for automated verification of programs with
+dynamic linked data structures using a separation logic and shape
+graphs~\cite{Dudka2012}; Forester leverage tree automata in the combination
+with shape analysis to verify programs with various types of lists or
+trees~\cite{Holik2015}; whereas Space Invader~\cite{Yang2008} use shape
+analysis in combination with abduction. For an extended survey of heap
+abstractions, we refer to~\cite{Kanvar2016}.
 
-\add{ extend }
-
-For an extended survey of heap abstractions, we refer to~\cite{Kanvar2016}
+\add{ extend ? }
 
 \subsubsection{Array abstraction}
 
-The simplest and heavily used data structure -- array gets a lot of specific
-abstract domains for efficient reasoning about array manipulating programs. The
-analyzer needs to be able to discover relationships among values of array
-elements, as well as their relationships to scalar variables and constants.
+The simplest and heavily used data structure \emph{memory array} gets a lot of
+specific abstract domains for efficient reasoning about array manipulating
+programs. In the analysis of arrays, the analyzer needs to be able to discover
+relationships among values of array elements, as well as their relationships to
+scalar variables and constants located in the program.
 
-It is problematic to statically reason about arrays, because of their unbounded
-nature.  Usually, the array operations do not consider a particular fixed array
-size. Instead, the array size depends typically on the scalar variables. The
-precise verification of such program requires being able to reason about
-relationships between array size and array content and program variables. Hence
-analyses tend to utilize symbolic methods to represent constraints on
-arrays~\cite{Gopan2005}.
+Generally, it is problematic to statically reason about arrays, because of
+their unbounded nature. The problem is that the array operations do not
+consider a particular fixed array size. Instead, the array size typically
+depends on the scalar variables. The precise verification of such program
+requires being able to reason about relationships between array size and array
+content and program variables. Hence analyses tend to utilize symbolic methods
+to represent constraints on arrays~\cite{Gopan2005}.
 
-Generally, we recognize two types of array-related techniques. Depending on the
-properties, analysis focus either on the reasoning about array bounds and
+Depending on the interested properties, we recognize two types of array-related
+techniques. The analysis either focus on the reasoning about array bounds and
 related out of bounds errors, or on the content of the array~\cite{Halbwachs2008}.
 
 To reason about array content, abstract domains are usually parametrizable by
-numerical abstract domains~\cite{Cousot2011p}. Symbolic methods are also used
-to represent or generalize facts about array manipulations -- for example,
+numerical abstract domains by which tha abstraction represents the internal
+elements of an abstract array~\cite{Cousot2011p}. Symbolic methods are also
+used to represent or generalize facts about array manipulations -- for example,
 \emph{universally quantified abstract domains}, enable to quantify over array
 elements with the use of simpler abstract domains~\cite{Gulwani2008}.
 Predicate abstraction is also used to describe properties about arrays in a
 form of update predicates~\cite{Kovacs2009}.
 
-The symbolic techniques naturally request for refinement of abstractions.
-Refinement of universally quantified abstract domains is presented in~\cite{Seghir2009}.
-As universal quantifiers represent hard task for decision procedures; the
-refinement tries to eliminate their occurrences using ghost variables.
-Refinement techniques leverage that predicates have a particular form when they
-reason about array indices. Other refinement approaches utilize lazy-abstraction~\cite{Alberti2012} and interpolants~\cite{Alberti2012b}.
+The symbolic techniques naturally request for a refinement of abstractions.
+The refinement of universally quantified abstract domains is presented
+in~\cite{Seghir2009}.  As universal quantifiers represent hard task for
+decision procedures; the refinement tries to eliminate their occurrences using
+ghost variables. Furthermore, the refinement techniques leverage that
+predicates have a particular form when they reason about array indices. Other
+refinement approaches utilize lazy-abstraction~\cite{Alberti2012} and
+interpolants~\cite{Alberti2012b}.
 
 The recent work~\cite{Payet2018} summarizes how weakly-relational domains for
 array indices does not scale in the analysis of object-oriented languages.
 However, in combination with symbolic expressions, traditional domains can
 scale to real-world codebases.
 
-A different approach is via program instrumentation~\cite{Cornish2015} to lower
-program arrays. The array-free programs can then leverage the fine-tuned
-numerical analysis. Moreover, the instrumentation can slice program only for
-interested array properties.
-
-\add{ reword + extend paper description }
+A different approach is via program instrumentation~\cite{Cornish2015} that
+lowers program arrays into scalar manipulating code. In this way, we obtain
+array-free programs that leverage the fine-tuned numerical analysis. Moreover,
+the instrumentation can slice program only for interested array properties.
 
 \subsubsection{String abstractions}
 
 Even though array abstraction might be used to handle strings in programs, it
-is more precise to treat them separately. In C/C++ language strings are
+is more precise to treat them separately. In C language, strings are
 represented as null-terminated arrays of characters. Hence, to detect string
 related errors, many abstractions extends the array abstractions to keep record
 about null characters~\cite{Olliaro2018}.
@@ -910,30 +935,38 @@ represent an abstract set of strings like finite
 automata~\cite{Christensen2003} or trie data structures.
 
 The recent work of Constantini~\cite{Costantini2011, Costantini2015} proposes a
-unifying approach to string analysis.  Presented domains can be tuned to a
-different level of precision and address only specific properties of strings.
-
-\add{ extend constantini work description + example }
+unifying approach to string analysis.  In his work, presented domains can be
+tuned to a different level of precision and address only specific properties of
+strings.
 
 \subsection{Real-world programs dedicated abstractions}
 
 In addition to general-purpose domains presented so far, verification of
-real-world programs delivered many domain-specific abstractions. Many numerical
-domains work with unbounded numbers. However, we would like to reflect the
-properties of bit-precise arithmetic like overflows.
+real-world programs requires many domain-specific abstractions. Since most of
+numerical domains work with unbounded numbers, they are not well suited for
+sound representation of computer numbers. Therefore, we would like to reflect
+the properties of bit-precise arithmetic like overflows in the abstract domains.
+This problem is solved in recent abstract domains that leverage bit-vector
+logic to reproduce processor semantics~\cite{Sharma2013, Sharma2017}. Similar
+domains were also designed for floating-point arithmetic~\cite{Putot2004}.  The
+real-world program analysis also requires to reflect memory model of the
+program under test. To describe memory model properties, analysis usually
+leverage dedicated predicate abstraction~\cite{Dan2013}.
 
-Recent domains are based on bit-vector arithmetic and reproduce processor semantics~\cite{Sharma2013, Sharma2017}. Similar domains were also designed for floating-point arithmetic~\cite{Putot2004}.
+%\add{ \cite{Majumdar2018} }
+\add{extend memory model abstraction}
 
-\add{ extend + example of difference ? }
+\begin{marginfigure}
+
+\add{example of bitvector abstraction which is not recogniazable by infinite domain}
+
+\label{fig:bitvector}
+\end{marginfigure}
 
 The paper~\cite{Reps2010} outlines challenges that arise when analyzing machine code and what can be done about them.
 \add{ describe challenges }
 
-More domain-specific abstractions are used to analyze database querying languages~\cite{Halder2012} or system components like filters~\cite{Feret2004} or synchronous clocks~\cite{Feret2005}.
-
-A real-world program analysis also requires to reflect memory model of the program under test. To describe memory model properties, analysis usually leverage dedicated predicate abstraction~\cite{Dan2013}.
-%\add{ \cite{Majumdar2018} }
-\add{extend memory model abstraction}
+More domain-specific abstractions are used to analyze database querying languages~\cite{Halder2012}; system components like filters~\cite{Feret2004} or synchronous clocks~\cite{Feret2005}.
 
 \subsection{Domain Refinement}
 \label{sec:domainrefinement}
@@ -961,47 +994,55 @@ A real-world program analysis also requires to reflect memory model of the progr
 
 So far, we have seen abstract domains with various expressiveness, cost, and
 precision. However, in many cases, we want to start with the simplest domains
-and refine them automatically on the fly when a spurious counter-example is
-encountered. The first approach of refinement is based on the observation that
-also abstraction form a lattice (see \autoref{fig:latticeabs}). In the lattice
+and refine them automatically on the fly when a spurious counterexample is
+encountered. One approach of refinement is based on the observation that
+also abstract domains form a lattice (see \autoref{fig:latticeabs}). In the lattice
 of domains we can refine two domains by a meet operation on them -- also known
-as reduced product construction \cite{Toubhans2013, Cousot2011b}. A broader
+as reduced product construction \cite{Toubhans2013, Cousot2011b}. A~broader
 study of large-scale reduced-products is presented in \cite{Cousot2007}.
 
-The powerset construction of domains \cite{Cousot1979} is also refined in later works
-\cite{File1999} and extended by efficient widening operators \cite{Bagnara2004}
-and exacts joins of numerical elements \cite{Bagnara2010}.
+Another approach of refinement is a \emph{powerset construction}~\cite{Cousot1979}
+that builds from the elements of the abstract domain a powerset lattice. The
+powerset domain allows to create a more accurate abstraction where we can
+describe values by a subset of properties (e.g., in the \textit{sign} domain
+the powerset domain allows to abstract a value to a subset $\{0, +\}$).  This
+technique was later refined in \cite{File1999} and extended by efficient
+widening operators \cite{Bagnara2004} and exacts joins of numerical elements
+\cite{Bagnara2010}.
 
-Many abstract domains are not closed under union. Usually, the approximation
-induced by abstract unions is a major source of precision loss. Disjunctive
-completion methods address this problem \cite{File1999}. The complementation
-introduces to abstraction \domain{} all those concrete disjunctions of elements
-of \domain{} that were initially missing. The resulting domain is the most
-abstract domain that is exact on disjunctions of abstract properties in
-\domain{}.  The usual usecase of abstract dijunctions is to merge multiple paths
-of the program.  Similarly complementation supplements missing complements to the
-abstraction \cite{Cortesi1995}.
+In the abstraction, the major source of imprecision is approximation induced by
+abstract unions. The usual usecase of abstract dijunctions (unions) is to merge
+multiple paths of the program. However, many abstract domains are not closed
+under union operation.  \emph{Disjunctive completion methods} address this
+problem \cite{File1999}. The complementation introduces to abstraction all
+those concrete disjunctions of elements of the domain that were initially
+missing.  The resulting domain is the most abstract domain that is exact on
+disjunctions of abstract properties in original domain. Similarly the technique
+of \emph{complementation} supplements missing complements to the abstraction
+\cite{Cortesi1995}.
 
-On the other hand, the fixpoint completion is a program dependent refinement,
-which improves the abstract domain by introducing all the properties which
+On the other hand, the \emph{fixpoint completion} is a program dependent refinement,
+which improves the abstract domain by introducing all the properties that
 would make the fixpoint iteration imprecise \cite{Giacobazzi2000,
 Giacobazzi2001}.
 
 The problem with relational abstract domains is that they do not generally
 scale-up. A general technique to ensure the linear cost of abstract domains is
-to split variables into independent smaller sets -- also know as variable
-packing technique \cite{Mine2006}. The variable packing can be refined by
+to split variables into independent smaller sets -- also know as \emph{variable
+packing technique} \cite{Mine2006}. The variable packing can be refined by
 keeping relations between the sets of variables \cite{Bouzaziz2012}.
 
-The state partitioning techniques \cite{Muchnick1981} facilitate the use of
-decision-tree data structures (based on binary decision diagrams) which are
-used in the state of the art tools \cite{Cousot2010, Bertrane2015}.
-Similarly, there are abstract domains that incorporate the decision trees to
-handle disjunctions in the programs \cite{Cousot2010a} or to prove conditional
-termination \cite{Urban2010}.
+The \emph{state partitioning} techniques \cite{Muchnick1981} work similarly,
+they facilitate the use of decision-tree data structures (based on binary
+decision diagrams) to split program states into smaller parts and relationally
+reason about values properties only inside of those parts. The state
+partitioning is commonly adopted in the state-of-the-art tools
+\cite{Cousot2010, Bertrane2015}. Similarly, there are abstract domains that
+incorporate the decision trees to handle disjunctions in the programs
+\cite{Cousot2010a} or to prove conditional termination \cite{Urban2010}.
 
 Further in the pursuit of increased precision, some techniques step out of the
-lattice-based approach and develop a weaker formalism for abstract domains with
+lattice-based approach and develop a weaker formalisms for abstract domains with
 the quasi-join ope\-ra\-tion~\cite{Gange2013}.
 
 \subsection{ Tools }
@@ -1061,7 +1102,7 @@ reachable in the concrete one; if not so, we are talking about the spurious erro
 
 \subsection{Counterexample-guided abstraction refinement}
 
-A common technique to handle spurious counterexamples is counterexample guided
+A common technique to handle spurious counterexamples is counterexample-guided
 abstraction refinement (\cegar), first time presented in~\cite{Clarke2000}.
 The idea of the \cegar approach is to examine a counterexample and if it is spurious,
 refine the abstraction. Subsequently, we restart the analysis with abstraction,
@@ -1103,7 +1144,7 @@ gain a more information from refinement, predicates are interpolated
 is an exceptionally successful abstraction technique for software model
 checking, because its symbolic state representation combines well with
 strongest post-conditions, and abstractions can be computed efficiently with
-\smt solvers~\cite{Beyer2013}.
+\textsc{smt} solvers~\cite{Beyer2013}.
 
 As listed in the \autoref{tab:svcomp}, many state-of-art tools apply \cegar in
 their analysis. Other applications worth mentioning are: predicate-based model
@@ -1149,9 +1190,9 @@ abstractions~\cite{Alberti2012, Alberti2012b}.
 
 On the contrary to lazy abstraction, which has used a refinement of abstraction
 on demand, the eager abstraction~\cite{McMillan2018} is inspired by eager
-theory explication used in \smt solvers. Eager strategy in \smt solvers
+theory explication used in \textsc{smt} solvers. Eager strategy in \textsc{smt} solvers
 abstract the formula to its propositional skeleton -- to compensate the loss of
-information \smt solver adds tautologies to the formula before abstraction,
+information \textsc{smt} solver adds tautologies to the formula before abstraction,
 whereas the lazy approach produces tautologies retroactively after abstraction.
 In the case of model checking, we apply the eager abstraction on the level of
 atomic propositions. The eager abstraction separates propositional and theory
@@ -1175,11 +1216,11 @@ language.
 
 Similarly, as in abstract interpretation, symbolic methods employ refinement
 techniques~\cite{Beyer2016}. As many of these techniques are primarily based on
-\smt theories~\cite{Beyer2018}, the symbolic verification may apply abstraction
+\textsc{smt} theories~\cite{Beyer2018}, the symbolic verification may apply abstraction
 strategies from solvers -- for example a bitwidth
 abstractions~\cite{Jonavs2018} or theory refinements~\cite{Hyvarinen2017}.
 
-As in the case of abstraction with uninterpreted functions~\cite{Gange2016}, \smt is also used to
+As in the case of abstraction with uninterpreted functions~\cite{Gange2016}, \textsc{smt} is also used to
 a better approximation of abstract operations via symbolic abstraction~\cite{Thakur2012}.
 
 \add{ extend symbolic abstraction technique }

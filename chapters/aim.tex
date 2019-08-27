@@ -61,7 +61,7 @@ or not.
 Another part of abstraction execution is a decision procedure which determines
 the feasibility of a program path. One can argue that it can also be extracted
 out of the execution engine for our purpose, however, in reality, it is hardly
-realizable that whole \smt solver would be compiled into the program and
+realizable that whole \textsc{smt} solver would be compiled into the program and
 reinterpreted by further analysis.
 
 \begin{figure}[h]
@@ -157,7 +157,7 @@ points:
 \begin{enumerate}
     \item general-purpose analyses for autonomous abstraction,
     \item easy to design reusable abstract domains of all kinds,
-    \item adaptation of counterexample guided refinement and widening, narrowing techniques,
+    \item adaptation of counterexample-guided abstraction refinement and widening, narrowing techniques,
     \item completely independent abstraction, i.e., executable abstract counterexamples.
 \end{enumerate}
 
@@ -316,7 +316,7 @@ means of transformation based abstraction. The main challenge here is how to
 remap counterexample back to instrumentation.
 
 Hand-in-hand with \cegar comes multiple possible refinement techniques inspired
-by the \smt community: program variables bitwidth
+by the \textsc{smt} community: program variables bitwidth
 abstraction~\cite{Jonavs2018}, theory refinement~\cite{Hyvarinen2017} or lazy
 abstraction approaches~\cite{Henzinger2002}. Moreover, the final symbolic
 approach might be extended by function summarization and bottom-up program
@@ -356,7 +356,7 @@ The plan of my future study and research activities is following:
         implementation for predicate abstraction.
 
     \item [Jun 2020 -- December 2020]
-        Investigation of \smt-based refinements and lazy abstraction.
+        Investigation of \textsc{smt}-based refinements and lazy abstraction.
 
     \item[January 2021 -- August 2021]
         Implementing instrumentation of executable abstract counterexamples.
