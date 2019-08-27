@@ -8,24 +8,29 @@ an overwhelming number of new techniques, tools, and algorithms.  However, many
 of them are not designed with reusability in mind.  This trend causes
 researchers to reimplement many of algorithms by themselves whenever they want
 to extend existing work.  The reimplementation does not just require extra time
-resources, but also produces hardly comparable results with previous approaches
-because the evaluation is becoming implementation-dependent.
+resources, but also produces results hardly comparable with previous approaches
+because the performance is becoming implementation-dependent.
 
-The computer-aided verification community is not an exception. In general, a
-goal of verification is to decide whether a system under test satisfies a given
-specification. Nevertheless, the verification task is undecidable; many
-verifiers are able to reason about complex systems. Hereabouts origins a large
-number of similar techniques that are used to tackle this problem. The primary
-set of techniques to reduce the complexity of verification is an
-\emph{abstraction}. According to the classification of used techniques in
-recent \svcomp \cite{SVCOMP2019}, many tools utilize a similar set of
-abstraction techniques (see \autoref{tab:svcomp}) concretely: counterexample
-guided refinement (\cegar) \cite{Clarke20}, predicate abstraction
-\cite{Flanagan02}, shape analysis \cite{Yang2008}, lazy abstraction
-\cite{Henzinger2002}, or symbolic data representation
-\cite{King76,Burch1990,Majumdar2018}. Nevertheless these techniques share
-similar ideas, each of the tools ship with their own implementation.  Moreover,
-the design of these algorithms is not well suited for reusability.
+The computer-aided verification community is not an exception. The goal of
+verification is to decide whether a system under test satisfies a given
+specification. Even though this task is generally undecidable; many verifiers
+are able to reason about complex systems. The technique that enables
+verification tools to handle such complex systems is an abstraction. In
+general, the abstraction reduces the amount of information that the verifier is
+reasoning about, consequently reducing program state-space, but for the price
+of approximated result. This can be achieved, for example, by maintaining only
+specific properties of program values. Because abstraction based techniques are
+indispensable for successful verification of larger models, the verification
+community is being overwhelmed by the amount their implementations.  According
+to the classification of techniques used in the recent \svcomp
+\cite{SVCOMP2019}, many tools utilize a similar set of abstraction techniques
+(see \autoref{tab:svcomp}) concretely: counterexample guided abstraction
+refinement (\cegar) \cite{Clarke20}, predicate abstraction \cite{Flanagan02},
+shape analysis \cite{Yang2008}, lazy abstraction \cite{Henzinger2002}, or
+symbolic data representation \cite{King76,Burch1990,Majumdar2018}. Though,
+these techniques share similar ideas, each of the tools ships with its own
+implementation.  Moreover, the design of these algorithms is not well suited
+for reusability.
 
 \begin{table}[ht]
 
@@ -113,68 +118,49 @@ the design of these algorithms is not well suited for reusability.
 %verification.  With widely adopted format SMT-LIB \cite{Barrett2010}, \smt
 %solvers are easily used out-of-the-box \cite{Dutertre2006, DeMoura2008, Barrett2011, Corzilius2015}.
 
-In this thesis proposal, I will investigate how to extract abstraction-related
-techniques out of verification tools so that they will become reusable for
-other tools. This involves the identification of common properties of the
-abovementioned algorithms, as well as a design of an interface between newly
-developed algorithms and verification tools.  In addition to reusable
-abstraction, I intend to create an accessible framework for easy develepement
-and testing of new abstract domains. With the power of reusable abstraction,
-these abstract domains can be then applied in various tools out-of-the-box.
-Moreover, the inherent advantage gained by the removal of abstraction engine
-out of a verification tool is its simplification -- therefore a more robust
-verification.
-
-In the verification, the abstraction is applied on many levels of the system.
-One of them is a model on which the verifier operates. In general, it would be
-impractical if not impossible to verify the whole software stack, from the
-bottom of the hardware layer, throughout an operating system environment to the
-top -- the actual program under test. Hence the verifier abstract from the
-environment and reason only about the program and subset of its environment.
-The program representation can also be abstracted; the verifier process either
-the original form of it or translates the program to more verification friendly
-format (e.g., byte-code intermediate representation or program graph).
+In the program verification, abstraction is applied on many levels of the
+system.  One of them is a model on which the verifier operates. In general, it
+would be impractical if not impossible to verify the whole software stack, from
+the bottom of the hardware layer, throughout an operating system environment to
+the top -- the actual program under test. Hence, the verifier abstracts from the
+environment and reasons only about the program and a subset of its environment.
+The program representation can also be abstracted; the verifier processes either
+the original form of it or translates the program to a more verification friendly
+format (e.g., byte-code intermediate representation or a program graph).
 
 However, the abstraction that we will be interested in is an abstraction of
-non-deterministic data. It is required to examine the unpredictable behavior of
-interaction with the program environment. To soundly handle the
-non-determinism, the verification tool needs to examine all possible program
-behaviors (e.g., program inputs). To manage an enormous amount of
-possibilities, verifiers utilize abstraction to group similar behaviors and
-reason about a reduced amount of options. Alternatively they use the
-abstraction to preserve only those behaviors that are interesting for a
-verified property.
+program environment, also addressed as non-deter\-mi\-ni\-stic inputs to the program.
+For full coverage of verification, it is required to examine the unpredictable
+behavior of interaction with the program environment. Hence, the verification
+tool needs to consider all possible program behaviors (e.g., program inputs).
+To manage an enormous amount of possibilities, verifiers utilize abstraction to
+group similar behaviors and consequently reason only about a reduced amount of
+options. Alternatively, verification tools use abstraction to preserve only
+those behaviors that are interesting for the verified property.
 
-%As we have noted before, the abstraction techniques are broadly employed in
-%state-of-the-art tools. However, their design is usually not well suited for
-%sharing among the tools. Hence in this thesis proposal, we are going to
-%investigate how to adapt existing abstraction techniques to become reusable.
-%Moreover, we will aim at a design of abstraction that will allow researchers to
-%develop abstractions and reevaluate them across multiple tools without being
-%implementation-dependent.
+In this thesis proposal, I investigate how to extract abstraction-related
+techniques out of verification tools so that the techniques can be reused by
+other tools. This involves the identification of common properties of the
+abovementioned techniques and based on that development of new autonomous
+algorithms, as well as a design of an interface between newly developed
+algorithms and verification tools.  In addition to reusable abstraction, I
+intend to create an accessible framework for simple construction and testing of
+new abstract domains. With the power of reusable abstraction, these abstract
+domains can then be easily used in various tools. Moreover, the inherent
+advantage gained by removing the abstraction engine out of a verification tool
+is its simplification -- therefore a more robust verification.
 
-There exist many possible approaches of how to extract abstraction out of the
+There exist many possible approaches of extracting abstraction out of the
 verification tools. In my research, I focus on a single particular approach
-where the responsibility for abstract computation is moved from the interpreter
+where the responsibility for the abstract computation is moved from the interpreter
 to the verified program. This means that the program will maintain abstract
 data and perform abstract operations instead of concrete computation.
 
-The rest of the proposal is organized as follows: \autoref{ch:state} summarizes
-the state of the art of approximation techniques, the
-\autoref{sec:preliminaries} present a common notation used in following
-chapters, followed by introduction to an abstraction
-(\autoref{sec:abstraction}) and summary of abstract domains
-\autoref{sec:domains}. The second half of \autoref{ch:state} investigates
-abstraction-based techniques used in computer-aided verification
-(\autoref{sec:techniques}). The following \autoref{ch:aim} examines the
-presented approaches and states the challenges of reusable abstraction design,
-as well as aims of my thesis. We introduce a notion of a transformation-based
-abstraction, which is one of the possible solutions for the stated objectives.
-The last chapter (\autoref{ch:results}) presents already achieved results in
-transformation-based approach.  \autoref{sec:symbolic} investigates how we have
-adapted a symbolic abstraction for explicit-based model checking
-\cite{Lauko2019Sym, Lauko2018SymComp}. Further in \autoref{sec:string}, we
-pre\-sent an extended transformation-based abstraction for
-string-ma\-ni\-pu\-la\-ting programs~\cite{Lauko2019String}.  In the end
-(\autoref{sec:publications}), the chapter lists my already published papers
-related to abstraction techniques.
+In the rest of the proposal, I will first present the state-of-the-art
+abstraction techniques in \autoref{ch:state}.  The following \autoref{ch:aim}
+examines the presented approaches and states the challenges of reusable
+abstraction design, as well as the aims of my thesis. In this chapter, I
+introduce the notion of a transformation-based abstraction, which is one of the
+possible solutions for the stated objectives. Finally, in the
+\autoref{ch:results}, I present my achieved results in transformation-based
+approach to abstraction.

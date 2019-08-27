@@ -738,10 +738,10 @@ to a set of predicates). Because the predicate abstraction is restricted to a
 finitary domain, its transition function can be computed by \smt solver/theorem
 prover~\cite{Cousot2003, Ball2001}. The predicates used in abstraction are
 generated in a heuristic manner from the program under test or by a refinement
-loop (see TODO) \cite{Flanagan2002}. In contrast to previous abstract domains,
-a predicate representation may not just reason about a single variable but a
-whole program state (set of states), moreover predicates inherently keep
-relational information between variables.
+loop (see \autoref{fig:cegar}) \cite{Flanagan2002}. In contrast to previous
+abstract domains, a predicate representation may not just reason about a single
+variable but a whole program state (set of states), moreover predicates
+inherently keep relational information between variables.
 
 \add{ extend citations }
 
@@ -770,7 +770,7 @@ determined by three primary components:
 \begin{enumerate}
     \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretization and abstraction function,
     \item effective and sound abstract operators,
-    \item an iteration strategy.
+    \item and an iteration strategy.
 \end{enumerate}
 
 \subsection{Non-numerical abstract domains}
@@ -784,41 +784,52 @@ arrays~\cite{Cousot2011p}, trees~\cite{Mauborgne2000}, heaps (non sharing
 
 To perform memory abstractions, we extend our model to consider a program heap.
 In memory aware analysis, we have a set of values $\mathcal{C}$; memory addresses are
-values $C_{\textit{addr}} \subseteq C$. The environment $e \in \mathcal{E}$
-maps program variables into their addresses: $\mathcal{E} = \mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$.
-Then heap $h \in \mathcal{H}$ is a partial function that map addresses into
-values: $\mathcal{H} = \mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C}$.
-A particular environment and heap describe a memory state $\sigma_m \in
-\mathcal{M}$ where $\mathcal{M} = \mathcal{E} \times \mathcal{H}$.
+values $\mathcal{C}_{\textit{addr}} \subseteq \mathcal{C}$. The environment $e
+\in \mathcal{E}$ maps program variables into their addresses: $\mathcal{E}:\mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$.  Then heap $h \in
+\mathcal{H}$ is a partial function that map addresses into values: $\mathcal{H}
+= \mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C}$.  A particular
+environment and heap describe a memory state $\sigma_m \in \mathcal{M}$ where
+$\mathcal{M} = \mathcal{E} \times \mathcal{H}$, fro better illustration see
+example in \autoref{fig:memory}.
 
-\change{ zjednotit s uvodom }
-
-\add{ maybe create memory example }
+\begin{marginfigure}
+    \add{ TODO memory example }
+\caption{State of program memory.}
+\label{fig:memory}
+\end{marginfigure}
 
 \subsubsection{Pointer abstraction}
 
 In the memory-aware analysis, we may perform a separate abstraction of
-pointers. A simplest of them are non-relational pointer abstractions (see null
-pointer abstraction \autoref{fig:nulldomain}). A pointer abstraction is defined
-in the same way as a scalar abstraction; it is given as a set of abstract
-pointer values $A_{\textit{ptr}}$; concretization function
-$\gamma_{\textit{ptr}} : A_{\textit{ptr}} \rightarrow
+pointers. A simplest of them are non-relational pointer abstractions. A pointer
+abstraction is defined in the same way as a scalar abstraction; it is given as
+a set of abstract pointer values $A_{\textit{ptr}}$; concretization function
+$\gamma_{\textit{ptr}}: A_{\textit{ptr}} \rightarrow
 \mathcal{P}(\mathcal{C}_{\textit{addr}})$ and abstraction function
-$\alpha_{\textit{ptr}} : \mathcal{P}(\mathcal{C}_{\textit{addr}}) \rightarrow
-A _{\textit{ptr}}$.
+$\alpha_{\textit{ptr}}: \mathcal{P}(\mathcal{C}_{\textit{addr}}) \rightarrow A
+_{\textit{ptr}}$. An example of simple non-relational pointer abstract domain
+is a \emph{null pointer} domain illustrated in \autoref{fig:nulldomain}.
 
 \begin{marginfigure}
 
-    \add{ add lattice }
-    \caption{Null pointer domain keeps information about null-pointers.}
+    \centering
+    \begin{tikzpicture}[node distance=1em]
+    \node [] (t) {$\top$};
+    \node [below = of t] (null) {$\textit{non-null}$};
+    \node [below = of null] (b) {$\bot$};
+        \draw [thin] (t) -- (null) -- (b);
+    \end{tikzpicture}
+    \caption{Null pointer domain keeps information whether a pointer might be \emph{null}. Where
+    $\gamma_{\textit{ptr}}(\top) = \mathcal{C}_{\textit{addr}}$ and
+    $\gamma_{\textit{ptr}}(\textit{non-null}) = \mathcal{C}_{\textit{addr}} \setminus 0$. }
     \label{fig:nulldomain}
 \end{marginfigure}
 
-Non-Relational pointer domains have disadvantage because of their imprecision -- as soon as a points-to set of pointers contain several elements, the abstract interpretation performs imprecise updates. Moreover, they are not able to express well-structured invariants about memory objects (e.g., lists, tree).
+Non-Relational pointer domains have a disadvantage because of their imprecision -- as soon as a points-to set of pointers contain several elements, the abstract interpretation performs imprecise updates. Moreover, they are not able to express well-structured invariants about memory objects (e.g., lists, tree).
 
-For more precise updates, pointer abstraction leverage separation logic principle. It allows performing local reasoning about memory (i.e., consider only a part of memory). In separation logic, the memory relations are described by points-to predicates and separating conjunctions on heaps~\cite{Reynolds2002}.
+For more precise updates, pointer abstraction leverage \emph{separation logic}. It allows performing local reasoning about memory (i.e., consider only a part of memory). In separation logic, the memory relations are described by points-to predicates and separating conjunctions on heaps~\cite{Reynolds2002}.
 
-Just separation logic is too expressive to be tractable as an abstract domain because it is not efficient for manipulation. In static analysis, separation logic is usually used in combination with shape analysis. Shape graphs are used to generalize abstract data structures (e.g., lists or trees). The shape graph can summarize inductive data structures into simple shapes~\cite{Distefano2006}. Similarly to scalar analysis, shape analysis can be refined by widening or by keeping shape relations~\cite{Chang2008}.
+However, just separation logic is too expressive to be tractable as an abstract domain because it is not efficient manipulation. In static analysis, separation logic is usually used in combination with shape analysis. Shape graphs are used to generalize abstract data structures (e.g., lists or trees). The shape graph can summarize inductive data structures into simple shapes~\cite{Distefano2006}. Similarly to scalar analysis, shape analysis can be refined by widening or by keeping shape relations~\cite{Chang2008}.
 Reduced products to shape analysis was introduced in~\cite{Toubhans2013}.
 
 More recent approaches leverage \smt solvers and reduce problems from
@@ -927,17 +938,16 @@ A real-world program analysis also requires to reflect memory model of the progr
 \subsection{Domain Refinement}
 \label{sec:domainrefinement}
 
-\begin{marginfigure}%
+\begin{figure}%
     \centering
-\resizebox{\textwidth}{!}{
-    \begin{tikzpicture}[node distance=2em]
+    \begin{tikzpicture}[node distance=1em]
         \node [align=center] (con) {$\mathcal{P}(\mathbb{Z})$ \\ \textsf{concrete domain}};
         \node [align=center, below = of con] (ci) {\textsf{intervals and congruences}};
         \node [align=center, below right = of ci] (co) {\{$a\mathbb{Z} + b\} \cup \{\bot\}$ \\ \textsf{congruences}};
         \node [align=center, below left = of ci] (i) {$\{[a,b]\} \cup \{\bot\}$ \\ \textsf{intervals}};
         \node [align=center, below = of co] (c) {$\mathbb{Z} \cup \{\top, \bot\}$ \\ \textsf{constants}};
         \node [align=center, below = of i] (s) {$\{0, +, -, \top, \bot\}$ \\ \textsf{signs}};
-        \node [align=center, below = 11em of ci] (n) {$\{0, \top, \bot\}$ \\ \textsf{nullness}};
+        \node [align=center, below = 6em of ci] (n) {$\{0, \top, \bot\}$ \\ \textsf{nullness}};
         \node [align=center, below = of n] (d) {$\{\top, \bot\}$ \\ \textsf{dead code}};
         \node [align=center, below = of d] (t) {$\{\top\}$ \\ \textsf{no information}};
 
@@ -945,11 +955,9 @@ A real-world program analysis also requires to reflect memory model of the progr
         \draw [thin] (ci) -- (co) -- (c)  -- (n);
         \draw [thin] (c) -- (i);
     \end{tikzpicture}
-}
     \caption{Lattice of non-relational abstract domains.}
     \label{fig:latticeabs}%
-\end{marginfigure}%
-
+\end{figure}%
 
 So far, we have seen abstract domains with various expressiveness, cost, and
 precision. However, in many cases, we want to start with the simplest domains
@@ -1083,11 +1091,11 @@ which is more precise and avoids the spurious error (see \autoref{fig:cegar}).
         \draw [->, >=stealth] (refinement) -- (abstraction);
     \end{tikzpicture}
 }
-\add{ fit page width }
-\caption{\cegar loop}
+\caption{Counterexample guided refinement loop.}
 \label{fig:cegar}
 \end{figure}
 
+\noindent
 The interesting task of \cegar is how to refine abstraction. In predicate
 abstraction-based techniques, a refinement introduces new predicates, however to
 gain a more information from refinement, predicates are interpolated
