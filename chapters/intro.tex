@@ -3,13 +3,13 @@
 
 % Stručné uvedení do problematiky, motivace, přehled dalších kapitol, 2 - 3 strany.
 
-The contemporary research in computer science is increasingly characterized by
+Contemporary research in computer science is increasingly characterized by
 an overwhelming number of new techniques, tools, and algorithms.  However, many
 of them are not designed with reusability in mind.  This trend causes
-researchers to reimplement many of algorithms by themselves whenever they want
-to extend existing work.  The reimplementation does not just require extra time
-resources, but also produces results hardly comparable with previous approaches
-because the performance is becoming implementation-dependent.
+researchers to reimplement standard techniques by themselves whenever they want
+to extend or adapt existing work.  The reimplementation does not just require
+extra time resources, but also produces results hardly comparable with previous
+approaches because the performance is becoming implementation-dependent.
 
 The computer-aided verification community is not an exception. The goal of
 verification is to decide whether a system under test satisfies a given
@@ -21,16 +21,16 @@ reasoning about, consequently reducing program state-space, but for the price
 of approximated result. This can be achieved, for example, by maintaining only
 specific properties of program values. Because abstraction based techniques are
 indispensable for successful verification of larger models, the verification
-community is being overwhelmed by the amount their implementations.  According
-to the classification of techniques used in the recent \svcomp
-\cite{SVCOMP2019}, many tools utilize a similar set of abstraction techniques
-(see \autoref{tab:svcomp}) concretely: counterexample-guided abstraction
-refinement (\cegar) \cite{Clarke20}, predicate abstraction \cite{Flanagan02},
-shape analysis \cite{Yang2008}, lazy abstraction \cite{Henzinger2002}, or
-symbolic data representation \cite{King76,Burch1990,Majumdar2018}. Though,
-these techniques share similar ideas, each of the tools ships with its own
-implementation.  Moreover, the design of these algorithms is not well suited
-for reusability.
+community is being flooded by the amount their implementations.  According to
+the classification of techniques used in the recent verification competition
+\svcomp~\cite{SVCOMP2019}, many tools utilize a similar set of abstraction
+techniques (see \autoref{tab:svcomp}) concretely: predicate abstraction
+\cite{Flanagan02},  coun\-ter\-example-guided abstraction refinement (\cegar)
+\cite{Clarke20}, shape analysis \cite{Yang2008}, lazy abstraction
+\cite{Henzinger2002}, or symbolic data representation
+\cite{King76,Burch1990,Majumdar2018}. Though, these techniques share similar
+ideas, each of the tools ships with its own implementation.  Moreover, the
+design of these algorithms is not well suited for reusability.
 
 \begin{table}[ht]
 
@@ -112,21 +112,16 @@ for reusability.
 \label{tab:svcomp}
 \end{table}
 
-
-%On the other hand, we may also find examples of reusable techniques.  One such
-%example is the utilization of \textsc{smt} logics and solvers in the symbolic
-%verification.  With widely adopted format SMT-LIB \cite{Barrett2010}, \textsc{smt}
-%solvers are easily used out-of-the-box \cite{Dutertre2006, DeMoura2008, Barrett2011, Corzilius2015}.
-
 In the program verification, abstraction is applied on many levels of the
 system.  One of them is a model on which the verifier operates. In general, it
 would be impractical if not impossible to verify the whole software stack, from
 the bottom of the hardware layer, throughout an operating system environment to
-the top -- the actual program under test. Hence, the verifier abstracts from the
+the top, the actual program under test. Hence, the verifier abstracts from the
 environment and reasons only about the program and a subset of its environment.
-The program representation can also be abstracted; the verifier processes either
-the original form of it or translates the program to a more verification friendly
-format (e.g., byte-code intermediate representation or a program graph).
+The program representation can also be abstracted.  Usually, it is inconvenient
+to process the original form of a program. Therefore, many tools firstly
+translate the program into a simpler verification friendly format  (e.g.,
+byte-code intermediate representation or a program graph).
 
 However, the abstraction that we will be interested in is an abstraction of
 program environment, also addressed as non-deter\-mi\-ni\-stic inputs to the program.
@@ -138,28 +133,31 @@ group similar behaviors and consequently reason only about a reduced amount of
 options. Alternatively, verification tools use abstraction to preserve only
 those behaviors that are interesting for the verified property.
 
-In this thesis proposal, I investigate how to extract abstraction-related
-techniques out of verification tools so that the techniques can be reused by
-other tools. This involves the identification of common properties of the
-abovementioned techniques and based on that development of new autonomous
-algorithms, as well as a design of an interface between newly developed
-algorithms and verification tools.  In addition to reusable abstraction, I
-intend to create an accessible framework for simple construction and testing of
-new abstract domains. With the power of reusable abstraction, these abstract
-domains can then be easily used in various tools. Moreover, the inherent
-advantage gained by removing the abstraction engine out of a verification tool
-is its simplification -- therefore a more robust verification.
+In this thesis proposal, I investigate how to refactor out abstraction-related
+techniques out of verification tools so that other tools can reuse them. This
+involves the identification of common properties of the abovementioned
+techniques and based on that development of new self-con\-tained algorithms, as
+well as a design of an interface between newly developed algorithms and
+verification tools. Moreover, I intend to create an accessible framework for
+simple construction and testing of new abstract domains. With the power of
+reusable abstraction, these abstract domains can then be easily used in further
+analyses. Furthermore, the inherent advantage gained by removing the
+abstraction engine out of a verification tool is its simplification --
+therefore a more robust verification.
 
-There exist many possible approaches of extracting abstraction out of the
+There exist many possible approaches how to refactor abstraction out of the
 verification tools. In my research, I focus on a single particular approach
-where the responsibility for the abstract computation is moved from the interpreter
-to the verified program. This means that the program will maintain abstract
-data and perform abstract operations instead of concrete computation.
+where the responsibility for the abstract computation is moved from the
+interpreter to the precedent static transformation. The static transformation
+takes care of instrumentation of the abstraction directly into the program.
+Hence, the program will maintain abstract data and perform abstract operations
+instead of concrete computation. Conse\-quen\-tly, the interpreter can interpret
+the instrumented program without any knowledge of abstract semantics.
 
 In the rest of the proposal, I will first present the state-of-the-art
 abstraction techniques in \autoref{ch:state}.  The following \autoref{ch:aim}
 examines the presented approaches and states the challenges of reusable
-abstraction design, as well as the aims of my thesis. In this chapter, I
+abstraction design, as well as the aims of my thesis. Moreover, I
 introduce the notion of a transformation-based abstraction, which is one of the
 possible solutions for the stated objectives. Finally, in the
 \autoref{ch:results}, I present my achieved results in transformation-based
