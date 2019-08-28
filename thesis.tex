@@ -40,7 +40,7 @@
 % Note: Make all your adjustments in here
 %*******************************************************
 \input{classicthesis-config}
-
+\usepackage{titletoc}
 %********************************************************************
 % Bibliographies
 %*******************************************************
@@ -84,7 +84,8 @@
 
 \appendix
 \cleardoublepage
-\part*{Appendix}
+\part*{appendix}
+
 \include{chapters/llvm}
 
 % ********************************************************************
@@ -101,10 +102,22 @@
 \setlength{\marginparwidth}{7.5em}%
 \setlength{\marginparsep}{2em}%
 
-\part*{Publications}
-%\includepdf[pages=-]{ictac-paper.pdf}
-%\includepdf[pages=-]{svcomp-paper.pdf}
-%\includepdf[pages=-]{spin-paper.pdf}
+\part*{publications}
+
+\refstepcounter{dummy}
+\addcontentsline{toc}{chapter}{\small symbolic computation via program transformation}
+\label{paper:ictac}
+\includepdf[pages=-]{ictac-paper.pdf}
+
+\refstepcounter{dummy}
+\addcontentsline{toc}{chapter}{\small extending \divine with symbolic verification using smt}
+\label{paper:svcomp}
+\includepdf[pages=-]{svcomp-paper.pdf}
+
+\refstepcounter{dummy}
+\addcontentsline{toc}{chapter}{\small string abstraction for model checking of \textsf{c} programs}
+\label{paper:spin}
+\includepdf[pages=-]{spin-paper.pdf}
 
 \end{document}
 % ********************************************************************

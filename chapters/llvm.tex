@@ -2,7 +2,7 @@
 \label{ch:llvm}
 
 \textsc{\llvm syntax}
-\section{Types}
+\section*{Types}
 \begin{grammar}
 
 <float> ::= "half" | "float" | "double" | "fp80" | "fp128"
@@ -15,7 +15,7 @@
 where $sz \in \mathbb{N}^+$ is a natural number.
 
 
-\section{Operations}
+\section*{Operations}
 \begin{grammar}
 <bop> ::= "add" | "sub" | "mul" | "udiv" | "sdiv" | "urem" | "srem" \alt
           "shl" | "lshr" | "ashr" | "and" | "or" | "xor"
@@ -32,7 +32,7 @@ where $sz \in \mathbb{N}^+$ is a natural number.
 <cond> ::= TODO cmp
 \end{grammar}
 
-\section{Values}
+\section*{Values}
 \begin{grammar}
 <cnst> ::= TODO
 
@@ -41,7 +41,7 @@ where $sz \in \mathbb{N}^+$ is a natural number.
 <glob> ::= "global" TODO | "define" TODO | "declare" TODO
 \end{grammar}
 
-\section{Control Flow}
+\section*{Control Flow}
 \begin{grammar}
 <block> ::= TODO
 
@@ -50,7 +50,7 @@ where $sz \in \mathbb{N}^+$ is a natural number.
 <cfl> ::= "br val l_1 l_2" | "br l" | "ret" TODO | "ret void" | "unreachable"
 \end{grammar}
 
-\section{Commands}
+\section*{Commands}
 \begin{grammar}
 <cmd> ::= TODO
 \end{grammar}
