@@ -158,7 +158,7 @@ end:
 \label{fig:cfa}
 \end{figure}
 
-\section{Abstract Interpretation}
+\section{Abstract interpretation}
 \label{sec:abstraction}
 
 The original idea of abstract interpretation dates back to the late 70s, first
@@ -193,7 +193,7 @@ domain instead of a concrete one. In the following sections, we will
 investigate various types of abstract domains with their advantages and
 disadvantages.
 
-\section{Abstract Domains}
+\section{Scalar abstract domains}
 \label{sec:domains}
 
 To obtain a computable model, we need to drop some information about program
@@ -773,6 +773,12 @@ determined by three primary components:
     \item and an iteration strategy.
 \end{enumerate}
 
+\section{Aggregate abstraction}
+
+\add{ TODO }
+
+\section{Memory abstraction}
+
 \subsection{Non-numerical abstract domains}
 
 Generally known as symbolic abstractions, they abstract infinite sets of
@@ -1070,7 +1076,7 @@ underlying abstract interpreter for \textsc{crab} library is
 \textsc{crab} domains reason only about linear arithemtic; it lacks any pointer
 or shape analysis and provides only limited support of array abstractions.
 
-\section{Abstraction based techniques}
+\section{Towards sound analysis}
 \label{sec:techniques}
 
 Utilization of abstraction techniques is versatile; in addition to traditional
@@ -1078,7 +1084,9 @@ abstract interpretation, we can find many flavors of its application. In this
 section, we outline the various use-cases of abstraction in the program
 verification.
 
-\subsection{Abstraction-based model checking}
+\subsection{Static analysis}
+
+\add{ TODO rewrite }
 
 In model checking, abstraction is used to reduce the size of model state
 space~\cite{Pelnek2006}.  Instead of performing exploration of concrete state
@@ -1191,7 +1199,7 @@ atomic propositions. The eager abstraction separates propositional and theory
 reasoning about program states -- by the skeletal abstraction of symbolically
 described states and transition function.
 
-\section{Symbolic Abstraction}
+\subsection{Symbolic abstract domains}
 
 A different approach to abstract a set of states is to use symbolic methods:
 symbolic execution~\cite{King76, Cadar2013symbolic, Baldoni2018survey}, symbolic model
@@ -1216,7 +1224,7 @@ As in the case of abstraction with uninterpreted functions~\cite{Gange2016}, \te
 
 \add{ extend symbolic abstraction technique }
 
-\section{Interpolation}
+\subsection{Interpolation}
 \label{sec:interpolation}
 
 Another technique used to improve abstraction-based techniques is an
@@ -1236,6 +1244,8 @@ of widening of octagon and polyhedra domains to avoid false alarms. Similarly,
 in VINTA~\cite{Albarghouthi2012}, the interpolation is used to refine the interval domain.
 
 \section{Static analysis and transformation}
+
+\todo{ rework }
 
 A static analysis often uses code transformation and instrumentation to
 simplify its duties. A common technique is to reduce code size either directly
