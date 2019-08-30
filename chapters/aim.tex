@@ -21,36 +21,33 @@ program. Even though the abstraction techniques share a common foundation, each
 of the tools reimplements the analyses by itself. Moreover, the integration of
 abstraction into a robust verification engine might introduce undesirable
 complexity and can be a cause of faulty analysis. Hence in my research, I focus
-on the design of reusable abstraction techniques, that are independent of an
-execution engine.
+on the design of self-contained abstraction techniques, that are independent of
+an execution engine.
 
-The core idea of independent abstraction is to extract it from the interpreter.
-This includes extracting of abstract data representation and computation with
-them, as well as the redesign of the refinement algorithms. Aside from
-redesigned algorithms, the reusable abstraction needs to provide sufficient and
-easy to access information for the program analysis.
+The core idea of independent abstraction is to refactor it out from the
+interpreter.  This includes adaptation of abstract data representation and
+computation with them, as well as the redesign of the refinement algorithms.
+Aside from redesigned algorithms, the self-contained abstraction needs to
+provide sufficient and easy to access information for the program analysis.
 
-The similar shifting of responsibilities is already a known technique in
+The similar shifting of responsibilities is already known technique in
 computer science -- for example the compiled and interpreted languages move
 various tasks between compilation time and actual run time. In my work, I
-investigate how much it is possible to move abstraction from the interpreter to
+investigate how much it is possible to shift abstraction from the interpreter to
 the compilation (static) part of the verification analysis. Naturally, there
 exist many possible boundaries between abstraction and execution engine -- each
 defined by how much of the actual abstract interpretation is performed by the
 program or the executor (see \autoref{fig:bounds}).
 
-As listed in \autoref{sec:ingredients} the abstract domain is determined by
-three components (value representation, operators, and iteration strategy).
-Each of these components can be positioned on a different side of the boundary.
-
 The typical approach in abstract interpreters is to keep all of them inside of
 the interpreter. However, we can let the program to maintain abstract data and
 instrument abstract operations into the program (realize them as a concrete
-code). Therefore the execution engine will be only responsible for iteration
-strategy and refinement.
+code). Therefore, the execution engine will be only responsible for iteration
+strategy and refinement. Even though, the program might as well perform on-the-fly
+refinement techniques by itself.
 
 To minimize the loss of precision, we naturally only want to abstract
-nondeterministic data of the program. Hence, the analysis needs to decide which
+non-deterministic data of the program. Hence, the analysis needs to decide which
 operations will be abstracted. Another possibility is to dynamically determine
 whether to perform an abstract or concrete operation. This decision can also be
 moved between the program under analysis and execution engine. Usually, to
@@ -62,7 +59,7 @@ Another part of abstraction execution is a decision procedure which determines
 the feasibility of a program path. One can argue that it can also be extracted
 out of the execution engine for our purpose, however, in reality, it is hardly
 realizable that whole \textsc{smt} solver would be compiled into the program and
-reinterpreted by further analysis.
+reinterpreted by further analyses.
 
 \begin{figure}[h]
 
@@ -147,7 +144,7 @@ reinterpreted by further analysis.
 
 The ultimate goal of my research is to develop an approach to abstraction,
 which will be independent of the underlying execution engine. The demanded
-properties of the extracted abstraction are to preserve efficiency and
+properties of the self-contained abstraction are to preserve efficiency and
 capabilities of dynamic abstraction techniques and furthermore provide a
 minimal interface for the execution engine to explore abstract state-space.
 Moreover, I aim at easy to use abstract domain design that will be independent
@@ -155,9 +152,11 @@ of the abstraction execution. Overall my goals are summarized in the following
 points:
 
 \begin{enumerate}
-    \item general-purpose analyses for autonomous abstraction,
-    \item easy to design reusable abstract domains of all kinds,
-    \item adaptation of counterexample-guided abstraction refinement and widening, narrowing techniques,
+    \item general-purpose analyses for self-contained abstraction,
+    \item easy to design reusable abstract domains: including scalar, aggregate
+        and pointer domains,
+    \item adaptation of counterexample-guided abstraction refinement and
+        lazy abstraction to transformation-based abstraction,
     \item completely independent abstraction, i.e., executable abstract counterexamples.
 \end{enumerate}
 
@@ -166,15 +165,18 @@ In the following sections, I will state the main obstacles and objectives of
 these goals. Furthermore, I will explain how they relate to state-of-the-art
 research.
 
-\subsection{General-purpose analyses for autonomous abstraction}
+\subsection{General-purpose analyses for self-contained abstraction}
 
 The expected result of this objective is a tool \lart: \llvm abstraction and
 refinement tool. Its primary responsibilities are to perform data-flow analysis
 to identify wherever non-deterministic data might occur and further instrument
-a provided abstraction to those locations.  The instrumentation is to be
-performed on \llvm intermediate representation, which is widely used in the
-contemporary verification tools. Hence, the results of instrumentation can be
-easily used by these tools.
+a provided abstraction to those locations. Moreover, \lart needs to handle
+inter-domain interactions and instrument appropriate transfer operations. In
+addition to the traditional Cousots's model of abstraction, \lart also deals
+with the interaction of abstract values with program memory. The
+instrumentation is to be performed on \llvm intermediate representation, which
+is widely used in the contemporary verification tools. Hence, the results of
+instrumentation can be used by other tools.
 
 \subsubsection{Data flow analysis}
 
@@ -182,7 +184,7 @@ To be able to instrument abstraction into the program, first of all, we need to
 perform a data flow analysis to detect wherever abstract values might appear.
 Such analysis needs to be efficient and fast, and it needs to handle data flow
 through program memory, indirect calls as well as perform pointer analyses. Even though we can
-overapproximate its result, we want to minimize the amount of instrumented
+over-approximate its result, we want to minimize the amount of instrumented
 abstraction to retain precision of further analysis.
 
 The contemporary techniques are usually imprecise or they handle only a subset of use
@@ -195,20 +197,24 @@ in the program, e.g., indirect calls and memory manipulations.
 
 \subsection{Abstract domains}
 
-Even though there exist tools that aim at accessible design of abstract domains
-: SeaHorn~\cite{Gurfinkel2015}, CPAchecker~\cite{Beyer2013}, or
+Even though there exist tools that aim at accessible design of abstract
+domains: SeaHorn~\cite{Gurfinkel2015}, CPAchecker~\cite{Beyer2013}, or
 Astrée~\cite{Astree}; their disadvantage is in their dependency on the
 execution engine.  On the contrary, abstract domains, in combination with \lart
-instrumentation, allow reuse of abstracted programs across various tools. For
-the accessible design of abstract domains, I propose to implement them in a
+instrumentation, allow reuse of abstracted programs across various analyses.
+Moreover, the advantage of the transformation-based approach is in that the
+analysis is performed only once, in comparison to dynamic analysis that needs
+to perform abstraction each time it runs.
+
+For the accessible design of abstract domains, I propose to implement them in a
 higher-level programming language\sidenote{An abstract domain consists of data
 representation and implementation of its operations.} which is then compiled to
 \llvm and linked with instrumented bitcode from \lart.  Moreover, I intend to
 generalize analyses for abstract domains in such a way that all of then can be
 instrumented into the program: this includes numerical abstraction (no matter
-whether it is relational or not), memory abstraction including shape
-abstractions and pointer abstractions. In contrast, tools like SeaHorn or
-Astrée aim only at numerical analyses.
+whether it is relational or not), aggregate abstraction and pointer
+abstractions. In contrast, tools like SeaHorn or Astrée aim only at numerical
+analyses without dynamic memory.
 
 \subsubsection{Trivially constrainable domains}
 
@@ -279,14 +285,15 @@ its adaptation to \cegar-based techniques with the application of predicate
 abstraction. For this use case, I would like to reuse the bucketing/state
 partitioning techniques from abstract interpretation to simplify sets of
 possibly related variables. Furthermore, I would like to investigate an
-adaptation of on-the-fly refinement techniques like widening and narrowing.
+adaptation of on-the-fly refinement techniques like widening and narrowing or
+lazy abstraction.
 
 \subsubsection{ Domain categories }
 
-In addition to numeric abstract domains, I want to cover other techniques like
-shape analysis and heap abstractions -- here I want to focus on how to
-generalize these abstractions. In the transformation framework, I distinguish
-three categories of abstract domains:
+In addition to scalar domains, I want to cover other abstractions required for
+successful verification of \llvm programs. Especially, I want to focus on how to
+generalize program abstractions. In the transformation framework, I distinguish
+these three categories of abstract domains:
 
 \begin{itemize}
     \item \emph{scalar domains} that abstract program integers and floating-point values (correspond to numeric abstract domains),
@@ -312,29 +319,27 @@ abstraction needs to resolve their join somehow.
 
 
 A final challenge of my research would be to define a general \cegar loop in the
-means of transformation based abstraction. The main challenge here is how to
-remap counterexample back to instrumentation.
+means of transformation-based abstraction. The main challenge here is how to
+adapt counterexample back to instrumentation.
 
-Hand-in-hand with \cegar comes multiple possible refinement techniques inspired
-by the \textsc{smt} community: program variables bitwidth
+Hand-in-hand with \cegar comes multiple refinement techniques that can be
+adapted from the \textsc{smt} community: program variables bitwidth
 abstraction~\cite{Jonavs2018}, theory refinement~\cite{Hyvarinen2017} or lazy
-abstraction approaches~\cite{Henzinger2002}. Moreover, the final symbolic
-approach might be extended by function summarization and bottom-up program
-verification.
+abstraction approach~\cite{Henzinger2002}.
 
 \subsection{ Executable abstraction }
 
 The hitherto presented abstraction relied on the underlying execution engine,
-which maintained abstraction metadata and enabled non-deterministic program
+which maintained abstraction metadata and enabled non-deter\-mi\-ni\-stic program
 branching. However, for the future, I plan to investigate a possibility of a
 runnable abstraction for a particular run of non-deterministic choices.  With
 the use of clang data flow sanitizer, that manages program shadow memory, the
 abstraction can store its metadata in the program and be completely independent
-of the execution enginei (see fourth option of \autoref{fig:bounds}) -- such
+of the execution engine (see fourth option of \autoref{fig:bounds}) -- such
 program provides an option of executable counterexample to be analyzed by
 general-purpose analyses of \llvm programs (e.g., debuggers).  The data flow
 sanitizer enables program to keep track of metadata and propagates them during
-execution -- allows to perform a taint analysis, where taints identify abstract
+execution, i.e., allows to perform a taint analysis, where taints identify abstract
 values in the program.
 
 \newpage

@@ -3,8 +3,8 @@
 
 % Povinné pro rigorózní práci, 3-5 stran.
 
-In my research, I focus on the design of reusable abstraction for program
-verification. The main objective of this design is to determine how to extract
+In my research, I focus on the design of self-contained abstraction for program
+verification. The main objective of this design is to determine how to refactor
 abstraction out of dynamic analysis and still provide sufficient information
 for program state-space exploration. In my work, I propose to let the program
 under test take care of abstraction and maintain abstract data. This can be
@@ -32,9 +32,8 @@ computation~\cite{Lauko2019Sym, Lauko2018SymComp}.
 All analyses presented in my up-to-date work are implemented in a tool named
 \lart -- \llvm abstraction and refinement tool, that is a part of the \divine
 project. \lart is based on top of the open-source \llvm compiler
-infrastructure.  The latter is a well-maintained, well-documented, and
-continuously improving framework. It allows \lart to easily integrate program
-analyses, transformations, and other tools that target \llvm.
+infrastructure. It allows \lart to easily integrate program analyses,
+transformations, and other tools that target \llvm.
 
 \section{Transformation-based abstraction}
 \label{sec:symbolic}
@@ -62,10 +61,8 @@ about abstract values present in the program.
 
 However, it needs to recognize what parts of the memory contains abstract data,
 because they can not be compared explicitly when the model checker is
-determining equality of states.\sidenote{A dedicated decision procedure
-determines the equality of abstract values. In the case of symbolic values it is
-a \textsc{smt} solver.} Therefore, the virtual machine keeps metadata that denotes what
-parts of memory hold abstract values.
+determining equality of states. Therefore, the virtual machine keeps metadata
+that denotes what parts of memory hold abstract values.
 
 \begin{figure}
     \centering
@@ -88,12 +85,12 @@ proposal~\cite{Lauko2018SymComp, Lauko2019Sym}.
 \label{sec:string}
 
 My following publication has focused on the extension of the
-transformation-based approach to non-scalar domains (i.e., aggregate domains).
-An example of such a domain is a string domain. In cooperation with Martina
-Olliaro, I have adapted her string domain (\textsc{mstring})~\cite{Olliaro2018}
-as \lart domain. A \lart domain is a C or C++ library that provides
-definitions of abstract values and implementation of supported operations on
-them.
+trans\-for\-ma\-tion-based approach to non-scalar domains (i.e., aggregate
+domains).  An example of such a domain is a string domain. In cooperation with
+Martina Olliaro, I have adapted her string domain
+(\textsc{mstring})~\cite{Olliaro2018} as \lart domain. A \lart domain is a C or
+C++ library that provides definitions of abstract values and implementation of
+supported operations on them.
 
 \textsc{Mstring} domain represents C strings by segmentation abstract domain
 that keeps track of terminal zeros in the underlying array. It is a
@@ -140,7 +137,7 @@ by \textsc{Cortesi} A., H. \textsc{Lauko}, M. \textsc{Olliaro} and P. \textsc{Ro
 I am the author of half of the paper content: primarily part concerning
 transformation-based abstraction and experiments. I also have concluded
 experiments and implemented an abstract string domain and accompanying
-\lart analysis.
+\lart analyses.
 
 \end{itemize}
 

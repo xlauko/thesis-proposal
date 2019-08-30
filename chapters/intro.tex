@@ -133,14 +133,14 @@ group similar behaviors and consequently reason only about a reduced amount of
 options. Alternatively, verification tools use abstraction to preserve only
 those behaviors that are interesting for the verified property.
 
-In this thesis proposal, I investigate how to refactor out abstraction-related
-techniques out of verification tools so that other tools can reuse them. This
-involves the identification of common properties of the abovementioned
-techniques and based on that development of new self-con\-tained algorithms, as
-well as a design of an interface between newly developed algorithms and
-verification tools. Moreover, I intend to create an accessible framework for
-simple construction and testing of new abstract domains. With the power of
-reusable abstraction, these abstract domains can then be easily used in further
+In this thesis proposal, I investigate how to adapt abstraction-related
+techniques used in verification tools as stand-alone algorithms. This involves
+the identification of common properties of the abovementioned techniques and
+based on that development of new self-con\-tained algorithms, as well as a
+design of an interface between newly developed algorithms and verification
+tools. Moreover, I intend to create an accessible framework for simple
+construction and testing of new abstract domains. With the power of stand-alone
+abstraction, these abstract domains can then be easily used by dynamic
 analyses. Furthermore, the inherent advantage gained by removing the
 abstraction engine out of a verification tool is its simplification --
 therefore a more robust verification.

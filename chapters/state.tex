@@ -3,25 +3,6 @@
 
 % Současný stav řešené problematiky, přehled klasických i aktuálních výsledků a jejich porovnání, analýza problematiky vedoucí k vymezení oblasti zájmu budoucí disertační práce, 8 - 12 stran.
 
-
-% Handbook of mode checking
-%   - 3.2.1.4 Level of Abstraction
-%   - 3.4.1.4 Data Type Abstraction:
-% The choice of how to model the data type of the flit can have a big impact on the
-% scalability of verification.
-%
-% Chapter 13:
-% Abstraction tackles this challenge based on the assumption that a reduction of
-% the information content results in a reduction of the size of the representation of
-% a Kripke structure.
-%
-% Clanky:
-% The topic of constructing abstractions is
-% also one of the focuses of the theory of Abstract Interpretation [8, 37–40, 76], which
-% is not treated in this chapter.
-
-% TODO prerequisites
-
 \section{Preliminaries}
 \label{sec:preliminaries}
 
@@ -32,14 +13,22 @@ notation used to describe abstract interpretation \cite{Cousot2012}.
 
 \subsection{Programs, Control-Flow Graph, States}
 
-We restrict the presentation to a simplified version of \llvm programs
-\cite{Lattner04}. An elementary unit of \llvm program is an instruction. We
-distinguish binary instructions (arithmetic operations, relational operations),
-memory access operations, data flow operations (branching instructions, calls,
-return instructions). Because \llvmir is a typed language, it also provides
-casting instructions. We admit scalar types (floats, integers), pointer types,
-and aggregate types (arrays, structures).\sidenote{For detailed syntax and
-semantics description see \autoref{ch:llvm}.}
+We restrict the presentation to a simplified version of \llvmir programs
+\cite{Lattner04}. The \llvmir is byte-code intermediate representation of the
+open-source \llvm compiler infrastructure.  The latter is a well-main\-tained,
+well-documented, and continuously improving framework. Because of its faithful
+correspondence with the executable program and robust infrastructure, \llvm
+presents a sweet spot where to conduct program analysis.
+
+An elementary unit of \llvm program is an \emph{instruction}. We recognize a usual set of binary
+instructions (arithmetic, relational operations), memory access operations
+(\texttt{load}, \texttt{store}), heap operations (\texttt{malloc},
+\texttt{free}), stack allocation (\texttt{alloca}), data flow operations
+(branching instructions \texttt{br}, calls, return instruction \texttt{ret}).
+Since \llvmir is a typed language, it also provides conversion instructions
+among integers, floats and pointers. We admit scalar types (floats, integers),
+pointer types, and aggregate types (arrays, structures).  For detailed syntax
+and semantics description we refer the interested reader to \autoref{ch:llvm}.
 
 The entire program in \llvm consists of global variables and functions.  A
 function is a directed graph of basic blocks. A basic block is a sequence of
@@ -60,17 +49,44 @@ instructions attached to its edges (see \autoref{fig:cfa}).
     an instruction that is executed when the control flows along the edge.
 \end{definition}
 
-The set of all variables that occur in the \llvm program is denoted by
-$\mathcal{V}$. A \emph{concrete state} $\sigma : \mathcal{V} \rightarrow
-\mathsf{C}$ is a mapping from program variables to concrete values. We denote
-the set of all concrete states as $\Sigma$. Thus, the concrete state can be
-viewed as a state of program's memory that holds the value for each program
-variable. A~set of admissible states at some location $l \in \mathcal{L}$ is
-called a \emph{context} $\mathcal{C}_l \subseteq \mathcal{P}(\Sigma)$.
+The goal of the analyses that we will investigate throughout this chapter is to
+determine for each program location a set of possible concrete states described
+by some abstract representation. A \emph{concrete program state} is determined
+by values of the program registers $\mathcal{R}$ and memory content. The number of \llvm
+registers is unbounded, and they represent results of individual instructions
+in the static single assignment (\ssa) form~\cite{Cytron1991}. The memory
+consists of stack-allocated variables $\mathcal{S}$ created by \texttt{alloca}
+instruction, heap memory content $\mathcal{H}$ allocated via \texttt{malloc}, and
+global variables $\mathcal{V}_{\textit{G}}$; the only permitted access to memory is
+through dedicated instructions (\texttt{store} and \texttt{load}).  For
+simplicity, we expect that the memory is strongly typed; hence, we always know
+what type is assigned to what memory location.
+We denote a set of variables as $\mathcal{V} = \mathcal{S} \cup \mathcal{H}
+\cup \mathcal{V}_{\textit{G}}$ and all possible concrete values as
+$\mathcal{C}$.  Program values contains all possible values of registers and
+variables as well as memory addresses $\mathcal{C}_{\textit{addr}} \subseteq
+\mathcal{C}$.
+
+\begin{definition}
+    A \textbf{\emph{concrete state}} of \llvm program $\sigma = (\rho, \epsilon, \mu)$, where:
+\begin{itemize}
+    \item $\rho: \mathcal{R} \rightarrow \mathcal{C}$ is a value map that assigns each program
+        register a~concrete value,
+    \item $\epsilon : \mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$ is a
+        program environment that maps variables to their addresses, and
+    \item $\mu: \mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C}$ is a
+        partial function that maps addresses into values.
+\end{itemize}
+\end{definition}
+
+\noindent
+We denote the set of all concrete states as $\Sigma$.  A~set of admissible
+states at some location $l \in \mathcal{L}$ is called a \emph{context}
+$\mathcal{C}_l \subseteq \mathcal{P}(\Sigma)$.
 
 The semantics of instruction $i \in \mathcal{I}$ is defined by \emph{strongest
 post condition} $\textsf{SP}_{i}(\cdot)$, i.e. it is executed on a particular program
-state and accordingly updates values of program variables.
+state and accordingly updates values of program values and memory content.
 
 A set of all edges $\mathcal{G}$ induces a transition relation $\rightarrow$ on
 the set of states $\Sigma$, such that for each $g \in \mathcal{G}$ there is
@@ -82,13 +98,16 @@ A \emph{path} $\pi$ is a sequence of edges $\langle
 \rightarrow_1, \rightarrow_2, \dots, \rightarrow_n \rangle$ such that all edges
 form a continuous path in the transition system induced by $\mathcal{G}$.  A path
 is called a \emph{program path} if it starts from initial program location
-$\l_{\textit{init}}$. The semantics of path $\pi$ is defined by iterative
+$l_{\textit{init}}$. The semantics of path $\pi$ is defined by iterative
 application of $SP_{i}( \cdot )$ for each instruction in path $\pi$. Given
-initial constraints $\phi$ on variables, the strongest postcondition of path
-$\pi$ is $\textsf{SP}_{\pi} = \textsf{SP}_{i_n}(\dots,\textsf{SP}_{i_1}(\phi),\dots)$. A
-path $\pi$ is called \emph{feasible} if $\textsf{SP}_{\pi}(\textit{true})$ is
-satisfiable and \emph{infeasible} otherwise \cite{Beyer2018b}.
-
+initial constraints $\varphi$ on program state, the strongest postcondition of
+path $\pi$ is $\textsf{SP}_{\pi} =
+\textsf{SP}_{i_n}(\dots,\textsf{SP}_{i_1}(\varphi),\dots)$. A path $\pi$ is
+called \emph{feasible} if $\textsf{SP}_{\pi}(\textit{true})$ is satisfiable and
+\emph{infeasible} otherwise \cite{Beyer2018b}.  In the abstract execution, the
+transition system does not contain particular states but whole contexts that
+abstract sets of states. A set of possible transition from a context contains
+all feasible transitions from concrete states included in the context.
 A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L},
 l_{\textit{init}}, \mathcal{G})$ is to show that error location
 $l_{\textit{err}} \in \mathcal{L}$ is unreachable in $\mathcal{A}$, or to find
@@ -154,7 +173,12 @@ end:
 \end{tikzpicture}
 \end{minipage}
 
-\caption{An example of \llvm program (left) and its CFA (right).}
+\caption{An example of \llvm program (left) and its CFA (right).  The program
+allocates on stack a 32-bit integer variable and stores its address to register
+\llvmint{|\var{\%x}|} (registers in \llvm are traditionally prefixed with \%,
+and global objects as functions by \@) Subsequently in the loop, program
+increments value of the variable while it is smaller than 5. The~semantic of
+instructions is described in \autoref{ch:llvm}.}
 \label{fig:cfa}
 \end{figure}
 
@@ -168,13 +192,14 @@ constructive approximation of the mathematical structures used in the formal
 description of programming languages or verification of undecidable program
 properties~\cite{Cousot2012}.
 
-For our course, the goal of abstract interpretation is to assign each program
-location a context in a given domain, i.e., given a set of program states, the
+For us, the goal of abstract interpretation is to assign each program location
+a context in a given domain, i.e., given a set of program states, the
 abstraction represents properties of these states by abstract state. Program
 contexts are computed by solving a system of fixpoint equations generated from
 a~transition function \cite{Cousot1977}. Such computation simulates the
-execution of a program in an abstract domain. As a result, each abstract context represents possible properties (invariants about states) of variables at a location after the execution of the program
-\label{sec:symbolic}
+execution of a program in an abstract domain. As a result, each abstract
+context represents possible properties (invariants about states) of variables
+at a location after the execution of the program \label{sec:symbolic}
 with arbitrary input. The states\sidenote{State of computation comprise of all
 intermediate contexts assigned to program locations.} of the computation forms
 a complete lattice: $(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$, where $S$
@@ -189,15 +214,8 @@ semantic domain} is a complete lattice $(\mathcal{P}(\Sigma), \cap, \cup,
 \subseteq, \Sigma, \emptyset)$. Even though this technique gives us a tool to
 compute all possible states that a program might reach, it is, unfortunately,
 uncomputable. To mitigate the problem of computability, we employ an abstract
-domain instead of a concrete one. In the following sections, we will
-investigate various types of abstract domains with their advantages and
-disadvantages.
-
-\section{Scalar abstract domains}
-\label{sec:domains}
-
-To obtain a computable model, we need to drop some information about program
-variables. For instance, to drop all the information about each program
+domain instead of a concrete one, i.e., we need to drop some information about
+program variables. For instance, to drop all the information about each program
 variable except whether it is positive, negative or zero. This can be achieved
 by replacement of values domain we are computing on $\mathsf{C}$ by an abstract
 domain $\domainm{sign} = \{\bot, -, 0, +, \top\}$, where $\bot$ represents an
@@ -220,7 +238,7 @@ undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
 sign of variable and $\top$ is for an arbitrary value (i.e., variable can be
 either negative, positive or zero).
 
-\begin{figure}[!ht]
+\begin{figure}[t]
 \begin{adjustwidth}{-\oddsidemargin-1in}{-\rightmargin}
 \centering
 \begin{minipage}[t]{0.3\textwidth +  0.3\marginparsep + 0.3\marginparwidth}
@@ -369,10 +387,10 @@ either negative, positive or zero).
 \end{tikzpicture}
 }
 \end{minipage}
-    \caption{\domain{sign} fixpoint iteration for variables
-    (\llvmint{|\var{\%x}, \var{\%v}, \var{\%a}, \var{\%b}|}). A~tuple at each
-    location represents an abstract evaluation of the variables in this order.
-    The presented states of iteration are after first iteration
+    \caption{\domain{sign} fixpoint iteration for values of stack variables and
+    registers (\llvmint{|\var{\%x}, \var{\%v}, \var{\%a}, \var{\%b}|}). A~tuple
+    at each location represents an abstract evaluation of the registers in this
+    order.  The presented states of iteration are after first iteration
     (\textbf{left}), after 5 iterations (\textbf{middle}), reached fixpoint
     (\textbf{right}).}
     \label{fig:signcomp}%
@@ -384,10 +402,13 @@ less information about program variables. One requirement on $\mathsf{A}$ is
 that its values form a complete lattice (see \autoref{fig:signd}). Moreover, a
 well-defined domain is required to have an image for each concrete value, and
  is over approximating abstraction. Such properties of domains are described by
- \textbf{\emph{Galois connection}}. For the concrete lattice $(C, \subseteq)$ and
- abstract lattice $(A, \sqsubseteq)$ a galois connection is $(\alpha, \gamma)$,
- where $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ are monotonic
- functions such that:
+ \textbf{\emph{Galois connection}}.
+
+ \begin{definition}
+ For the concrete lattice $(C, \subseteq)$ and abstract lattice $(A,
+ \sqsubseteq)$ a~galois connection is $(\alpha, \gamma)$, where
+ $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ are monotonic functions
+ such that:
 
 \bigskip
 \begin{center}
@@ -401,8 +422,8 @@ well-defined domain is required to have an image for each concrete value, and
     \node [domainbox, thick, color = vivid, right = of c, label=\color{vivid}$A$] (a) {};
     \node [context, below = 1em of a.north] (as) {};
 
-    \draw [->, >=stealth] (as) to [bend right=40] node[above] {$\gamma$} (cs);
-    \draw [->, >=stealth] (co) to [bend right=40] node[below] {$\alpha$} (as);
+    \draw [->, >=stealth] (co) to [bend left=40] node[above] {$\alpha$} (as);
+    \draw [->, >=stealth] (as) to [bend left=40] node[below] {$\gamma$} (cs);
 \end{tikzpicture}
     \[
         \forall c \in C.\: c \subseteq \gamma( \alpha( c ) )
@@ -433,11 +454,17 @@ In abstract interpretation, $C$ and $A$ are called \emph{concrete} respectivelly
 \emph{abstract} domain and they are assumed to be complete lattices. We call
 $\alpha$ the \emph{abstraction} map and $\gamma$ the \emph{concretization} map.
 
-Given an abstract domain and abstract operations\sidenote{In our case,
-definitions how \llvm instructions transform abstract values.} we perform a
-fixpoint iteration\sidenote{For detailed algorithm see \cite{Cousot1977}} and
-by Knaster-Tarski theorem \cite{Tarski1955} we are guaranteed to obtain a
-solution, see \autoref{fig:signcomp}.
+\end{definition}
+
+\prule
+\bigskip
+
+\noindent
+Given an abstract domain and abstract operations\sidenote{In our case, abstract
+semantics of \llvm instructions.} we perform a fixpoint iteration\sidenote{For
+detailed algorithm see \cite{Cousot1977}} and by Knaster-Tarski theorem
+\cite{Tarski1955} we are guaranteed to obtain a solution, see
+\autoref{fig:signcomp}.
 
 Even though our example program in \autoref{fig:signcomp} is quite trivial, the
 sign domain \domain{sign} was not able to preserve any interesting properties,
@@ -445,8 +472,8 @@ and all resulting contexts contains either $\top$ or $\bot$.  Sign domain belong
 the class of simple domains that reason only about single property of variables --
 also known as \emph{property domains}. Another famous example of a property
 domain is a \textbf{\emph{parity domain}}, which captures whether the
-variable is odd or even. The parity domain is just a special case of a
-\textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
+variable is odd or even. The parity domain is just a special case of
+a~\textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
 \begin{marginfigure}%
     \centering
 \resizebox{\textwidth}{!}{
@@ -476,12 +503,13 @@ A~\textbf{\emph{constant propagation domain}} \domain{cp}
 (see~\autoref{fig:cp}) is another example of property domain used in
 optimization techniques \cite{Kildall1973}.
 
-Probably the simplest of domains is a \emph{definedness domain} \domain{D}, which only
-reason about definedness of values (see domain lattice \autoref{fig:unitd}).
-Despite its simplicity, it can be useful to detect reachability of program
-locations. Even simpler domain is a~single value domain \domain{U}. The single
-value domain is usefull if we want to omit a variable from the model of the
-program.
+Probably the simplest of domains is a~\textbf{\emph{single value}} domain
+\domain{U}. The single value domain is useful if we want to omit a variable
+from the model of the program. The two-value domain that contains two possible
+elements ($\top, \bot$) is also called the \textbf{\emph{definedness domain}}
+\domain{D}. Because with $\top$, we can denote that value is defined,
+respectively undefined with $\bot$. Despite its simplicity, it can be useful to
+detect reachability of program locations.
 
 \begin{marginfigure}%
     \centering
@@ -511,38 +539,77 @@ program.
     \label{fig:cpsign}%
 \end{marginfigure}%
 
-\begin{marginfigure}%
-    \centering
-    \begin{tikzpicture}[node distance=1em]
-    \node [] (t) {$\top$};
-    \node [below = of t] (b) {$\bot$};
-    \draw [thin] (t) -- (b);
-    \end{tikzpicture}
-    \caption{\domain{U} keeps only information about definedness of variables.}
-    \label{fig:unitd}%
-\end{marginfigure}%
+Furthermore, it is possible to combine multiple domains to
+reason about multiple properties either by keeping each property separately
+or~by reduced product of domains (see \autoref{fig:cpsign}), which is more
+precise and more efficient than multiple separate interpretations
+\cite{Cousot2011b}.  For further information see domain refinement in
+\autoref{sec:domainrefinement}.
 
 The basic building block of these domains is \emph{basis} that expresses how to
-abstract one program variable and simple arithmetic operations. Thanks to
-the galois connection the rest of interpretation can be derived automatically
-\cite{Mine2004Thesis}.
+abstract one program variable or register and operations on it.  Thanks to the
+galois connection the rest of interpretation can be derived automatically as a
+product domain for all variables \cite{Mine2004Thesis}.
 
-Furthermore, it is possible to combine multiple domains to
-reason about multiple properties either by keeping each property separately or
-by reduced product of domains (see \autoref{fig:cpsign}), which is more precise
-and more efficient than multiple separate interpretations \cite{Cousot2011b}.
-For further information see \autoref{sec:domainrefinement}.
+Given the state of a program, each of the program variables and registers
+requires a various level of abstraction, as well as different abstract domains.
+Depending on what values we abstract, we distinguish an abstraction of numerical
+values, memory content, and also program pointers. Consequently, the entire
+abstraction of program state is formed by a product domain of all used
+abstractions. Moreover, some parts of the state might be omitted from the
+abstraction entirely and represented in the concrete domain.
 
-Since the precision of an abstract domain highly depends on the program
-structure, many abstract domains were designed to track various program
-properties. Let us take it chronologically. The first domain presented in
-Cousot's paper \cite{Cousot1977} to achieve more precise results was an
-\textbf{\emph{interval domain}} \domain{I}. In the interval abstraction, a set of values
-is represented by its minimal and maximal value (see \autoref{fig:interval}).
-Since in some cases, it is not possible to determine the boundary values, the
-interval domain utilizes infinities to denote arbitrary bound -- we represent
-arbitrary value $\top_{\textit{I}}$ by $[-\infty, \infty]$ and undetermined
-value $\bot_{\textit{I}}$ by empty interval $\emptyset$.
+Since our goal is to formulate a unified model for all of these abstractions,
+in the following sections, we will bring the state-of-the-art abstract
+domains to our \llvm model so that we can build upon them. Furthermore, we
+detect missing components of these approaches so that they can be used in the
+abstraction of \llvm. Based on the purpose of the abstract domains, in \llvm we
+recognize three types of abstractions:
+\begin{enumerate}
+    \item \emph{scalar abstraction} conducts analysis only on basic types:
+        integers or floats,
+    \item \emph{aggregate abstraction} takes care of abstract representation of
+        memory objects like homogeneous arrays, strings, or heterogeneous
+        structures, and
+    \item \emph{pointer abstraction} handle representation of non-deterministic
+        pointers that can contain an arbitrary address or just random offset
+        from a concrete address.
+\end{enumerate}
+
+\section{Scalar abstract domains}
+\label{sec:domains}
+
+Scalar abstract domains take care of representation of basic \llvm values as
+integers or floating-points. The traditional scalar domains are also known in
+the literature as \emph{numerical abstract domains} defined by Cousot
+in~\cite{Cousot1977}. In Cousot's approach, the abstraction is designed only
+for programs without memory and recursion; hence, abstract only program
+variables. We will call this restricted model as \emph{Cousot's program model}.
+Since we do not have a direct correspondence to this model in \llvm, we need to
+adjust Cousot's model to our state description. In \llvm for an abstract domain
+\domain{}, the numerical abstraction extends the state definition so that
+registers can hold abstract values. These program registers can be handled as
+Cousot's variables, but, the problem arises on the boundaries with memory.
+The simplest solution would be to lower abstract values to concrete domain with
+concretization function $\gamma$, but we would lose any advantage of abstraction.
+Therefore we need to extend \llvm program memory to be able to hold abstract
+scalar values.
+
+\add{ recursion solution }
+
+\begin{definition}
+    For abstract scalar domain $\mathcal{A}$, an abstract program state is
+    defined as $(\rho, \epsilon, \mu)$, where:
+
+    \begin{itemize}
+        \itemsep0em
+        \item $\rho:\mathcal{R} \rightarrow \mathcal{C} \cup \mathcal{A}$ allows to store abstract values into registers,
+    \item $\epsilon:\mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$ is a
+        concrete program environment, and
+    \item $\mu:\mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C} \cup
+        \mathcal{A}$ permits to keep abstract values in program memory.
+    \end{itemize}
+\end{definition}
 
 \begin{marginfigure}
 \strut\vspace*{-\baselineskip}\newline\centering
@@ -591,9 +658,21 @@ value $\bot_{\textit{I}}$ by empty interval $\emptyset$.
     \draw [->, >=stealth] (l8) -- node[midway, right] {\llvmint{ret 0}} (l9);
 \end{tikzpicture}
 }
-    \caption{Result of interval abstraction for variable \llvmint{|\var{\%x}|} after fixpoint iteration.}
+    \caption{Result of interval abstraction for content of stack variable
+    \llvmint{|\var{\%x}|} after fixpoint iteration.}
     \label{fig:interval}
 \end{marginfigure}
+
+Since the precision of an abstract domain highly depends on the program
+structure, many abstract domains were designed to track various program
+properties. The first domain presented by Cousot~\cite{Cousot1977} to
+achieve more precise results was an \textbf{\emph{interval domain}} \domain{I}.
+In the interval abstraction, a set of values is represented by its minimal and
+maximal value (see \autoref{fig:interval}).  Because in some cases, it is not
+possible to determine the boundary values, the interval domain utilizes
+infinities to denote arbitrary bound -- we represent arbitrary value
+$\top_{\textit{I}}$ by $[-\infty, \infty]$ and undetermined value
+$\bot_{\textit{I}}$ by an empty interval~$\emptyset$.
 
 Unfortunately, with the infinite lattice of the interval
 domain,\sidenote{The interval domain does not meet ascending chain condition.} the
@@ -604,39 +683,11 @@ fixpoint). Therefore, abstract interpreters employ \textbf{\emph{widening}} and
 \textbf{\emph{narrowing}} techniques to accelerate convergence \cite{Cousot1992a,
 Cortesi2011}.  The idea of wi\-de\-ning is to overshoot the least fixpoint
 after few unsuccessful iterations of the interpretation and subsequently by
-narrowing to refine the over-approximated solution.
-\begin{definition}
-    \textbf{Widening operator} $\nabla$ for domain $(\mathcal{A},
-    \sqsubseteq)$ fulfills:
-    \begin{enumerate}
-        \item $\forall v_1, v_2 \in \mathcal{A} : v_1 \sqcup v_2 \sqsubseteq v_1 \nabla v_2$,
-        \item for each sequence $(v_k)_{k \in \mathbb{N}}$, the sequence $(v^{\nabla}_k)_{k \in \mathbb{N}}$ defined as $v^{\nabla}_0 = v_0$ and $v^{\nabla}_k = v^{\nabla}_{k-1} \nabla v_k$ reaches a fixpoint after finitely many steps.
-    \end{enumerate}
-\end{definition}
-\vspace{-1em}
-\begin{definition}
-    \textbf{Narrowing operator} $\Delta$ for domain $(\mathcal{A},
-    \sqsubseteq)$ fulfills:
-    \begin{enumerate}
-        \item $\forall v_1, v_2 \in \mathcal{A} : v_1 \sqsupseteq v_2 \implies v_1 \Delta v_2 \sqsubseteq v_2$,
-        \item for each sequence $(v_k)_{k \in \mathbb{N}}$, the sequence $(v^{\Delta}_k)_{k \in \mathbb{N}}$ defined as $v^{\Delta}_0 = v_0$ and $v^{\Delta}_k = v^{\Delta}_{k-1} \Delta v_k$ reaches a fixpoint after finitely many steps.
-    \end{enumerate}
-\end{definition}
-
-\noindent
-By different implementation of widening and narrowing, abstract interpreters
-employ different strategies to achieve convergence -- for example widening
-with thresholds \cite{Blanchet2003, Lakhdar2011}, delayed widening, parma widening
-\cite{Bagnara2008} or abstract acceleration \cite{Gonnord2006, Feautrier2010}.
-
-An alternative approach to tackle infinite interpretation that does not require
-any extrapolation operator is a \textbf{\emph{policy iteration}}
-\cite{Costan2005, Gaubert2007, Gawlitza2007, Gawlitza2007b, Gawlitza2011}. The
-idea of policies is to compute fixpoint solution of a sequence of simpler
-semantic equations, such that the least fixpoint is reached after a finite
-number of iterations.  The sequence of policies defines a strategy to approach
-the fixpoint either from above or below. Policies are formed from a
-decomposition of original abstraction.
+narrowing to refine the over-approximated solution. By different implementation
+of widening and narrowing, abstract interpreters employ different strategies to
+achieve convergence -- for example widening with thresholds \cite{Blanchet2003,
+Lakhdar2011}, delayed widening, parma widening \cite{Bagnara2008} or abstract
+acceleration \cite{Gonnord2006, Feautrier2010}.
 
 \begin{marginfigure}
 \begin{minted}[linenos]{c}
@@ -651,6 +702,15 @@ while (i >= 0) {
     \caption{Program that requires a relational invariant.}
     \label{fig:relationalc}
 \end{marginfigure}
+
+An alternative approach to tackle infinite interpretation that does not require
+any extrapolation operator is a \textbf{\emph{policy iteration}}
+\cite{Costan2005, Gaubert2007, Gawlitza2007, Gawlitza2007b, Gawlitza2011}. The
+idea of policies is to compute fixpoint solution of a sequence of simpler
+semantic equations, such that the least fixpoint is reached after a finite
+number of iterations.  The sequence of policies defines a strategy to approach
+the fixpoint either from above or below. Policies are formed from a
+decomposition of original abstraction.
 
 The drawback of the domains presented uptil now is that they are not able to reason about
 relational properties between variables. Therefore, we address them as
@@ -687,10 +747,9 @@ linear properties is examined in \cite{Chen2009}.
 \subsection{Weakly relational abstract domains}
 
 In the middle between relational and non-relational abstract domains stand
-\textbf{\emph{weakly relational abstract domains}}. These domains aim to
-increase the precision of non-relational domains (interval domain) and reduce
-the cost of abstraction of relational domains (polyhedron domain) by keeping
-only a reduced amount of relations.
+weakly relational abstract domains. These domains aim to enhance the precision
+of non-relational domains and reduce the cost of abstraction of relational
+domains by keeping only a reduced amount of relations.
 
 The notable representant of weakly-relational domains is an \emph{octagon
 abstract domain} \cite{Mine2006}. This domain efficiently enables the representation
@@ -698,18 +757,20 @@ of invariants of form $\pm x \pm y \leq c$, where $x$ and $y$ are program
 variables and $c$ is a constant.  Moreover, the advantage of the octagon domain
 is in its representation by potential graphs and difference-bound matrices
 \cite{Larsen1997}, which allows a unique minimal representation of abstract
-values. The octagon domain was further optimized by bucketing of octagons
+values.\sidenote{Unique representation is highly demanded in the program
+verification because it allows fast equality comparisons of abstract states.}
+The octagon domain was further optimized by bucketing of octagons
 \cite{Blanchet2003, Venet2004} and modified to extend captured properties
 \cite{Claris2004, Mine2004}. Further restriction provides a \emph{zone domain}
 \cite{Mine2001} which reasons only about invariants of form $x - y \leq c$ and
 $\pm x \leq c$.
 
 A less precise and lightweight relational domain of \emph{pentagons} was introduced in~\cite{Logozzo2010} with applicability on validation of array manipulating
-byte-code. The pentagon domain captures properties of the form of $x \in [a,b]
+byte-code. The pentagon domain captures properties of the form $x \in [a,b]
 \wedge x < y$.
 
 A recent abstract domain utilizes \emph{parallelotopes} to encode any linear
-constraint as the polyhedra, while it preserves the efficiency of weakly
+constraint as polyhedra do, while it preserves the efficiency of weakly
 relational abstract domains \cite{Amato2017}.
 
 A disadvantageous aspect of relational abstract domains is their complicated
@@ -743,8 +804,6 @@ abstract domains, a predicate representation may not just reason about a single
 variable but a whole program state (set of states), moreover predicates
 inherently keep relational information between variables.
 
-\add{ extend citations }
-
 \subsubsection{Domain of uninterpreted functions}
 
 The domain that is of particular interest for us in the following chapters is a
@@ -760,148 +819,76 @@ with relational information.
 \prule
 \bigskip
 
-\noindent
-So far, we have presented only domains, which abstract only scalar values -- we call
-them numerical abstract domains.  Overall a \emph{numerical abstract domain} is
-determined by three primary components:
+So far, we have presented only domains, which abstract only scalar values.
+Overall a \emph{scalar abstract domain} is determined by three primary
+components:
 
 \phantomsection
 \label{sec:ingredients}
 \begin{enumerate}
+    \itemsep0em
     \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretization and abstraction function,
     \item effective and sound abstract operators,
     \item and an iteration strategy.
 \end{enumerate}
 
+%\bigskip
+%\prule
+%\bigskip
+
+%\noindent
+%In the following section we investigate non-scalar abstract domains, generally
+%known as symbolic abstractions. They abstract infinite sets of in/finite
+%functions \cite{Cousot14}, graphs and other constructs of programming languages
+%like arrays~\cite{Cousot2011p}, trees~\cite{Mauborgne2000}, heaps (non sharing
+%\cite{Cousot1977static, Cousot1977rec} or shape analysis~\cite{Reps2002,
+%Chang2008}).
+
 \section{Aggregate abstraction}
 
-\add{ TODO }
+In a general setting, analyses of programming languages require more
+specialized abstractions to reason about complex constructs as aggregates or
+memory, than just the scalar ones. In \llvm, we recognize two types of
+aggregates: homogenous like arrays or vectors, or heterogeneous structures.
+Although it may seem reasonable to represent aggregates as products of scalars
+abstract domains, in practice such representation is a cost-inefficient.
+Moreover, product representation is restricted only to the exact size of
+aggregate, hence does not allow an analysis of arbitrary large objects.
+Therefore, many tools utilize various domain specific abstractions to reason
+efficiently about aggregates.
 
-\section{Memory abstraction}
+In comparison to scalar domains, aggregate domains do not abstract arithmetic
+operations, but they behave like memory objects. Therefore they abstract memory
+access operations (\texttt{store}/ \texttt{load}) and also allow to compute an
+offset to their elements. These offsets might be abstract, but the address of
+the aggregates is required to be concrete, i.e., only the content behind the
+pointer is abstracted -- this is the key difference to more general heap
+abstractions. The aggregate domain might also combine with scalar domains to
+represent internal elements, or abstract indices used to represent the
+arbitrary large sizes.
 
-\subsection{Non-numerical abstract domains}
+\subsection{Array abstraction}
 
-Generally known as symbolic abstractions, they abstract infinite sets of
-in/finite functions \cite{Cousot14}, graphs and other constructs of programming languages like
-arrays~\cite{Cousot2011p}, trees~\cite{Mauborgne2000}, heaps (non sharing
-\cite{Cousot1977static, Cousot1977rec} or shape analysis~\cite{Reps2002, Chang2008}).
-
-\subsubsection{Memory abstraction}
-
-To perform memory abstractions, we extend our model to consider a program heap.
-In memory aware analysis, we have a set of values $\mathcal{C}$; memory addresses are
-values $\mathcal{C}_{\textit{addr}} \subseteq \mathcal{C}$. The environment $e
-\in \mathcal{E}$ maps program variables into their addresses: $\mathcal{E}:\mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$.  Then heap $h \in
-\mathcal{H}$ is a partial function that map addresses into values: $\mathcal{H}
-= \mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C}$.  A particular
-environment and heap describe a memory state $\sigma_m \in \mathcal{M}$ where
-$\mathcal{M} = \mathcal{E} \times \mathcal{H}$, for better illustration see
-example in \autoref{fig:memory}.
-
-\begin{marginfigure}
-    \add{ TODO memory example }
-\caption{State of program memory.}
-\label{fig:memory}
-\end{marginfigure}
-
-\subsubsection{Pointer abstraction}
-
-In the memory-aware analysis, we may perform a separate abstraction of
-pointers. A simplest of them are non-relational pointer abstractions. A pointer
-abstraction is defined in the same way as a scalar abstraction; it is given as
-a set of abstract pointer values $A_{\textit{ptr}}$; concretization function
-$\gamma_{\textit{ptr}}: A_{\textit{ptr}} \rightarrow
-\mathcal{P}(\mathcal{C}_{\textit{addr}})$ and abstraction function
-$\alpha_{\textit{ptr}}: \mathcal{P}(\mathcal{C}_{\textit{addr}}) \rightarrow A
-_{\textit{ptr}}$. An example of simple non-relational pointer abstract domain
-is a \emph{null pointer} domain illustrated in \autoref{fig:nulldomain}.
-
-\begin{marginfigure}
-
-    \centering
-    \begin{tikzpicture}[node distance=1em]
-    \node [] (t) {$\top$};
-    \node [below = of t] (null) {$\textit{non-null}$};
-    \node [below = of null] (b) {$\bot$};
-        \draw [thin] (t) -- (null) -- (b);
-    \end{tikzpicture}
-    \caption{The null pointer domain keeps information whether a pointer might be \emph{null}:
-    $\gamma_{\textit{ptr}}(\top) = \mathcal{C}_{\textit{addr}}$ and
-    $\gamma_{\textit{ptr}}(\textit{non-null}) = \mathcal{C}_{\textit{addr}} \setminus 0$. }
-    \label{fig:nulldomain}
-\end{marginfigure}
-
-Non-Relational pointer domains have a disadvantage because of their imprecision
--- as soon as a points-to set of pointers contain several elements, the
-abstract interpretation performs imprecise updates. Moreover, they are not able
-to express well-structured invariants about memory objects (e.g., lists or trees).
-
-For more precise updates, pointer abstraction leverage \emph{separation logic}.
-It allows performing local reasoning about memory (i.e., consider only a part
-of memory). In separation logic, the memory relations are described by
-points-to predicates and separating conjunctions on heaps~\cite{Reynolds2002}.
-
-However, just separation logic is too expressive to be tractable as an abstract
-domain because it is not efficient manipulation. In static analysis, separation
-logic is usually used in combination with shape analysis. Shape graphs are used
-to generalize abstract data structures (e.g., lists or trees). The shape graph
-can summarize inductive data structures into simple
-shapes~\cite{Distefano2006}. Similarly to scalar analysis, shape analysis can
-be refined by widening or by keeping shape relations~\cite{Chang2008}.  Reduced
-products to shape analysis was introduced in~\cite{Toubhans2013}.
-
-More recent approaches leverage \textsc{smt} solvers and reduce problems from
-separational logic to propositional logics~\cite{Piskac2013, Itzhaky2014,
-Itzhaky2014b}.  Also, template-based domains~\cite{Malik2018} delegates
-semantic reasoning to \textsc{smt} solvers and concentrates on the design of
-appropriate shape templates.  In comparison to traditional predicate analysis
-where a user needs to supply a set of predicates, template-based domains use a
-set of pa/-ra/-me/-trized predicates which are further gradually refined via \textsc{smt}.
-Moreover, the \textsc{smt} representation enables a straightforward combination with
-value analysis -- hence allows reasoning about the shape and their contents at
-the same time.
-
-To reason only about numeric properties of heap manipulating programs, we can
-omit a lot of shape analysis. Magill et al. present an
-abstraction~\cite{Magill2010} that instruments only numeric abstraction of
-shape properties into the program, hence allow cheaper reasoning about
-properties like a length of linked-lists or distance between two elements of
-the list. Other domains extend the relational numeric analysis of the content
-of particular shapes, for example, trees~\cite{Journault2019}.
-
-Many tools specialize in the analysis of a single type of data-structures. To
-name a few: Predator~\cite{Dudka2012} is a tool for automated verification of programs with
-dynamic linked data structures using a separation logic and shape
-graphs; Forester~\cite{Holik2015} leverage tree automata in the combination
-with shape analysis to verify programs with various types of lists or
-trees; whereas Space Invader~\cite{Yang2008} use shape
-analysis in combination with abduction. For an extended survey of heap
-abstractions, we refer to~\cite{Kanvar2016}.
-
-\add{ extend ? }
-
-\subsubsection{Array abstraction}
-
-The simplest and heavily used data structure \emph{memory array} gets a lot of
-specific abstract domains for efficient reasoning about array manipulating
-programs. In the analysis of arrays, the analyzer needs to be able to discover
-relationships among values of array elements, as well as their relationships to
-scalar variables and constants located in the program.
+The simplest and heavily used aggregate -- \emph{array} gets a lot of specific
+abstract domains for efficient reasoning about array manipulating programs. In
+the analysis of arrays, the analyzer needs to be able to discover relationships
+among values of array elements, as well as their relationships to scalar
+variables and constants located in the program.
 
 Generally, it is problematic to statically reason about arrays, because of
 their unbounded nature. The problem is that the array operations do not
 consider a particular fixed array size. Instead, the array size typically
 depends on the scalar variables. The precise verification of such program
-requires being able to reason about relationships between array size and array
-content and program variables. Hence analyses tend to utilize symbolic methods
+requires being able to reason about relationships between array size, array
+content and program variables. Hence, analyses tend to utilize symbolic methods
 to represent constraints on arrays~\cite{Gopan2005}.
 
 Depending on the interested properties, we recognize two types of array-related
 techniques. The analysis either focus on the reasoning about array bounds and
 related out of bounds errors, or on the content of the array~\cite{Halbwachs2008}.
 
-To reason about array content, abstract domains are usually parametrizable by
-numerical abstract domains by which tha abstraction represents the internal
+To reason about array content, abstract domains are usually para\-me\-tri\-zable by
+numerical abstract domains by which the abstraction represents the internal
 elements of an abstract array~\cite{Cousot2011p}. Symbolic methods are also
 used to represent or generalize facts about array manipulations -- for example,
 \emph{universally quantified abstract domains}, enable to quantify over array
@@ -928,13 +915,13 @@ lowers program arrays into scalar manipulating code. In this way, we obtain
 array-free programs that leverage the fine-tuned numerical analysis. Moreover,
 the instrumentation can slice program only for interested array properties.
 
-\subsubsection{String abstractions}
+\subsection{String abstraction}
 
 Even though array abstraction might be used to handle strings in programs, it
-is more precise to treat them separately. In C language, strings are
-represented as null-terminated arrays of characters. Hence, to detect string
-related errors, many abstractions extends the array abstractions to keep record
-about null characters~\cite{Olliaro2018}.
+is more precise to treat them separately. In C language as well as in \llvm,
+strings are represented as null-terminated arrays of characters. Hence, to
+detect string related errors, many abstractions extends the array abstractions
+to keep record about null characters~\cite{Olliaro2018}.
 
 Since string domains are more restricted, they utilize other formalisms to
 represent an abstract set of strings like finite
@@ -945,34 +932,151 @@ unifying approach to string analysis.  In his work, presented domains can be
 tuned to a different level of precision and address only specific properties of
 strings.
 
-\subsection{Real-world programs dedicated abstractions}
+
+\section{Heap abstraction}
+
+Because heap memory is potentially unbounded and seemingly arbitrary, we cannot
+employ the same techniques as with stack and static memory. Another key
+difference of memory abstractions to previous techniques is that memory permits
+self-referential values, i.e., abstraction needs to manage possibly infinitely
+recursive structures. Hence, a general heap abstraction consists of two
+components:
+
+\begin{enumerate}
+    \item \emph{heap modeling}, which takes care of heap memory representation
+        as memory model (i.e., an unbounded set of concrete locations as an
+        unbounded set of abstract locations), and
+    \item \emph{summarization}, which bounds the memory by merging multiple
+        abstract locations into summary locations.
+\end{enumerate}
+
+\noindent
+In literature, we recognize multiple types of heap models: a \emph{store-based
+model}, which represents memory as a graph with symbolic addresses, where edge
+$p \rightarrow l$ represents that a pointer $p$ may hold the address of
+concrete location $l$; on the contrary, a \emph{storeless model} abstracts
+locations in terms of access paths and capture the structure of relations
+between heap objects~\cite{Kanvar2016}.
+
+\begin{marginfigure}
+
+\add{image}
+\caption{Store-based model of heap graphs.}
+\label{fig:storebased}
+\end{marginfigure}
+
+\subsubsection{Pointer abstraction}
+
+In the memory-aware analysis, we may perform a separate abstraction of
+pointers. The simplest of them are non-relational pointer abstractions. A
+non-relational pointer abstraction is defined in the same way as a~scalar
+abstraction; it is given as lattice of abstract pointer values
+$A_{\textit{addr}}$; concretization function
+$\gamma: A_{\textit{addr}} \rightarrow
+\mathcal{P}(\mathcal{C}_{\textit{addr}})$ and abstraction function $\alpha:
+\mathcal{P}(\mathcal{C}_{\textit{addr}}) \rightarrow A _{\textit{addr}}$. An
+example of simple non-relational pointer abstract domain is a \emph{null
+pointer} domain illustrated in \autoref{fig:nulldomain}.
+
+\begin{definition}
+    For abstract pointer domain $\mathcal{A}_{\textit{addr}}$, an abstract program state is
+    defined as $(\rho, \epsilon, \mu)$, where:
+
+    \begin{itemize}
+        \itemsep0em
+        \item $\rho: \mathcal{R} \rightarrow \mathcal{C} \cup
+            \mathcal{A}_{\textit{addr}}$ registers may contain abstract
+            addresses,
+        \item $\epsilon : \mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}
+            \cup \mathcal{A}_{\textit{addr}}$ environment allows to assign
+            objects symbolic addresses, and
+        \item $\mu: \mathcal{C}_{\textit{addr}} \cup
+            \mathcal{A}_{\textit{addr}} \rightarrow \mathcal{C} \cup
+            \mathcal{A}_{\textit{addr}}$ permits to keep values in abstract
+            memory, as well as referencing another abstract addresses.
+    \end{itemize}
+\end{definition}
+
+\begin{marginfigure}
+
+    \centering
+    \begin{tikzpicture}[node distance=1em]
+    \node [] (t) {$\top$};
+    \node [below = of t] (null) {$\textit{non-null}$};
+    \node [below = of null] (b) {$\bot$};
+        \draw [thin] (t) -- (null) -- (b);
+    \end{tikzpicture}
+    \caption{The null pointer domain keeps information whether a pointer might be \emph{null}:
+    $\gamma_{\textit{ptr}}(\top) = \mathcal{C}_{\textit{addr}}$ and
+    $\gamma_{\textit{ptr}}(\textit{non-null}) = \mathcal{C}_{\textit{addr}} \setminus 0$. }
+    \label{fig:nulldomain}
+\end{marginfigure}
+
+Non-Relational pointer domains have a disadvantage because of their imprecision
+-- as soon as a points-to set of pointers contain several elements, the
+abstract interpretation performs imprecise updates. Moreover, they are not able
+to express well-structured invariants about memory objects (e.g., lists or trees).
+
+For more precise updates, pointer abstraction leverage summarization
+techniques, also known as \emph{shape analysis}. Shape graphs are used to
+generalize abstract data structures (e.g., lists or trees). The shape graph can
+summarize inductive data structures into simple shapes~\cite{Distefano2006}.
+Similarly to scalar analysis, shape analysis can be refined by widening or by
+keeping shape relations~\cite{Chang2008}.  Reduced products to shape analysis
+was introduced in~\cite{Toubhans2013}.
+
+More recent approaches leverage \textsc{smt} solvers and reduce problems from
+separational logic, that is used in shape analysis, to propositional
+logics~\cite{Piskac2013, Itzhaky2014, Itzhaky2014b}.  Also, template-based
+domains~\cite{Malik2018} delegates semantic reasoning to \textsc{smt} solvers
+and concentrates on the design of appropriate shape templates.  In comparison
+to traditional predicate analysis where a user needs to supply a set of
+predicates, template-based domains use a set of parametrized predicates which
+are further gradually refined via \textsc{smt}.  Moreover, the \textsc{smt}
+representation enables a straightforward combination with value analysis --
+hence allows reasoning about the shape and their contents at the same time.
+
+To reason only about numeric properties of heap manipulating programs, we can
+omit a lot of shape analysis. Magill et al. present an
+abstraction~\cite{Magill2010} that instruments only numeric abstraction of
+shape properties into the program, hence allow cheaper reasoning about
+properties like a length of linked-lists or distance between two elements of
+the list. Other domains extend the relational numeric analysis of the content
+of particular shapes, for example, trees~\cite{Journault2019}.
+
+Many tools specialize in the analysis of a single type of data-structures. To
+name a few: Predator~\cite{Dudka2012} is a tool for automated verification of programs with
+dynamic linked data structures using a separation logic and shape
+graphs; Forester~\cite{Holik2015} leverage tree automata in the combination
+with shape analysis to verify programs with various types of lists or
+trees; whereas Space Invader~\cite{Yang2008} use shape
+analysis in combination with abduction. For an extended survey of heap
+abstractions, we refer to~\cite{Kanvar2016}.
+
+\subsection{Verification dedicated abstractions}
 
 In addition to general-purpose domains presented so far, verification of
 real-world programs requires many domain-specific abstractions. Since most of
 numerical domains work with unbounded numbers, they are not well suited for
 sound representation of computer numbers. Therefore, we would like to reflect
-the properties of bit-precise arithmetic like overflows in the abstract domains.
-This problem is solved in recent abstract domains that leverage bit-vector
-logic to reproduce processor semantics~\cite{Sharma2013, Sharma2017}. Similar
-domains were also designed for floating-point arithmetic~\cite{Putot2004}.  The
-real-world program analysis also requires to reflect memory model of the
-program under test. To describe memory model properties, analysis usually
-leverage dedicated predicate abstraction~\cite{Dan2013}.
-
-%\add{ \cite{Majumdar2018} }
-\add{extend memory model abstraction}
+the properties of bit-precise arithmetic like overflows in the abstract
+domains.  This problem is solved in recent abstract domains that leverage
+bit-vector logic to reproduce processor semantics~\cite{Sharma2013,
+Sharma2017}. Similar domains were also designed for floating-point
+arithmetic~\cite{Putot2004}.  The real-world program analysis also requires to
+reflect memory model of the program under test. To describe memory model
+properties, analysis usually leverage dedicated predicate
+abstraction~\cite{Dan2013}. Further challenges of machine code analysis are
+outlined in~\cite{Reps2010}.
 
 \begin{marginfigure}
 
-\add{example of bitvector abstraction which is not recogniazable by infinite domain}
-
+\add{example of bitvector abstraction which is not recognizable by infinite domain}
+\caption{Bitvector}
 \label{fig:bitvector}
 \end{marginfigure}
 
-The paper~\cite{Reps2010} outlines challenges that arise when analyzing machine code and what can be done about them.
-\add{ describe challenges }
-
-More domain-specific abstractions are used to analyze database querying languages~\cite{Halder2012}; system components like filters~\cite{Feret2004} or synchronous clocks~\cite{Feret2005}.
+More domain-specific abstractions are used to analyze database querying languages~\cite{Halder2012}; system components like filters~\cite{Feret2004} or syn\-chro\-nous clocks~\cite{Feret2005}.
 
 \subsection{Domain Refinement}
 \label{sec:domainrefinement}
@@ -1017,10 +1121,10 @@ widening operators \cite{Bagnara2004} and exacts joins of numerical elements
 \cite{Bagnara2010}.
 
 In the abstraction, the major source of imprecision is approximation induced by
-abstract unions. The usual usecase of abstract dijunctions (unions) is to merge
-multiple paths of the program. However, many abstract domains are not closed
-under union operation.  \emph{Disjunctive completion methods} address this
-problem \cite{File1999}. The complementation introduces to abstraction all
+abstract unions. The usual use-case of abstract disjunctions (unions) is to
+merge multiple paths of the program. However, many abstract domains are not
+closed under union operation.  \emph{Disjunctive completion methods} address
+this problem \cite{File1999}. The complementation introduces to abstraction all
 those concrete disjunctions of elements of the domain that were initially
 missing.  The resulting domain is the most abstract domain that is exact on
 disjunctions of abstract properties in original domain. Similarly the technique
@@ -1066,14 +1170,14 @@ smart handling of disjunctions~\cite{Blanchet2003, Mauborgne2005} and
 domain-specific abstract domains~\cite{Feret2004, Feret2005}.
 
 Another tool SeaHorn~\cite{Gurfinkel2015} is a software verification framework
-built on top of \llvm.  It is closely related to our course, mainly because it
+built on top of \llvm.  It is closely related to our goal, mainly because it
 targets an easy design of abstract domains for program verification. The
 management of abstraction in SeaHorn is provided by an abstract interpretation
 module \textsc{crab} (language-agnostic library for static analysis) which is
 suited for the generation of invariants into \llvm~\cite{Gershuni2019}. The
 underlying abstract interpreter for \textsc{crab} library is
 \textsc{ikos}~\cite{Ikos}. SeaHorn faces limitation in its usage: most
-\textsc{crab} domains reason only about linear arithemtic; it lacks any pointer
+\textsc{crab} domains reason only about linear arithmetic; it lacks any pointer
 or shape analysis and provides only limited support of array abstractions.
 
 \section{Towards sound analysis}
@@ -1084,22 +1188,13 @@ abstract interpretation, we can find many flavors of its application. In this
 section, we outline the various use-cases of abstraction in the program
 verification.
 
-\subsection{Static analysis}
-
-\add{ TODO rewrite }
-
-In model checking, abstraction is used to reduce the size of model state
-space~\cite{Pelnek2006}.  Instead of performing exploration of concrete state
-space, algorithms group a set of concrete states together according to some
-abstraction to explore a reduced state space. Model checkers also use
-abstraction or symbolic representation to handle non-deterministic data instead
-of exhaustive enumeration of all possible values~\cite{Mrazek2016}.
-
-In general, we are talking about overapproximating abstraction; which means
-that if an abstract model is correct, the concrete model also is. However,
-there is no guarantee that reachable error state in the abstract model is also
-reachable in the original concrete model; if not so, we are talking about the
-spurious error.
+In verification, in comparison to static analysis, it is crucial to preserve
+the soundness of the analyses. Hence, the abstraction needs to preserve all
+possible paths to the error, and may create potentially new paths. We call such
+abstraction over-approximating; meaning that if an abstract model is correct,
+the concrete model also is.  However, there is no guarantee that the reachable
+error state in the abstract model is also reachable in the original concrete
+model; if not so, we are talking about the \emph{spurious} error.
 
 \subsection{Counterexample-guided abstraction refinement}
 
@@ -1186,19 +1281,6 @@ Lazy abstraction comes in particularly useful to shape analysis where it allows
 to refine shapes only locally~\cite{Henzinger2003,Beyer2006a}, as well as to
 array abstractions~\cite{Alberti2012, Alberti2012b}.
 
-\subsection{Eager Abstraction}
-
-On the contrary to lazy abstraction, which has used a refinement of abstraction
-on demand, the eager abstraction~\cite{McMillan2018} is inspired by eager
-theory explication used in \textsc{smt} solvers. Eager strategy in \textsc{smt} solvers
-abstract the formula to its propositional skeleton -- to compensate the loss of
-information \textsc{smt} solver adds tautologies to the formula before abstraction,
-whereas the lazy approach produces tautologies retroactively after abstraction.
-In the case of model checking, we apply the eager abstraction on the level of
-atomic propositions. The eager abstraction separates propositional and theory
-reasoning about program states -- by the skeletal abstraction of symbolically
-described states and transition function.
-
 \subsection{Symbolic abstract domains}
 
 A different approach to abstract a set of states is to use symbolic methods:
@@ -1207,7 +1289,19 @@ checking~\cite{Clarke96, McMillan93, Cimatti20}, bounded model
 checking~\cite{Biere2003bounded} or control-explicit data-symbolic model
 checking (\ceds)~\cite{Mrazek2016}.
 
-In between symbolic execution tools, a prominent position represents
+The symbolic representation can be viewed as a precise abstract domain, i.e.,
+meaning that it accurately represents a set of concrete values and therefore
+does not produce spurious errors. In our framework, a~symbolic domain assigns
+to each variable a formula that represents constraints on it. Therefore during
+the execution, we can collect all symbolic values, and by joining all
+constraints, we obtain a description of an abstract state. In comparison to
+\cegar approach, a symbolic execution refines its precision on-the-fly by
+introducing new constraints on variables, hence remains precise throughout the
+execution. The symbolic execution also features a lazy approach since whenever
+it encounters an unfeasible state, it cancels exploration of current path
+backtracks to the previously feasible fork on path.
+
+In between symbolic execution tools, a prominent position holds
 \textsc{klee}~\cite{Cadar2008klee}. It is a symbolic executor based on \llvm,
 which enjoys widespread adoption and a lot of tools are built on top of
 it~\cite{Beyer2018Klee, Chalupa2018, Chen2018, Menezes2018}. This is mainly because it
@@ -1221,8 +1315,6 @@ strategies from \textsc{smt} solvers -- for example a bitwidth
 abstractions~\cite{Jonavs2018} or theory refinements~\cite{Hyvarinen2017}.
 
 As in the case of abstraction with uninterpreted functions~\cite{Gange2016}, \textsc{smt} is also used for better approximation of abstract operations via symbolic abstraction~\cite{Thakur2012}.
-
-\add{ extend symbolic abstraction technique }
 
 \subsection{Interpolation}
 \label{sec:interpolation}
@@ -1244,8 +1336,6 @@ of widening of octagon and polyhedra domains to avoid false alarms. Similarly,
 in VINTA~\cite{Albarghouthi2012}, the interpolation is used to refine the interval domain.
 
 \section{Static analysis and transformation}
-
-\todo{ rework }
 
 A static analysis often uses code transformation and instrumentation to
 simplify its duties. A common technique is to reduce code size either directly
