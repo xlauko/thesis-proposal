@@ -23,7 +23,7 @@ presents a sweet spot where to conduct program analysis.
 An elementary unit of \llvm program is an \emph{instruction}. We recognize a usual set of binary
 instructions (arithmetic, relational operations), memory access operations
 (\texttt{load}, \texttt{store}), heap operations (\texttt{malloc},
-\texttt{free}), stack allocation (\texttt{alloca}), data flow operations
+\texttt{free}), stack allocation (\texttt{alloca}), data-flow operations
 (branching instructions \texttt{br}, calls, return instruction \texttt{ret}).
 Since \llvmir is a typed language, it also provides conversion instructions
 among integers, floats and pointers. We admit scalar types (floats, integers),
@@ -1112,7 +1112,7 @@ properties like a length of linked-lists or distance between two elements of
 the list. Other domains extend the relational numeric analysis of the content
 of particular shapes, for example, trees~\cite{Journault2019}.
 
-Many tools specialize in the analysis of a single type of data-structures. To
+Many tools specialize in the analysis of a single type of data structures. To
 name a few: Predator~\cite{Dudka2012} is a tool for automated verification of programs with
 dynamic linked data structures using a separation logic and shape
 graphs; Forester~\cite{Holik2015} leverage tree automata in the combination
