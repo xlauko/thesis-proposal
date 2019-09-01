@@ -10,7 +10,7 @@ for program state-space exploration. In my work, I propose to let the program
 under test take care of abstraction and maintain abstract data. This can be
 achieved by instrumentation of abstract operations directly into the program.
 Hence, the verifier does not need to perform abstract interpretation, but it
-can only perform a concrete interpretation of the program and extract abstract
+can only perform a concrete interpretation of the program and obtain abstract
 data from the program memory if it needs them.
 
 In the previous chapter, I have stated multiple alternatives of how much of the
@@ -53,7 +53,7 @@ operations and provides definitions of abstract data representation.
 
 During verification, virtual machine (\textsc{vm}) executes the abs\-trac\-ted
 program and generates state space for a model checking algorithm (\textsc{mc}).
-The model checking algorithm extracts symbolic data and path condition directly
+The model checking algorithm obtains symbolic data and path condition directly
 from program memory, whenever it needs to decide whether the state is feasible
 or is equal to some previously visited state. An external \textsc{smt} solver solves
 feasibility and equality queries. Notice that the virtual machine has no clue

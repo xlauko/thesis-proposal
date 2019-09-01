@@ -8,7 +8,7 @@ verification of complex systems. One of its applications is to simplify
 reasoning about non-deterministic data, i.e., interactions with a program
 environment. The computation with non-de\-ter\-mi\-nistic data, also known as
 abstract interpretation, represents data in an abstract domain. Such a domain
-drops some information about program variables to reduce the amount of
+drops some information about program variables to reduce the number of
 potential variable states, hence simplifies the reasoning about all possible
 program inputs. In order to simplify abstract computation even further, many
 techniques have been developed to refine abstraction on demand, e.g.,
@@ -56,7 +56,7 @@ associated with the values, which will determine whether the value is concrete
 or not.
 
 Another part of abstraction execution is a decision procedure which determines
-the feasibility of a program path. One can argue that it can also be extracted
+the feasibility of a program path. One can argue that it can also be refactored out
 out of the execution engine for our purpose, however, in reality, it is hardly
 realizable that whole \textsc{smt} solver would be compiled into the program and
 reinterpreted by further analyses.
@@ -124,7 +124,7 @@ reinterpreted by further analyses.
     \item The third approach shifts responsibility about metadata to
         the program (they can be kept as shadow memory of the program -- a
         similar approach is used by sanitizers~\cite{Stepanov2015}), consequently the
-        interpreter needs to extract metadata from the program.
+        interpreter needs to obtain metadata from the program.
     \item The latter approach let full responsibility about abstraction to the
         program, and the interpreter executes program explicitly. The decision
         procedure needs to take care of non-deterministic execution and
@@ -184,8 +184,8 @@ To be able to instrument abstraction into the program, first of all, we need to
 perform a data flow analysis to detect wherever abstract values might appear.
 Such analysis needs to be efficient and fast, and it needs to handle data flow
 through program memory, indirect calls as well as perform pointer analyses. Even though we can
-over-approximate its result, we want to minimize the amount of instrumented
-abstraction to retain precision of further analysis.
+over-approximate its result, we want to minimize the number of instrumented
+abstract instructions to retain precision of further analysis.
 
 The contemporary techniques are usually imprecise or they handle only a subset of use
 cases of real programs. Hence, the first goal of successful abstraction is a
