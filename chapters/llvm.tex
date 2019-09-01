@@ -1,60 +1,133 @@
-\chapter{\llvm syntax \& semantics}
+\chapter{\llvm syntax}
 \label{ch:llvm}
 
-\textsc{\llvm syntax}
 \section*{Types}
 \begin{grammar}
 
 <float> ::= "half" | "float" | "double" | "fp80" | "fp128"
 
-<type> ::= "void" | "i"<sz> | <float> | <type>* | "[" <sz> $\times$ <type> "]"
-    \alt { $<type>^n$ } | "id"
+<type> ::= "void" | "i"<sz> | <float> | <type>* | "[" <sz> $\times$ <type> "]" | \{ $<type>^n$ \} | "id"
 
 \end{grammar}
 
-where $sz \in \mathbb{N}^+$ is a natural number.
-
+\noindent
+where $sz \in \mathbb{N}^+$ is a natural number. \llvm recognize
+integer types denoted by \texttt{i} and their bit-width $sz$, floating point
+types, pointer types denoted by \texttt{*}, array types of predetermined size,
+heterogeneous structure types wrapped in curly braces, and value identifiers.
+\llvm does not have a dedicated boolean type, instead it uses a one bit-long
+integer type \texttt{i1}.
 
 \section*{Operations}
+
+In our restricted \llvm, we recognize binary arithmetic operations on integers
+and floating points. Since \llvm integer types do not preserve signedness,
+operations that depend on the sign (e.g., division \texttt{div} and reminder
+after division \texttt{rem}) have multiple variations for unsigned and signed
+integers.
+
 \begin{grammar}
 <bop> ::= "add" | "sub" | "mul" | "udiv" | "sdiv" | "urem" | "srem" \alt
           "shl" | "lshr" | "ashr" | "and" | "or" | "xor"
 
 <fbop> ::= "fadd" | "fsub" | "fmul" | "fdiv" | "frem"
+\end{grammar}
 
+\noindent
+To extend or truncate bit-width of scalar values \llvm utilizes following
+instructions, where the extension can preserve the sign of value (the most
+significant bit) by \texttt{sext} or extend the value with zeros \texttt{zext}:
+
+\begin{grammar}
 <eop>  ::= "zext" | "sext" | "fpext"
 
-<cop>  ::= "bitcast" | "ptrtoint" | "inttoptr" | "fptoui" | "fptosi" \alt
-           "uitofp"  | "sitofp"
-
 <trop> ::= "trunc" | "fptrunc"
+\end{grammar}
 
-<cond> ::= TODO cmp
+\noindent
+Cast instructions perform the transformation between integer, floating-point,
+and pointer types, as well as between various pointer types by \texttt{bitcast}:
+
+\begin{grammar}
+<cast>  ::= "bitcast" | "ptrtoint" | "inttoptr" | "fptoui" | "fptosi" \alt
+           "uitofp"  | "sitofp"
+\end{grammar}
+
+\noindent
+Relations between \llvm values are determined by comparison operators. They
+also contains of singed and unsigned versions for integer values, as well as
+order and unsigned versions for floating-point values. They denote equality
+\texttt{eq}, non-equality \texttt{ne}, greater than relation \texttt{gt},
+greater or equal relation \texttt{ge}, less than relation \texttt{lt} and less
+than or equal relation \texttt{le}.
+
+\begin{grammar}
+<irel> ::= "eq" | "ne" | "ugt" | "uge" | "ult" | "ule" | "sgt" | "sge" | "slt" | "sle"
+
+<frel> ::= "false" | "oeq" | "ogt" | "oge" | "olt" | "ole" | "one" | "ord" | "ueq" | "ugt" | "uge"
+    \alt "ult" | "ule" | "une" | "uno" | "true"
 \end{grammar}
 
 \section*{Values}
+
+In \llvm program we allow constant values, dynamic values denoted by
+identifiers, global variables, function definitions and declarations:
+
 \begin{grammar}
-<cnst> ::= TODO
+<cnst> ::= "i"<sz> "Int" | <float> "Float" | <type>* "null" | <type> "undef" |
+    \alt <type> "zeroinitializer"
 
 <val> ::= <id> | <cnst>
 
-<glob> ::= "global" TODO | "define" TODO | "declare" TODO
+<arg> ::= <type> <id>
+
+<glob> ::= "global" <type> <cnst>
+    \alt "define" <type> <id>( $<arg>^n$ ) \{ $<block>^m$ \}
+    \alt "declare" <type> <id>( $<arg>^n$ )
 \end{grammar}
 
 \section*{Control Flow}
+
+Control flow graph of \llvm functions consists of labeled basic blocks, where
+each starts with a sequence of phi node instructions (merge points of \ssa
+form), and sequence of instructions terminated with a terminal instruction.
+Terminal instruction either branch via conditional/uncon\-di\-tio\-nal branch to the
+subsequent basic block or they return from the function. Alternatively, an
+unreachable location is denoted by special instruction.
+
 \begin{grammar}
-<block> ::= TODO
 
-<phi> ::= TODO
+<block> ::= $label$ $<phi>^n$ $<cmd>^m$ <term>
 
-<cfl> ::= "br val l_1 l_2" | "br l" | "ret" TODO | "ret void" | "unreachable"
+<phi> ::= <id> = "phi" <type> [$<val>$, $label$]$^n$
+
+<term> ::= "br" <val> $label$ $label$  | "br" $label$
+    \alt "ret" <type> <val> | "ret void"
+    \alt "unreachable"
 \end{grammar}
 
 \section*{Commands}
+
+Ids identify results of \llvm commands, which are either \ssa instructions
+(binary operations, casts, or relational operations), memory access operations, or
+function calls. A special instruction getelementptr is used to compute offset
+from a pointer.
+
 \begin{grammar}
-<cmd> ::= TODO
+<cmd> ::= <id> = <bop> "i"<sz> <val> <val>
+    \alt <id> = <fbop> <float> <val> <val>
+    \alt <id> = "load" <type>* <val>
+    \alt "store" <type> <val> <val>
+    \alt <id> = "malloc" <type>
+    \alt "free" <type>* <val>
+    \alt <id> = "alloca" <type>
+    \alt <id> = <cast> <type> <val> "to" <type>
+    \alt <id> = "icmp" <irel> <type> <val> <val>
+    \alt <id> = "fcmp" <frel> <type> <val> <val>
+    \alt call <type> <id> $<val>^n$ | <id> = call <type> <id> $<val>^n$
+    \alt <id> = getelementptr <type>* <val> $<val>^n$
 \end{grammar}
 
-\add{ \llvm structured data is flattened to lists of basic values that indicate its
-physical representation. }
-
+\noindent
+The semantics of these instructions is well described in the \llvm language
+reference manual\footnote{\url{https://llvm.org/docs/LangRef.html}}, and formalized in~\cite{Zhao2012}.

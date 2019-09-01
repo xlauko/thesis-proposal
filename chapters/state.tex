@@ -70,11 +70,11 @@ variables as well as memory addresses $\mathcal{C}_{\textit{addr}} \subseteq
 \begin{definition}
     A \textbf{\emph{concrete state}} of \llvm program $\sigma = (\rho, \epsilon, \mu)$, where:
 \begin{itemize}
-    \item $\rho: \mathcal{R} \rightarrow \mathcal{C}$ is a value map that assigns each program
+    \item $\rho \colon \mathcal{R} \to \mathcal{C}$ is a value map that assigns each program
         register a~concrete value,
-    \item $\epsilon : \mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$ is a
+    \item $\epsilon \colon \mathcal{V} \to \mathcal{C}_{\textit{addr}}$ is a
         program environment that maps variables to their addresses, and
-    \item $\mu: \mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C}$ is a
+    \item $\mu \colon \mathcal{C}_{\textit{addr}} \to \mathcal{C}$ is a
         partial function that maps addresses into values.
 \end{itemize}
 \end{definition}
@@ -91,7 +91,7 @@ state and accordingly updates values of program values and memory content.
 A set of all edges $\mathcal{G}$ induces a transition relation $\rightarrow$ on
 the set of states $\Sigma$, such that for each $g \in \mathcal{G}$ there is
 $\xrightarrow{g} \: \subseteq \Sigma \times \{g\} \times \Sigma$. The
-transition relation is a union over all edges $\rightarrow \bigcup_{g
+transition relation is a union over all edges $\rightarrow = \bigcup_{g
 \in\mathcal{G}} \xrightarrow{g}$.
 
 A \emph{path} $\pi$ is a sequence of edges $\langle
@@ -176,8 +176,8 @@ end:
 \caption{An example of \llvm program (left) and its CFA (right).  The program
 allocates on stack a 32-bit integer variable and stores its address to register
 \llvmint{|\var{\%x}|} (registers in \llvm are traditionally prefixed with \%,
-and global objects as functions by \@) Subsequently in the loop, program
-increments value of the variable while it is smaller than 5. The~semantic of
+and global objects as functions by @) Subsequently in the loop, program
+increments value of the variable while it is smaller than 5. Syntax of \llvm
 instructions is described in \autoref{ch:llvm}.}
 \label{fig:cfa}
 \end{figure}
@@ -199,15 +199,15 @@ contexts are computed by solving a system of fixpoint equations generated from
 a~transition function \cite{Cousot1977}. Such computation simulates the
 execution of a program in an abstract domain. As a result, each abstract
 context represents possible properties (invariants about states) of variables
-at a location after the execution of the program \label{sec:symbolic}
-with arbitrary input. The states\sidenote{State of computation comprise of all
-intermediate contexts assigned to program locations.} of the computation forms
-a complete lattice: $(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$, where $S$
-is a set of states, $\sqcup$, $\sqcap$ are meet and join operators,
-$\sqsubseteq$ ordering of a lattice, $\top$ is the greatest element and $\bot$
-it the least element of the lattice. Throughout the rest of the thesis proposal,
-we will assume familiarity with the basic notions of lattice theory
-\cite{Birkhoff1940} and abstract interpretation~\cite{Cousot1977}.
+at a location after the execution of the program with arbitrary input. The
+states\sidenote{State of computation comprise of all intermediate contexts
+assigned to program locations.} of the computation forms a complete lattice:
+$(S, \sqcap, \sqcup, \sqsubseteq, \top, \bot)$, where $S$ is a set of states,
+$\sqcup$, $\sqcap$ are meet and join operators, $\sqsubseteq$ ordering of a
+lattice, $\top$ is the greatest element and $\bot$ it the least element of the
+lattice. Throughout the rest of the thesis proposal, we will assume familiarity
+with the basic notions of lattice theory \cite{Birkhoff1940} and abstract
+interpretation~\cite{Cousot1977}.
 
 Given the concrete contexts from previous definitions, the \emph{concrete
 semantic domain} is a complete lattice $(\mathcal{P}(\Sigma), \cap, \cup,
@@ -407,7 +407,7 @@ well-defined domain is required to have an image for each concrete value, and
  \begin{definition}
  For the concrete lattice $(C, \subseteq)$ and abstract lattice $(A,
  \sqsubseteq)$ a~galois connection is $(\alpha, \gamma)$, where
- $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ are monotonic functions
+ $\alpha \colon C \to A$, $\gamma \colon A \to C$ are monotonic functions
  such that:
 
 \bigskip
@@ -584,18 +584,28 @@ integers or floating-points. The traditional scalar domains are also known in
 the literature as \emph{numerical abstract domains} defined by Cousot
 in~\cite{Cousot1977}. In Cousot's approach, the abstraction is designed only
 for programs without memory and recursion; hence, abstract only program
-variables. We will call this restricted model as \emph{Cousot's program model}.
-Since we do not have a direct correspondence to this model in \llvm, we need to
-adjust Cousot's model to our state description. In \llvm for an abstract domain
-\domain{}, the numerical abstraction extends the state definition so that
-registers can hold abstract values. These program registers can be handled as
-Cousot's variables, but, the problem arises on the boundaries with memory.
-The simplest solution would be to lower abstract values to concrete domain with
-concretization function $\gamma$, but we would lose any advantage of abstraction.
-Therefore we need to extend \llvm program memory to be able to hold abstract
-scalar values.
+variables and performs context-insensitive analysis. We will call this
+restricted model as \emph{Cousot's program model}. Since \llvm does not
+directly correspond to this model, we need to adjust Cousot's model to our
+state description. In \llvm for an abstract domain \domain{}, the numerical
+abstraction extends the state definition so that registers can hold abstract
+values. These program registers can be handled as Cousot's variables. However,
+the problem arises on the boundaries with memory.  The simplest solution would
+be to lower abstract values to concrete domain with concretization function
+$\gamma$, but we would lose any advantage of abstraction and lose its
+precision.  Therefore we need to extend \llvm program memory to be able to hold
+abstract scalar values.
 
-\add{ recursion solution }
+Cousots's model can also be extended to context-sensitive analysis, either by
+abstracting call-stack for interprocedural analysis~\cite{Jeannet2004,
+Pascal2011}, or summarization of functions~\cite{Boutonnet2019}. These
+techniques are extended to handle recursion in multiple works
+\cite{Cousot1977Recursion, CousotCousot01}.  Alternatively, the interprocedural
+analysis can be achieved by a dynamic approach. The dynamic execution allows
+the analysis to preserve context-sensitivity because it preserves call-stack as
+in the state of the program. Since we aim to perform abstract execution of
+\llvm dynamically, we will obtain the interprocedural analysis as a consequence
+of the execution.
 
 \begin{definition}
     For abstract scalar domain $\mathcal{A}$, an abstract program state is
@@ -603,10 +613,10 @@ scalar values.
 
     \begin{itemize}
         \itemsep0em
-        \item $\rho:\mathcal{R} \rightarrow \mathcal{C} \cup \mathcal{A}$ allows to store abstract values into registers,
-    \item $\epsilon:\mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}$ is a
+        \item $\rho \colon \mathcal{R} \to \mathcal{C} \cup \mathcal{A}$ allows to store abstract values into registers,
+    \item $\epsilon \colon \mathcal{V} \to \mathcal{C}_{\textit{addr}}$ is a
         concrete program environment, and
-    \item $\mu:\mathcal{C}_{\textit{addr}} \rightarrow \mathcal{C} \cup
+    \item $\mu \colon \mathcal{C}_{\textit{addr}} \to \mathcal{C} \cup
         \mathcal{A}$ permits to keep abstract values in program memory.
     \end{itemize}
 \end{definition}
@@ -954,14 +964,72 @@ components:
 In literature, we recognize multiple types of heap models: a \emph{store-based
 model}, which represents memory as a graph with symbolic addresses, where edge
 $p \rightarrow l$ represents that a pointer $p$ may hold the address of
-concrete location $l$; on the contrary, a \emph{storeless model} abstracts
-locations in terms of access paths and capture the structure of relations
-between heap objects~\cite{Kanvar2016}.
+concrete location $l$ (see \autoref{fig:storebased}); on the contrary, a
+\emph{storeless model} abstracts locations in terms of access paths and capture
+the structure of relations between heap objects~\cite{Kanvar2016}.
 
 \begin{marginfigure}
 
-\add{image}
-\caption{Store-based model of heap graphs.}
+\footnotesize
+
+\begin{minted}[linenos,fontsize=\scriptsize]{c}
+    Node *list = malloc(Node);
+    Node *n = list;
+    while (true) {
+      n->next = malloc(Node);
+      n = x->next;
+    }
+\end{minted}
+
+Store based model of concrete heap of previous program, where $l_1,
+{l_4}_1$ and ${l_4}_2$ denote allocation sites:
+
+\bigskip
+\begin{tikzpicture}[node distance=2.2em]
+    \node [mem] (l1) {};
+    \node [below = 0em of l1] (a1) {$l_1$};
+    \node [above = 1em of l1] (p1) {\texttt{list}};
+
+    \node [mem, right = of l1] (l2) {};
+    \node [below = 0em of l2] (a2) {${l_4}_1$};
+    \node [above = 1em of l2] (p2) {\texttt{n}};
+
+    \node [mem, right = of l2] (l3) {};
+    \node [below = 0em of l3] (a3) {${l_4}_2$};
+    \node [above = 1em of l3] (p3) {\texttt{n}};
+
+    \node [right = of l3] (l4) {$\dots$};
+
+    \draw [->, >=stealth] (l1) -- node[midway, above] {\scriptsize\texttt{next}} (l2);
+    \draw [->, >=stealth] (l2) -- node[midway, above] {\scriptsize\texttt{next}} (l3);
+    \draw [->, >=stealth] (l3) -- node[midway, above] {\scriptsize\texttt{next}} (l4);
+
+    \draw [->, >=stealth] (p1) -- (l1);
+    \draw [->, >=stealth] (p2) -- (l2);
+    \draw [->, >=stealth] (p3) -- (l3);
+\end{tikzpicture}
+
+Allocation site based summarization:
+
+\bigskip
+\begin{tikzpicture}[node distance=2.2em]
+    \node [mem] (l1) {};
+    \node [below = 0em of l1] (a1) {$l_1$};
+    \node [above = 1em of l1] (p1) {\texttt{list}};
+
+    \node [mem, right = of l1] (l2) {};
+    \node [below = 0em of l2] (a2) {$l_4$};
+    \node [above = 1em of l2] (p2) {\texttt{n}};
+
+    \draw [->, >=stealth] (l1) -- node[midway, above] {\scriptsize\texttt{next}} (l2);
+%    \draw [->, >=stealth] (l2) -- node[midway, above] {\scriptsize\texttt{next}} (l3);
+
+    \draw [->, >=stealth] (p1) -- (l1);
+    \draw [->, >=stealth] (p2) -- (l2);
+
+    \draw [->, >=stealth] (l2) to [out=30,in=-30,looseness=8] node [right] {\scriptsize\texttt{next}} (l2);
+\end{tikzpicture}
+\caption{Heap summarization example.}
 \label{fig:storebased}
 \end{marginfigure}
 
@@ -984,14 +1052,14 @@ pointer} domain illustrated in \autoref{fig:nulldomain}.
 
     \begin{itemize}
         \itemsep0em
-        \item $\rho: \mathcal{R} \rightarrow \mathcal{C} \cup
+        \item $\rho \colon \mathcal{R} \to \mathcal{C} \cup
             \mathcal{A}_{\textit{addr}}$ registers may contain abstract
             addresses,
-        \item $\epsilon : \mathcal{V} \rightarrow \mathcal{C}_{\textit{addr}}
+        \item $\epsilon \colon \mathcal{V} \to \mathcal{C}_{\textit{addr}}
             \cup \mathcal{A}_{\textit{addr}}$ environment allows to assign
             objects symbolic addresses, and
-        \item $\mu: \mathcal{C}_{\textit{addr}} \cup
-            \mathcal{A}_{\textit{addr}} \rightarrow \mathcal{C} \cup
+        \item $\mu \colon \mathcal{C}_{\textit{addr}} \cup
+            \mathcal{A}_{\textit{addr}} \to \mathcal{C} \cup
             \mathcal{A}_{\textit{addr}}$ permits to keep values in abstract
             memory, as well as referencing another abstract addresses.
     \end{itemize}
@@ -1069,14 +1137,9 @@ properties, analysis usually leverage dedicated predicate
 abstraction~\cite{Dan2013}. Further challenges of machine code analysis are
 outlined in~\cite{Reps2010}.
 
-\begin{marginfigure}
-
-\add{example of bitvector abstraction which is not recognizable by infinite domain}
-\caption{Bitvector}
-\label{fig:bitvector}
-\end{marginfigure}
-
-More domain-specific abstractions are used to analyze database querying languages~\cite{Halder2012}; system components like filters~\cite{Feret2004} or syn\-chro\-nous clocks~\cite{Feret2005}.
+More domain-specific abstractions are used to analyze database querying
+languages~\cite{Halder2012}; system components like filters~\cite{Feret2004} or
+syn\-chro\-nous clocks~\cite{Feret2005}.
 
 \subsection{Domain Refinement}
 \label{sec:domainrefinement}
@@ -1179,6 +1242,8 @@ underlying abstract interpreter for \textsc{crab} library is
 \textsc{ikos}~\cite{Ikos}. SeaHorn faces limitation in its usage: most
 \textsc{crab} domains reason only about linear arithmetic; it lacks any pointer
 or shape analysis and provides only limited support of array abstractions.
+Similarly, Apron library~\cite{Jeannet2009} provides only a set of numerical
+abstract domains ready for use in other tools.
 
 \section{Towards sound analysis}
 \label{sec:techniques}

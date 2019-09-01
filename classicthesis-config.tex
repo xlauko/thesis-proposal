@@ -99,6 +99,7 @@
 
 \definecolor{varcolor}{HTML}{B83838}
 \newcommand{\var}[1]{\hspace{-0.5em}\color{varcolor}\text{#1}}
+\newcommand{\op}[1]{\hspace{-0.5em}\color{varcolor}\text{#1}}
 
 \usepackage{csquotes}
 
@@ -154,7 +155,7 @@
 % ********************************************************************
 \PassOptionsToPackage{T1}{fontenc} % T2A for cyrillics
 
-%\usepackage{fontspec}
+\usepackage{fontspec}
 \usepackage{textcomp} % fix warning with missing font shapes
 \usepackage{scrhack} % fix warnings when using KOMA with listings package
 \usepackage{xspace} % to get the spacing after macros right
@@ -329,7 +330,7 @@
 
 %\usepackage[math-style=upright]{unicode-math}
 \usepackage{unicode-math}
-
+%\usepackage[cmsy]{MnSymbol}
 \setmainfont[Numbers={OldStyle,Proportional},SmallCapsFeatures={LetterSpace=6}]{Minion Pro}
 \setmathfont[Scale=MatchLowercase]{STIX2Math.otf}
 \setmonofont[Scale=MatchLowercase]{Inconsolata}
