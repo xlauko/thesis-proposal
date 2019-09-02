@@ -18,7 +18,7 @@ We restrict the presentation to a simplified version of \llvmir programs
 open-source \llvm compiler infrastructure.  The latter is a well-main\-tained,
 well-documented, and continuously improving framework. Because of its faithful
 correspondence with the executable program and robust infrastructure, \llvm
-presents a sweet spot where to conduct program analysis.
+presents a sweet spot of where to conduct program analysis.
 
 An elementary unit of \llvm program is an \emph{instruction}. We recognize a usual set of binary
 instructions (arithmetic, relational operations), memory access operations
@@ -50,22 +50,22 @@ instructions attached to its edges (see \autoref{fig:cfa}).
 \end{definition}
 
 The goal of the analyses that we will investigate throughout this chapter is to
-determine for each program location a set of possible concrete states described
-by some abstract representation. A \emph{concrete program state} is determined
-by values of the program registers $\mathcal{R}$ and memory content. The number of \llvm
-registers is unbounded, and they represent results of individual instructions
-in the static single assignment (\ssa) form~\cite{Cytron1991}. The memory
-consists of stack-allocated variables $\mathcal{S}$ created by \texttt{alloca}
-instruction, heap memory content $\mathcal{H}$ allocated via \texttt{malloc}, and
-global variables $\mathcal{V}_{\textit{G}}$; the only permitted access to memory is
-through dedicated instructions (\texttt{store} and \texttt{load}).  For
-simplicity, we expect that the memory is strongly typed; hence, we always know
-what type is assigned to what memory location.
-We denote a set of variables as $\mathcal{V} = \mathcal{S} \cup \mathcal{H}
-\cup \mathcal{V}_{\textit{G}}$ and all possible concrete values as
-$\mathcal{C}$.  Program values contains all possible values of registers and
-variables as well as memory addresses $\mathcal{C}_{\textit{addr}} \subseteq
-\mathcal{C}$.
+determine a set of possible concrete states described
+by some abstract representation for each program location. A \emph{concrete
+program state} is determined by values of the program registers $\mathcal{R}$
+and memory content. The number of \llvm registers is unbounded, and they
+represent results of individual instructions in the static single assignment
+(\ssa) form~\cite{Cytron1991}. The memory consists of stack-allocated variables
+$\mathcal{S}$ created by \texttt{alloca} instruction, heap memory content
+$\mathcal{H}$ allocated via \texttt{malloc}, and global variables
+$\mathcal{V}_{\textit{G}}$; the only permitted access to memory is through
+dedicated instructions (\texttt{store} and \texttt{load}).  For simplicity, we
+expect that the memory is strongly typed; hence, we always know what type is
+assigned to what memory location.  We denote a set of variables as $\mathcal{V}
+= \mathcal{S} \cup \mathcal{H} \cup \mathcal{V}_{\textit{G}}$ and all possible
+concrete values as $\mathcal{C}$.  Program values contains all possible values
+of registers and variables as well as memory addresses
+$\mathcal{C}_{\textit{addr}} \subseteq \mathcal{C}$.
 
 \begin{definition}
     A \textbf{\emph{concrete state}} of \llvm program $\sigma = (\rho, \epsilon, \mu)$, where:
@@ -106,7 +106,7 @@ path $\pi$ is $\textsf{SP}_{\pi} =
 called \emph{feasible} if $\textsf{SP}_{\pi}(\textit{true})$ is satisfiable and
 \emph{infeasible} otherwise \cite{Beyer2018b}.  In the abstract execution, the
 transition system does not contain particular states but whole contexts that
-abstract sets of states. A set of possible transition from a context contains
+abstract sets of states. A set of possible transitions from a context contains
 all feasible transitions from concrete states included in the context.
 A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L},
 l_{\textit{init}}, \mathcal{G})$ is to show that error location
@@ -722,10 +722,10 @@ number of iterations.  The sequence of policies defines a strategy to approach
 the fixpoint either from above or below. Policies are formed from a
 decomposition of original abstraction.
 
-The drawback of the domains presented uptil now is that they are not able to reason about
+The drawback of the domains presented up uptil now is that they are not able to reason about
 relational properties between variables. Therefore, we address them as
 \emph{non-relational} abstract domains.  However, many verification tasks
-require to take variables relations into account.  For example, to show that $v \leq 11$
+require that one take variable relations into account.  For example, to show that $v \leq 11$
 at line 7 in program of \autoref{fig:relationalc}, we need to prove a
 relational loop invariant $v + i
 \leq 10$.
@@ -756,7 +756,7 @@ linear properties is examined in \cite{Chen2009}.
 
 \subsection{Weakly relational abstract domains}
 
-In the middle between relational and non-relational abstract domains stand
+In the middle between relational and non-relational abstract domains are
 weakly relational abstract domains. These domains aim to enhance the precision
 of non-relational domains and reduce the cost of abstraction of relational
 domains by keeping only a reduced number of relations.
@@ -772,7 +772,7 @@ verification because it allows fast equality comparisons of abstract states.}
 The octagon domain was further optimized by bucketing of octagons
 \cite{Blanchet2003, Venet2004} and modified to extend captured properties
 \cite{Claris2004, Mine2004}. Further restriction provides a \emph{zone domain}
-\cite{Mine2001} which reasons only about invariants of form $x - y \leq c$ and
+\cite{Mine2001}, which reasons only about invariants of form $x - y \leq c$ and
 $\pm x \leq c$.
 
 A less precise and lightweight relational domain of \emph{pentagons} was introduced in~\cite{Logozzo2010} with applicability on validation of array manipulating
@@ -792,11 +792,11 @@ bound matrices in the octagon domain \cite{Mine2006}, or generators of affine
 space in the linear equality domain \cite{Karr1976}).
 
 Except picking of a suitable abstraction, a precision of abstract methods can
-be improved by symbolic methods. Miné presents in his work \cite{Mine2006b} a
-set of lightweight simplifications (linearization and symbolic constant
-propagation) which are used to transform numerical expressions in order to
-increase the precision of the analysis. Likewise, Chang takes use of congruence
-closure extensions~\cite{Chang2005}.
+be improved by symbolic methods. In his work, Miné presents a set of
+lightweight simplifications (linearization and symbolic constant propagation)
+which are used to transform numerical expressions in order to increase the
+precision of the analysis~\cite{Mine2006b}. Likewise, Chang takes use of
+congruence closure extensions~\cite{Chang2005}.
 
 \subsubsection{Predicate Abstraction}
 
@@ -861,7 +861,7 @@ specialized abstractions to reason about complex constructs as aggregates or
 memory, than just the scalar ones. In \llvm, we recognize two types of
 aggregates: homogenous like arrays or vectors, or heterogeneous structures.
 Although it may seem reasonable to represent aggregates as products of scalars
-abstract domains, in practice such representation is a cost-inefficient.
+abstract domains, in practice such representation is cost-inefficient.
 Moreover, product representation is restricted only to the exact size of
 aggregate, hence does not allow an analysis of arbitrary large objects.
 Therefore, many tools utilize various domain specific abstractions to reason
@@ -894,14 +894,14 @@ content and program variables. Hence, analyses tend to utilize symbolic methods
 to represent constraints on arrays~\cite{Gopan2005}.
 
 Depending on the interested properties, we recognize two types of array-related
-techniques. The analysis either focus on the reasoning about array bounds and
+techniques. The analysis either focuses on the reasoning about array bounds and
 related out of bounds errors, or on the content of the array~\cite{Halbwachs2008}.
 
 To reason about array content, abstract domains are usually para\-me\-tri\-zable by
 numerical abstract domains by which the abstraction represents the internal
 elements of an abstract array~\cite{Cousot2011p}. Symbolic methods are also
 used to represent or generalize facts about array manipulations -- for example,
-\emph{universally quantified abstract domains}, enable to quantify over array
+\emph{universally quantified abstract domains}, enable us to quantify over array
 elements with the use of simpler abstract domains~\cite{Gulwani2008}.
 Predicate abstraction is also used to describe properties about arrays in a
 form of update predicates~\cite{Kovacs2009}.
@@ -909,7 +909,7 @@ form of update predicates~\cite{Kovacs2009}.
 The symbolic techniques naturally request for a refinement of abstractions.
 The refinement of universally quantified abstract domains is presented
 in~\cite{Seghir2009}.  As universal quantifiers represent hard task for
-decision procedures; the refinement tries to eliminate their occurrences using
+decision procedures, the refinement tries to eliminate their occurrences using
 ghost variables. Furthermore, the refinement techniques leverage that
 predicates have a particular form when they reason about array indices. Other
 refinement approaches utilize lazy-abstraction~\cite{Alberti2012} and
@@ -954,14 +954,14 @@ components:
 
 \begin{enumerate}
     \item \emph{heap modeling}, which takes care of heap memory representation
-        as memory model (i.e., an unbounded set of concrete locations as an
+        as a memory model (i.e., an unbounded set of concrete locations as an
         unbounded set of abstract locations), and
     \item \emph{summarization}, which bounds the memory by merging multiple
         abstract locations into summary locations.
 \end{enumerate}
 
 \noindent
-In literature, we recognize multiple types of heap models: a \emph{store-based
+In the literature, we recognize multiple types of heap models: a \emph{store-based
 model}, which represents memory as a graph with symbolic addresses, where edge
 $p \rightarrow l$ represents that a pointer $p$ may hold the address of
 concrete location $l$ (see \autoref{fig:storebased}); on the contrary, a
@@ -1131,9 +1131,9 @@ the properties of bit-precise arithmetic like overflows in the abstract
 domains.  This problem is solved in recent abstract domains that leverage
 bit-vector logic to reproduce processor semantics~\cite{Sharma2013,
 Sharma2017}. Similar domains were also designed for floating-point
-arithmetic~\cite{Putot2004}.  The real-world program analysis also requires to
-reflect memory model of the program under test. To describe memory model
-properties, analysis usually leverage dedicated predicate
+arithmetic~\cite{Putot2004}.  Program verification also requires the
+consideration of memory model of the program under test. To describe memory
+model properties, analysis usually leverage dedicated predicate
 abstraction~\cite{Dan2013}. Further challenges of machine code analysis are
 outlined in~\cite{Reps2010}.
 
@@ -1169,7 +1169,7 @@ So far, we have seen abstract domains with various expressiveness, cost, and
 precision. However, in many cases, we want to start with the simplest domains
 and refine them automatically on the fly when a spurious counterexample is
 encountered. One approach of refinement is based on the observation that
-also abstract domains form a lattice (see \autoref{fig:latticeabs}). In the lattice
+abstract domains also form a lattice (see \autoref{fig:latticeabs}). In the lattice
 of domains we can refine two domains by a meet operation on them -- also known
 as reduced product construction \cite{Toubhans2013, Cousot2011b}. A~broader
 study of large-scale reduced-products is presented in \cite{Cousot2007}.
@@ -1178,7 +1178,7 @@ Another approach of refinement is a \emph{powerset construction}~\cite{Cousot197
 that builds from the elements of the abstract domain a powerset lattice. The
 powerset domain allows to create a more accurate abstraction where we can
 describe values by a subset of properties (e.g., in the \textit{sign} domain
-the powerset domain allows to abstract a value to a subset $\{0, +\}$).  This
+the powerset domain allows us to abstract a value to a subset $\{0, +\}$).  This
 technique was later refined in \cite{File1999} and extended by efficient
 widening operators \cite{Bagnara2004} and exacts joins of numerical elements
 \cite{Bagnara2010}.
@@ -1190,7 +1190,7 @@ closed under union operation.  \emph{Disjunctive completion methods} address
 this problem \cite{File1999}. The complementation introduces to abstraction all
 those concrete disjunctions of elements of the domain that were initially
 missing.  The resulting domain is the most abstract domain that is exact on
-disjunctions of abstract properties in original domain. Similarly the technique
+disjunctions of abstract properties in the original domain. Similarly the technique
 of \emph{complementation} supplements missing complements to the abstraction
 \cite{Cortesi1995}.
 
@@ -1201,11 +1201,11 @@ Giacobazzi2001}.
 
 The problem with relational abstract domains is that they do not generally
 scale-up. A general technique to ensure the linear cost of abstract domains is
-to split variables into independent smaller sets -- also know as \emph{variable
+to split variables into independent smaller sets -- also known as \emph{variable
 packing technique} \cite{Mine2006}. The variable packing can be refined by
 keeping relations between the sets of variables \cite{Bouzaziz2012}.
 
-The \emph{state partitioning} techniques \cite{Muchnick1981} work similarly,
+The \emph{state partitioning} techniques \cite{Muchnick1981} work similarly;
 they facilitate the use of decision-tree data structures (based on binary
 decision diagrams) to split program states into smaller parts and relationally
 reason about values properties only inside of those parts. The state
@@ -1256,15 +1256,15 @@ verification.
 In verification, in comparison to static analysis, it is crucial to preserve
 the soundness of the analyses. Hence, the abstraction needs to preserve all
 possible paths to the error, and may create potentially new paths. We call such
-abstraction over-approximating; meaning that if an abstract model is correct,
+abstraction over-approximating, meaning that if an abstract model is correct,
 the concrete model also is.  However, there is no guarantee that the reachable
 error state in the abstract model is also reachable in the original concrete
-model; if not so, we are talking about the \emph{spurious} error.
+model; if not so, we are referring to the \emph{spurious} error.
 
 \subsection{Counterexample-guided abstraction refinement}
 
 A common technique to handle spurious coun\-ter\-examples is the
-coun\-ter\-example-guided abstraction refinement (\cegar), first time presented
+coun\-ter\-example-guided abstraction refinement (\cegar), first presented
 in~\cite{Clarke2000}. The idea of the \cegar approach is to examine a
 counterexample and if it is spurious, refine the abstraction in such a way that
 the spurious error would become unfeasible. Subsequently, the analysis is
@@ -1357,7 +1357,7 @@ checking (\ceds)~\cite{Mrazek2016}.
 The symbolic representation can be viewed as a precise abstract domain, i.e.,
 meaning that it accurately represents a set of concrete values and therefore
 does not produce spurious errors. In our framework, a~symbolic domain assigns
-to each variable a formula that represents constraints on it. Therefore during
+a formula to each variable that represents constraints on it. Therefore during
 the execution, we can collect all symbolic values, and by joining all
 constraints, we obtain a description of an abstract state. In comparison to
 \cegar approach, a symbolic execution refines its precision on-the-fly by

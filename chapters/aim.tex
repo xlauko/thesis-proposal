@@ -15,7 +15,7 @@ techniques have been developed to refine abstraction on demand, e.g.,
 counterexample-guided abstraction refinement~\cite{Clarke2000} or lazy abstraction
 techniques~\cite{Henzinger2002}.
 
-Most of these techniques are implemented as dynamic analysis inside of a
+Most of these techniques are implemented as dynamic analysis inside of
 verification tools, i.e., they are performed during the interpretation of a
 program. Even though the abstraction techniques share a common foundation, each
 of the tools reimplements the analyses by itself. Moreover, the integration of
@@ -116,9 +116,9 @@ reinterpreted by further analyses.
         decision procedure \textsc{dp}).
     \item In the second approach, we let the program to maintain abstract
         data (this can be achieved by instrumentation as described
-        in~\autoref{sec:symbolic}).  However, interpreter still keeps metadata
+        in~\autoref{sec:symbolic}).  However, the interpreter still keeps metadata
         that keeps track for each value, whether it is abstract or concrete.
-        This information is used when interpreter needs to decide how to
+        This information is used when the interpreter needs to decide how to
         interpret program memory -- whether to perform an explicit or abstract
         comparison of states.
     \item The third approach shifts responsibility about metadata to
@@ -128,7 +128,7 @@ reinterpreted by further analyses.
     \item The latter approach let full responsibility about abstraction to the
         program, and the interpreter executes program explicitly. The decision
         procedure needs to take care of non-deterministic execution and
-        determine what path to take when a non-deterministic branch occurs. Or
+        determine what path to take when a non-deterministic branch occurs, or
         the responsibility of the non-determinism can be left to the
         interpreter. Alternatively, one can encode the vector of decisions to
         the program and create an executable abstract program.
@@ -197,9 +197,9 @@ in the program, e.g., indirect calls and memory manipulations.
 
 \subsection{Abstract domains}
 
-Even though there exist tools that aim at accessible design of abstract
-domains: SeaHorn~\cite{Gurfinkel2015}, CPAchecker~\cite{Beyer2013}, or
-Astrée~\cite{Astree}; their disadvantage is in their dependency on the
+Even though tools exist that aim at accessible design of abstract
+domains (e.g., SeaHorn~\cite{Gurfinkel2015}, CPAchecker~\cite{Beyer2013}, or
+Astrée~\cite{Astree}), their disadvantage is in their dependency on the
 execution engine.  On the contrary, abstract domains, in combination with \lart
 instrumentation, allow reuse of abstracted programs across various analyses.
 Moreover, the advantage of the transformation-based approach is in that the
@@ -228,8 +228,8 @@ It is further summarized in my achieved results presented in \autoref{ch:results
 
 \subsubsection{Non-relational abstract domains}
 
-In comparison to an abstract interpreter, a program, that executes abstract
-computation by itself, cannot simply perform interpretation to some fixpoint. Hence,
+In comparison to an abstract interpreter, a program that executes abstract
+computation by itself cannot simply perform interpretation to some fixpoint. Hence,
 to achieve an extended precision, we need to instrument some precision
 mechanism into the program.
 
@@ -333,7 +333,7 @@ The hitherto presented abstraction relied on the underlying execution engine,
 which maintained abstraction metadata and enabled non-deter\-mi\-ni\-stic program
 branching. However, for the future, I plan to investigate a possibility of a
 runnable abstraction for a particular run of non-deterministic choices.  With
-the use of clang data flow sanitizer, that manages program shadow memory, the
+the use of clang data flow sanitizer that manages program shadow memory, the
 abstraction can store its metadata in the program and be completely independent
 of the execution engine (see fourth option of \autoref{fig:bounds}) -- such
 program provides an option of executable counterexample to be analyzed by
@@ -378,6 +378,6 @@ The plan of my future study and research activities is following:
 \noindent
 Moreover, throughout my PhD study, I plan to advise bachelor and master
 students, that will implement various abstract domains into the \lart. In
-addition to classical domains, I plan with them to craft domain-specific abstractions
-for verification of real-world software (e.g., abstractions of the file system,
+addition to classical domains, I plan to craft domain-specific abstractions
+with them for verification of real-world software (e.g., abstractions of the file system,
 system clocks).
