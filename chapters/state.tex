@@ -51,22 +51,23 @@ instructions attached to its edges (see \autoref{fig:cfa}).
 \end{definition}
 
 The goal of the analyses that we will investigate throughout this chapter is to
-determine a set of possible concrete states described
-by some abstract representation for each program location. A \emph{concrete
-program state} is determined by values of the program registers $\mathcal{R}$
-and memory content. The number of \llvm registers is unbounded, and they
-represent results of individual instructions in the static single assignment
-(\ssa) form~\cite{Cytron1991}. The memory consists of stack-allocated variables
+determine a set of possible concrete states described by some abstract
+representation for each program location. A \emph{concrete program state} is
+determined by values of the program registers $\mathcal{R}$ and memory content.
+The number of \llvm registers is unbounded, and they represent results of
+individual instructions in the static single assignment (\ssa)
+form~\cite{Cytron1991}. The memory consists of stack-allocated variables
 $\mathcal{S}$ created by \texttt{alloca} instruction, heap memory content
 $\mathcal{H}$ allocated via \texttt{malloc}, and global variables
 $\mathcal{V}_{\textit{G}}$; the only permitted access to memory is through
 dedicated instructions (\texttt{store} and \texttt{load}).  For simplicity, we
-expect that the memory is strongly typed; hence, we always know what type is
-assigned to what memory location.  We denote a set of variables as $\mathcal{V}
-= \mathcal{S} \cup \mathcal{H} \cup \mathcal{V}_{\textit{G}}$ and all possible
-concrete values as $\mathcal{C}$.  Program values contains all possible values
-of registers and variables as well as memory addresses
-$\mathcal{C}_{\textit{addr}} \subseteq \mathcal{C}$.
+expect that the memory is strongly typed; hence, we always know what kind of
+object is stored at a~particular memory location.  We denote a~set of
+addressable objects (variables) as $\mathcal{V} = \mathcal{S} \cup \mathcal{H} \cup
+\mathcal{V}_{\textit{G}}$ and all possible concrete values as $\mathcal{C}$.
+Concrete program values $\mathcal{C}$ includes all potential values of registers
+and variables as well as memory addresses $\mathcal{C}_{\textit{addr}}
+\subseteq \mathcal{C}$.
 
 \begin{definition}
     A \textbf{\emph{concrete state}} of \llvm program $\sigma = (\rho, \epsilon, \mu)$, where:
@@ -103,13 +104,13 @@ $l_{\textit{init}}$. The semantics of path $\pi$ is defined by iterative
 application of $SP_{i}( \cdot )$ for each instruction in path $\pi$. Given
 initial constraints $\varphi$ on program state, the strongest postcondition of
 path $\pi$ is $\textsf{SP}_{\pi} =
-\textsf{SP}_{i_n}(\dots,\textsf{SP}_{i_1}(\varphi),\dots)$. A path $\pi$ is
+\textsf{SP}_{i_n}(\dots,\textsf{SP}_{i_1}(\varphi),\dots)$. A~path $\pi$ is
 called \emph{feasible} if $\textsf{SP}_{\pi}(\textit{true})$ is satisfiable and
 \emph{infeasible} otherwise \cite{Beyer2018b}.  In the abstract execution, the
 transition system does not contain particular states but whole contexts that
-abstract sets of states. A set of possible transitions from a context contains
+abstract sets of states. A~set of possible transitions from a context contains
 all feasible transitions from concrete states included in the context.
-A \emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L},
+A~\emph{verification task} for  CFA $\mathcal{A} = (\mathcal{L},
 l_{\textit{init}}, \mathcal{G})$ is to show that error location
 $l_{\textit{err}} \in \mathcal{L}$ is unreachable in $\mathcal{A}$, or to find
 feasible error path.
@@ -178,7 +179,8 @@ end:
 allocates on stack a 32-bit integer variable and stores its address to register
 \llvmint{|\var{\%x}|} (registers in \llvm are traditionally prefixed with \%,
 and global objects as functions by @) Subsequently in the loop, program
-increments value of the variable while it is smaller than 5. Syntax of \llvm
+increments value of the variable while it is smaller than 5 (\texttt{icmp ult}
+denotes unsigned less than comparison of integer values). Syntax of \llvm
 instructions is described in \autoref{ch:llvm}.}
 \label{fig:cfa}
 \end{figure}
@@ -236,7 +238,7 @@ undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
     \caption{$\mathsf{A}_{\textit{sign}}$ domain lattice.}
     \label{fig:signd}%
 \end{marginfigure}%
-sign of variable and $\top$ is for an arbitrary value (i.e., variable can be
+sign of variable and $\top$ stands for an arbitrary value (i.e., variable can be
 either negative, positive or zero).
 
 \begin{figure}[t]
@@ -408,7 +410,7 @@ well-defined domain is required to have an image for each concrete value, and
  \newpage
 
  \begin{definition}
- For the concrete lattice $(C, \subseteq)$ and abstract lattice $(A,
+ For a concrete lattice $(C, \subseteq)$ and abstract lattice $(A,
  \sqsubseteq)$ a~galois connection is $(\alpha, \gamma)$, where
  $\alpha \colon C \to A$, $\gamma \colon A \to C$ are monotonic functions
  such that:
@@ -469,7 +471,7 @@ theorem \cite{Tarski1955} we are guaranteed to obtain a solution, see example in
 \autoref{fig:signcomp}.
 
 Even though our example program in \autoref{fig:signcomp} is quite trivial, the
-sign domain \domain{sign} was not able to preserve any interesting properties,
+sign domain \domain{sign} was not able to determine any interesting invariants,
 and all resulting contexts contains either $\top$ or $\bot$.  Sign domain belongs to
 the class of simple domains that reason only about single property of variables --
 also known as \emph{property domains}. Another famous example of a property
@@ -544,8 +546,8 @@ Furthermore, it is possible to combine multiple domains to
 reason about multiple properties either by keeping each property separately
 or~by reduced product of domains (see \autoref{fig:cpsign}), which is more
 precise and more efficient than multiple separate interpretations
-\cite{Cousot2011b}.  For further information see domain refinement in
-\autoref{sec:domainrefinement}.
+\cite{Cousot2011b}.  For further information we kindly refer the to domain
+refinement in \autoref{sec:domainrefinement}.
 
 The basic building block of these domains is \emph{basis} that expresses how to
 abstract one program variable or register and operations on it.  Thanks to the
@@ -698,6 +700,16 @@ narrowing to refine the over-approximated solution. By different implementation
 of widening and narrowing, abstract interpreters employ different strategies to
 achieve convergence -- for example widening with thresholds \cite{Blanchet2003,
 Lakhdar2011}, delayed widening, parma widening \cite{Bagnara2008} or abstract
+acceleration \cite{Gonnord2006, Feautrier2010}.
+
+An alternative approach to tackle infinite interpretation that does not require
+any extrapolation operator is a \textbf{\emph{policy iteration}}
+\cite{Costan2005, Gaubert2007, Gawlitza2007, Gawlitza2007b, Gawlitza2011}. The
+idea of policies is to compute fixpoint solution of a sequence of simpler
+semantic equations, such that the least fixpoint is reached after a finite
+number of iterations.  The sequence of policies defines a strategy to approach
+the fixpoint either from above or below. Policies are formed from a
+decomposition of original abstraction.
 \begin{marginfigure}
 \begin{minted}[linenos]{c}
 int i = 10;
@@ -711,16 +723,6 @@ while (i >= 0) {
     \caption{Program that requires a relational invariant.}
     \label{fig:relationalc}
 \end{marginfigure}
-acceleration \cite{Gonnord2006, Feautrier2010}.
-
-An alternative approach to tackle infinite interpretation that does not require
-any extrapolation operator is a \textbf{\emph{policy iteration}}
-\cite{Costan2005, Gaubert2007, Gawlitza2007, Gawlitza2007b, Gawlitza2011}. The
-idea of policies is to compute fixpoint solution of a sequence of simpler
-semantic equations, such that the least fixpoint is reached after a finite
-number of iterations.  The sequence of policies defines a strategy to approach
-the fixpoint either from above or below. Policies are formed from a
-decomposition of original abstraction.
 
 The drawback of the domains presented up uptil now is that they are not able to reason about
 relational properties between variables. Therefore, we address them as
@@ -762,26 +764,24 @@ of non-relational domains and reduce the cost of abstraction of relational
 domains by keeping only a reduced number of relations.
 
 The notable representant of weakly-relational domains is an \emph{octagon
-abstract domain} \cite{Mine2006}. This domain efficiently enables the representation
-of invariants of form $\pm x \pm y \leq c$, where $x$ and $y$ are program
-variables and $c$ is a constant.  Moreover, the advantage of the octagon domain
-is in its representation by potential graphs and difference-bound matrices
-\cite{Larsen1997}, which allows a unique minimal representation of abstract
-values.\sidenote[][-2cm]{\footnotesize\textit{Unique representation is highly demanded in the program
-verification because it allows fast equality comparisons of abstract states.}}
-The octagon domain was further optimized by bucketing of octagons
-\cite{Blanchet2003, Venet2004} and modified to extend captured properties
-\cite{Claris2004, Mine2004}. Further restriction provides a \emph{zone domain}
-\cite{Mine2001}, which reasons only about invariants of form $x - y \leq c$ and
-$\pm x \leq c$.
-
-A less precise and lightweight relational domain of \emph{pentagons} was introduced in~\cite{Logozzo2010} with applicability on validation of array manipulating
+abstract domain} \cite{Mine2006}. This domain efficiently enables the
+representation of invariants of form $\pm x \pm y \leq c$, where $x$ and $y$
+are program variables and $c$ is a constant.  Moreover, the advantage of the
+octagon domain is in its representation by potential graphs and
+difference-bound matrices \cite{Larsen1997}, which allows a unique minimal
+representation of abstract values.\sidenote{\footnotesize\textit{Unique
+representation is highly demanded in the program verification because it allows
+fast equality comparisons of abstract states.}} The octagon domain was further
+optimized by bucketing of octagons \cite{Blanchet2003, Venet2004} and modified
+to extend captured properties \cite{Claris2004, Mine2004}. Further restriction
+provides a \emph{zone domain} \cite{Mine2001}, which reasons only about
+invariants of form $x - y \leq c$ and $\pm x \leq c$. A less precise and
+lightweight relational domain of \emph{pentagons} was introduced
+in~\cite{Logozzo2010} with applicability on validation of array manipulating
 byte-code. The pentagon domain captures properties of the form $x \in [a,b]
-\wedge x < y$.
-
-A recent abstract domain utilizes \emph{parallelotopes} to encode any linear
-constraint as polyhedra do, while it preserves the efficiency of weakly
-relational abstract domains \cite{Amato2017}.
+\wedge x < y$. A recent abstract domain utilizes \emph{parallelotopes} to
+encode any linear constraint as polyhedra do, while it preserves the efficiency
+of weakly relational abstract domains \cite{Amato2017}.
 
 A disadvantageous aspect of relational abstract domains is their complicated
 representation and therefore computationally less efficient abstract
@@ -820,7 +820,7 @@ The domain that is of particular interest for us in the following chapters is a
 domain of \emph{uninterpreted functions}~\cite{Gange2016}. This domain is targeted
 at problems of relational abstract domains -- poor scalability and loss of
 tracking of non-linear properties. The idea of the domain is to treat program
-instructions as uninterpreted function symbols -- i.e., built expression trees,
+instructions as uninterpreted function symbols, i.e., built expression trees,
 where leaves are nullary terms (program variables) and nodes represent n-ary
 operations. This domain can be used to augment non-relational abstract domains
 with relational information.
@@ -859,7 +859,7 @@ components:
 In a general setting, analyses of programming languages require more
 specialized abstractions to reason about complex constructs as aggregates or
 memory, than just the scalar ones. In \llvm, we recognize two types of
-aggregates: homogenous like arrays or vectors, or heterogeneous structures.
+aggregates: homogeneous like arrays or vectors, or heterogeneous structures.
 Although it may seem reasonable to represent aggregates as products of scalars
 abstract domains, in practice such representation is cost-inefficient.
 Moreover, product representation is restricted only to the exact size of
@@ -870,12 +870,12 @@ efficiently about aggregates.
 In comparison to scalar domains, aggregate domains do not abstract arithmetic
 operations, but they behave like memory objects. Therefore they abstract memory
 access operations (\texttt{store}/ \texttt{load}) and also allow to compute an
-offset to their elements. These offsets might be abstract, but the address of
-the aggregates is required to be concrete, i.e., only the content behind the
-pointer is abstracted -- this is the key difference to more general heap
-abstractions. The aggregate domain might also combine with scalar domains to
-represent internal elements, or abstract indices used to represent the
-arbitrary large sizes.
+offset to their elements (\texttt{getelementptr}). These offsets might be
+abstract, but the address of the aggregates is required to be concrete, i.e.,
+only the content behind the pointer is abstracted -- this is the key difference
+to more general heap abstractions. The aggregate domain might also combine with
+scalar domains to represent internal elements, or abstract indices used to
+represent the arbitrary large sizes.
 
 \subsection{Array abstraction}
 
@@ -963,11 +963,6 @@ components:
 \noindent
 In the literature, we recognize multiple types of heap models: a \emph{store-based
 model}, which represents memory as a graph with symbolic addresses, where edge
-$p \rightarrow l$ represents that a pointer $p$ may hold the address of
-concrete location $l$ (see \autoref{fig:storebased}); on the contrary, a
-\emph{storeless model} abstracts locations in terms of access paths and capture
-the structure of relations between heap objects~\cite{Kanvar2016}.
-
 \begin{marginfigure}
 
 \footnotesize
@@ -1032,6 +1027,10 @@ Allocation site based summarization:
 \caption{Heap summarization example.}
 \label{fig:storebased}
 \end{marginfigure}
+$p \rightarrow l$ represents that a pointer $p$ may hold the address of
+concrete location $l$ (see \autoref{fig:storebased}); on the contrary, a
+\emph{storeless model} abstracts locations in terms of access paths and capture
+the structure of relations between heap objects~\cite{Kanvar2016}.
 
 \subsubsection{Pointer abstraction}
 
@@ -1120,7 +1119,7 @@ graphs; Forester~\cite{Holik2015} leverage tree automata in the combination
 with shape analysis to verify programs with various types of lists or
 trees; whereas Space Invader~\cite{Yang2008} use shape
 analysis in combination with abduction. For an extended survey of heap
-abstractions, we refer to~\cite{Kanvar2016}.
+abstractions, we refer the reader to~\cite{Kanvar2016}.
 
 \subsection{Verification dedicated abstractions}
 
@@ -1295,7 +1294,7 @@ avoids the spurious error (see \autoref{fig:cegar}).
         \draw [->, >=stealth] (refinement) -- (abstraction);
     \end{tikzpicture}
 }
-\caption{Counterexample guided refinement loop.}
+\caption{Counterexample guided abstraction refinement loop.}
 \label{fig:cegar}
 \end{figure}
 
@@ -1319,7 +1318,7 @@ with a \sat solver for bit-precise predicate
 abstraction~\cite{Clarke2005satabs}; and combination with other techniques like
 explicit-value analysis in CPAchecker~\cite{Beyer2013, Beyer2018e}.
 
-A unified approach to the abovementioned techniques was presented in the recent
+A unified approach to the above-mentioned techniques was presented in the recent
 work of Beyer et al.~\cite{Beyer2018b} as a combination of model checking and
 data-flow analysis. The unified framework enables an easy combination of
 abstract domains, no matter whether they were invented for data-flow analysis
@@ -1365,7 +1364,7 @@ constraints, we obtain a description of an abstract state. In comparison to
 introducing new constraints on variables, hence remains precise throughout the
 execution. The symbolic execution also features a lazy approach since whenever
 it encounters an unfeasible state, it cancels exploration of current path
-backtracks to the previously feasible fork on path.
+backtracks to the previously feasible fork on the path.
 
 In between symbolic execution tools, a prominent position holds
 \textsc{klee}~\cite{Cadar2008klee}. It is a symbolic executor based on \llvm,
@@ -1389,7 +1388,7 @@ Another technique used to improve abstraction-based techniques is an
 interpolation. The core idea of the interpolation is to take feasible and
 infeasible abstract paths, where the latter subsumes the first one, and refine
 the feasible path to abstract more concrete paths but remaining still feasible
-(i.e., subsumed by the infeasible state)~\cite{Mcmillan2003interpolation}.  The
+(i.e., subsumed by the infeasible path)~\cite{Mcmillan2003interpolation}.  The
 interpolation is usually a part of \cegar loop as a refinement procedure for
 spurious counterexamples. It has wide variety of use cases: in generation of
 relevant predicates for predicate abstraction~\cite{Henzinger2004abstractions,

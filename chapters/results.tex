@@ -10,7 +10,7 @@ for program state-space exploration. In my work, I propose to let the program
 under test take care of abstraction and maintain abstract data. This can be
 achieved by instrumentation of abstract operations directly into the program.
 Hence, the verifier does not need to perform abstract interpretation, but it
-can only perform a concrete interpretation of the program and obtain abstract
+can only perform a~concrete interpretation of the program and obtain abstract
 data from the program memory if it needs them.
 
 In the previous chapter, I have stated multiple alternatives of how much of the
@@ -58,7 +58,6 @@ from program memory, whenever it needs to decide whether the state is feasible
 or is equal to some previously visited state. An external \textsc{smt} solver solves
 feasibility and equality queries. Notice that the virtual machine has no knowledge
 about abstract values present in the program.
-
 However, it needs to recognize what parts of the memory contains abstract data,
 because they can not be compared explicitly when the model checker is
 determining equality of states. Therefore, the virtual machine keeps metadata
@@ -75,7 +74,7 @@ that denotes what parts of memory hold abstract values.
 
 The abstract domain used for the symbolic computation was inspired by the
 domain of uninterpreted functions~\cite{Gange2016} -- we call it a term domain.
-In the term domain, the arithmetic operations build term trees (data
+In the term domain, arithmetic operations are composed into term trees (data
 definitions) that represent relations between ground variables and constants,
 whereas the branching conditions extends the global path condition.  For
 further details, see papers in the attachments of the thesis
@@ -99,12 +98,13 @@ represents a consecutive area of the same characters.} length and array
 content.  Hence, we have repurposed a symbolic domain from previous work to
 abstract lengths of string segments.
 
-To support aggregate domains \lart, I have adapted its data\-flow analysis to
-support multiple domains and manipulations with \llvm arrays. Moreover, I have
-extended the instrumentation to support abstraction of larger operations than
-just \llvm instructions -- these occur in C string manipulating programs in the
-form of functions (\texttt{strlen}, \texttt{strcmp}, \texttt{strcat}). The
-transformation-based string abstraction is further presented in attached paper
+To support aggregate domains in \lart, I have adapted its data-flow analysis to
+carry multiple domains at the same time, as well as to be able to analyze
+manipulations with \llvm arrays. Moreover, I have extended the instrumentation
+to support abstraction of larger operations than just \llvm instructions --
+these occur in C string manipulating programs in the form of library functions
+(\texttt{strlen}, \texttt{strcmp}, \texttt{strcat}). The transformation-based
+string abstraction is further presented in the attached paper
 ~\cite{Lauko2019String}.
 
 \section{Publications}
@@ -130,7 +130,6 @@ I am the primary author of the text of the paper, as well as of the
 abstraction implementation. The implementation included an adaptation of \divine
 abstraction support to handle \svcomp benchmarks.
 
-\newpage
 \item \textbf{\emph{String Abstraction for Model Checking of C Programs}},
 by Cortesi A., H. Lauko, M. Olliaro and P. Ročkai.
         In: Model Checking Software -- SPIN 2019 -- 26th International Symposium~\cite{Lauko2019String}
