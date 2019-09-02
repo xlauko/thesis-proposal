@@ -1039,10 +1039,9 @@ In the memory-aware analysis, we may perform a separate abstraction of
 pointers. The simplest of them are non-relational pointer abstractions. A
 non-relational pointer abstraction is defined in the same way as a~scalar
 abstraction; it is given as lattice of abstract pointer values
-$A_{\textit{addr}}$; concretization function
-$\gamma: A_{\textit{addr}} \rightarrow
-\mathcal{P}(\mathcal{C}_{\textit{addr}})$ and abstraction function $\alpha:
-\mathcal{P}(\mathcal{C}_{\textit{addr}}) \rightarrow A _{\textit{addr}}$. An
+$A_{\textit{addr}}$; concretization function $\gamma\colon A_{\textit{addr}}
+\to \mathcal{P}(\mathcal{C}_{\textit{addr}})$ and abstraction function $\alpha
+\colon \mathcal{P}(\mathcal{C}_{\textit{addr}}) \to A _{\textit{addr}}$. An
 example of simple non-relational pointer abstract domain is a \emph{null
 pointer} domain illustrated in \autoref{fig:nulldomain}.
 

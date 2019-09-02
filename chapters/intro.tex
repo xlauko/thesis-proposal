@@ -24,11 +24,11 @@ indispensable for successful verification of larger models, the verification
 community is being flooded with their implementations.  According to the
 classification of techniques used in the recent verification competition
 \svcomp~\cite{SVCOMP2019}, many tools utilize a similar set of abstraction
-techniques (see \autoref{tab:svcomp}) concretely: coun\-ter\-example-guided abstraction refinement
+techniques (see \autoref{tab:svcomp}), namely coun\-ter\-example-guided abstraction refinement
 \cite{Clarke20}, predicate abstraction
 \cite{Flanagan02}, shape analysis \cite{Yang2008}, lazy abstraction
 \cite{Henzinger2002}, or symbolic data representation
-\cite{King76,Burch1990,Majumdar2018}. Though, these techniques share similar
+\cite{King76,Burch1990,Majumdar2018}. Even though, these techniques share similar
 ideas, each of the tools ships with its own implementation.  Moreover, the
 design of these algorithms is not well suited for reusability.
 
@@ -125,7 +125,7 @@ tools first translate the program into a simpler verification friendly format
 
 However, the abstraction that we are interested in is an abstraction of
 program environment, also addressed as non-deter\-mi\-ni\-stic inputs to the program.
-For full coverage of verification, it is required that one to examines the
+For full coverage of verification, it is required that one examines the
 unpredictable behavior of interaction with the program environment. Hence, the
 verification tool needs to consider all possible program behaviors (e.g.,
 program inputs).  To manage an enormous number of possibilities, verifiers
