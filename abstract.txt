@@ -1,0 +1,44 @@
+In computer-aided verification, most of the tools leverage abstraction
+techniques to reduce the complexity of analyzed systems. Even though these
+techniques are widely adopted, they are usually tightly integrated into tools,
+causing undesired complexity, and neglect any reusable design.
+
+In my research, I focus on the investigation of abstraction-based techniques
+used in program verification as abstract interpretation, counterexample guided
+abstraction or symbolic execution. For these techniques, I devise
+self-contained alternatives and general-purpose analyses. As a solution for
+    self-contained abstraction, I propose a transformation-based method. This
+method utilizes instrumentation to insert abstraction directly to the program,
+and consequently quits of responsibility for abstraction from the verification
+tools.
+
+Up till now, I have developed transformation-based symbolic execution and
+string abstraction for explicit model checkers. In the future, I plan to
+generalize the transformation-based technique for a wider variety of abstract
+domains such as predicate or pointer abstraction. Furthermore, I intend to
+adapt traditional abstraction refinement techniques to the self-contained
+abstraction.
+
+===
+
+Při automatické verifikaci programů využívá většina nástrojů abstrakce ke
+snížení složitosti analyzovaných systémů. Přestože jsou tyto techniky široce
+používány, je jejich implementace obvykle pevně spjata s konkrétními nástroji,
+což způsobuje nežádoucí složitost implementace a znemožňuje jakékoli použití v
+jiných nástrojích.
+
+Ve svém výzkumu se zaměřuji na zkoumání technik založených na abstrakci [a]
+používaných při ověřování programu, jako například abstraktní interpretace,
+zjemňování abstrakcí na základě protipříkladů nebo symbolická exekuce. Tyto
+techniky plánuji upravit tak, že budou samostatně použitelné nezávisle na
+verifikačním nástroji. Jako řešení pro samostatně použitelné abstrakce navrhuji
+ve své práci metodu založenou na transformaci programů. Tato metoda využívá
+instrumentace k vložení abstrakce přímo do programu, a v důsledku toho zbavuje
+odpovědnosti za abstrakci verifikační nástroje.
+
+Doposud jsem v této oblasti vyvinul techniku symbolické exekuce založené na
+transformaci a taktéž abstrakci řetězců pro explicitní ověřování modelů. V
+budoucnu plánuji zobecnit techniku založenou na transformaci pro širší škálu
+abstraktních domén, jako je predikátová doména nebo abstrakce ukazatelů. Dále
+mám v úmyslu přizpůsobit tradiční techniky zjemňování abstrakcí pro abstrakce
+založené na transformaci.
