@@ -29,8 +29,8 @@ of concrete and abstract values in a single program. In this way, I was able to
 extend model checker \divine~\cite{Divine17} with symbolic
 computation~\cite{Lauko2019Sym, Lauko2018SymComp}.
 
-All analyses presented in my up-to-date work are implemented in a tool named
-\lart{} -- \llvm abstraction and refinement tool, that is a part of the \divine
+All analyses presented in my up-to-date work are implemented in a~tool named
+\lart{} -- \llvm abstraction and refinement tool, that is a~part of the \divine
 project. \lart is based on top of the open-source \llvm compiler
 infrastructure. It allows \lart to easily integrate program analyses,
 transformations, and other tools that target \llvm.
@@ -93,8 +93,8 @@ C++ library that provides definitions of abstract values and implementation of
 supported operations on them.
 
 \textsc{Mstring} domain represents C strings by segmentation abstract domain
-that keeps track of terminal zeros in the underlying array. It is a
-parametrizable domain in the means of array segments\sidenote{Array segment
+that keeps track of terminal zeros in the underlying array. It is
+a~parametrizable domain in the means of array segments\sidenote{Array segment
 represents a consecutive area of the same characters.} length and array
 content.  Hence, we have repurposed a symbolic domain from previous work to
 abstract lengths of string segments.
@@ -121,17 +121,18 @@ I am the main author of the text of the paper. I have also implemented the
 transformation-based abstraction and conducted all the experiments.
 
 \item \emph{\textbf{Extending \textsf{DIVINE} with Symbolic Verification Using SMT}},
-by \textsc{Lauko} H., V. \textsc{Štill}, P. \textsc{Ročkai} and J.\textsc{Barnat}.
+by Lauko H., V. Štill, P. Ročkai and J. Barnat.
 In: Tools and Algorithms for the Construction and Analysis of Systems -- TACAS 2019 --
 25 Years of TACAS: TOOLympics, Prague, Czech Republic, April 6-11, 2019,
 Proceedings, Part III. pp. 204-208~\cite{Lauko2019Sym}
 
 I am the primary author of the text of the paper, as well as of the
-implementation. The implementation included an adaptation of \divine
+abstraction implementation. The implementation included an adaptation of \divine
 abstraction support to handle \svcomp benchmarks.
 
-\item \textbf{\emph{String abstraction for model checking of C programs}},
-by \textsc{Cortesi} A., H. \textsc{Lauko}, M. \textsc{Olliaro} and P. \textsc{Ročkai}.
+\newpage
+\item \textbf{\emph{String Abstraction for Model Checking of C programs}},
+by Cortesi A., H. Lauko, M. Olliaro and P. Ročkai.
         In: Model Checking Software -- SPIN 2019 -- 26th International Symposium~\cite{Lauko2019String}
 
 I am the author of half of the paper content: primarily part concerning
@@ -163,7 +164,7 @@ Proceedings, Part II. pp. 390-393~\cite{Mrazek2017}
 I wrote parts of the paper and I have helped with a tool preparation for the
 \svcomp competition.
 
-\item \textbf{\emph{\textsf{SymDIVINE}: Tool for Control-Explicit Data-Symbolic State Space Exploration}}
+\item \textbf{\emph{\textsf{SymDIVINE}: Tool for Control-Explicit Data-Symbolic State \\ Space Exploration}}
 by Mrázek J., P. Bauch, H. Lauko and J. Barnat.
 In: Model Checking Software -- SPIN 2016 -- 23rd International Symposium, Eindhoven, The Netherlands, April 7-8, 2016, Proceedings, pp. 208-213~\cite{Mrazek2016}
 

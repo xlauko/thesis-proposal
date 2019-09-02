@@ -285,21 +285,23 @@ its adaptation to \cegar-based techniques with the application of predicate
 abstraction. For this use case, I would like to reuse the bucketing/state
 partitioning techniques from abstract interpretation to simplify sets of
 possibly related variables. Furthermore, I would like to investigate an
-adaptation of on-the-fly refinement techniques like widening and narrowing or
+adaptation of on-the-fly refinement techniques, namely widening, narrowing or
 lazy abstraction.
 
 \subsubsection{ Domain categories }
 
 In addition to scalar domains, I want to cover other abstractions required for
-successful verification of \llvm programs. Especially, I want to focus on how to
-generalize program abstractions. In the transformation framework, I distinguish
-these three categories of abstract domains:
+successful verification of \llvm programs. Especially, I want to focus on how
+to generalize program abstractions. Depending on the target of abstraction, it
+requires various data representations and different analyses. However, I want
+to minimize the number of various abstraction types. Hence in the
+transformation framework, I unify abstract domains under these categories:
 
 \begin{itemize}
     \item \emph{scalar domains} that abstract program integers and floating-point values (correspond to numeric abstract domains),
     \item \emph{aggregate domains} that abstract program objects and memory content like arrays and strings,
 
-    \item \emph{pointer domains} that enable to abstract program pointers.
+    \item \emph{pointer domains} that enable to abstract program pointers and heap representation.
 \end{itemize}
 
 \noindent
@@ -342,7 +344,6 @@ sanitizer enables program to keep track of metadata and propagates them during
 execution, i.e., allows to perform a taint analysis, where taints identify abstract
 values in the program.
 
-\newpage
 \section{Progression schedule}
 
 The plan of my future study and research activities is following:

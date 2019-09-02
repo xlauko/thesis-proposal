@@ -20,15 +20,16 @@ well-documented, and continuously improving framework. Because of its faithful
 correspondence with the executable program and robust infrastructure, \llvm
 presents a sweet spot of where to conduct program analysis.
 
-An elementary unit of \llvm program is an \emph{instruction}. We recognize a usual set of binary
-instructions (arithmetic, relational operations), memory access operations
-(\texttt{load}, \texttt{store}), heap operations (\texttt{malloc},
-\texttt{free}), stack allocation (\texttt{alloca}), data-flow operations
-(branching instructions \texttt{br}, calls, return instruction \texttt{ret}).
-Since \llvmir is a typed language, it also provides conversion instructions
-among integers, floats and pointers. We admit scalar types (floats, integers),
-pointer types, and aggregate types (arrays, structures).  For detailed syntax
-and semantics description we refer the interested reader to \autoref{ch:llvm}.
+An elementary unit of \llvm program is an \emph{instruction}. We recognize a
+usual set of binary instructions (arithmetic, relational operations), heap
+operations (\texttt{malloc}, \texttt{free}), stack allocation
+(\texttt{alloca}), memory access operations (\texttt{load}, \texttt{store}),
+data-flow operations (branching instructions \texttt{br}, calls, return
+instruction \texttt{ret}).  Since \llvmir is a typed language, it also provides
+conversion instructions among integers, floats and pointers. We admit scalar
+types (floats, integers), pointer types, and aggregate types (arrays,
+structures).  For detailed syntax and semantics description we refer the
+interested reader to \autoref{ch:llvm}.
 
 The entire program in \llvm consists of global variables and functions.  A
 function is a directed graph of basic blocks. A basic block is a sequence of
@@ -404,6 +405,8 @@ well-defined domain is required to have an image for each concrete value, and
  is over approximating abstraction. Such properties of domains are described by
  \textbf{\emph{Galois connection}}.
 
+ \newpage
+
  \begin{definition}
  For the concrete lattice $(C, \subseteq)$ and abstract lattice $(A,
  \sqsubseteq)$ a~galois connection is $(\alpha, \gamma)$, where
@@ -459,11 +462,10 @@ $\alpha$ the \emph{abstraction} map and $\gamma$ the \emph{concretization} map.
 \prule
 \bigskip
 
-\noindent
-Given an abstract domain and abstract operations\sidenote{In our case, abstract
-semantics of \llvm instructions.} we perform a fixpoint iteration\sidenote{For
-detailed algorithm see \cite{Cousot1977}} and by Knaster-Tarski theorem
-\cite{Tarski1955} we are guaranteed to obtain a solution, see
+Given an abstract domain and semantics of abstract operations\sidenote{In our case, abstract
+semantics of \llvm instructions.}, we perform a fixed-point iteration\sidenote{For
+detailed algorithm see \cite{Cousot1977}} and by Knaster-Tarski
+theorem \cite{Tarski1955} we are guaranteed to obtain a solution, see example in
 \autoref{fig:signcomp}.
 
 Even though our example program in \autoref{fig:signcomp} is quite trivial, the
@@ -501,15 +503,14 @@ a~\textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
 \end{marginfigure}%
 A~\textbf{\emph{constant propagation domain}} \domain{cp}
 (see~\autoref{fig:cp}) is another example of property domain used in
-optimization techniques \cite{Kildall1973}.
-
-Probably the simplest of domains is a~\textbf{\emph{single value}} domain
-\domain{U}. The single value domain is useful if we want to omit a variable
-from the model of the program. The two-value domain that contains two possible
-elements ($\top, \bot$) is also called the \textbf{\emph{definedness domain}}
-\domain{D}. Because with $\top$, we can denote that value is defined,
-respectively undefined with $\bot$. Despite its simplicity, it can be useful to
-detect reachability of program locations.
+optimization techniques \cite{Kildall1973}. Probably the simplest of domains is
+a~\textbf{\emph{single value}} domain \domain{U}. The single value domain is
+useful if we want to omit a variable from the model of the program. The
+two-value domain that contains two possible elements ($\top, \bot$) is also
+called the \textbf{\emph{definedness domain}} \domain{D}. Because with $\top$,
+we can denote that value is defined, respectively undefined with $\bot$.
+Despite its simplicity, it can be useful to detect reachability of program
+locations.
 
 \begin{marginfigure}%
     \centering
@@ -560,7 +561,7 @@ abstractions. Moreover, some parts of the state might be omitted from the
 abstraction entirely and represented in the concrete domain.
 
 Since our goal is to formulate a unified model for all of these abstractions,
-in the following sections, we will bring the state-of-the-art abstract
+in the following sections, we adapt the state-of-the-art abstract
 domains to our \llvm model so that we can build upon them. Furthermore, we
 detect missing components of these approaches so that they can be used in the
 abstraction of \llvm. Based on the purpose of the abstract domains, in \llvm we
@@ -697,8 +698,6 @@ narrowing to refine the over-approximated solution. By different implementation
 of widening and narrowing, abstract interpreters employ different strategies to
 achieve convergence -- for example widening with thresholds \cite{Blanchet2003,
 Lakhdar2011}, delayed widening, parma widening \cite{Bagnara2008} or abstract
-acceleration \cite{Gonnord2006, Feautrier2010}.
-
 \begin{marginfigure}
 \begin{minted}[linenos]{c}
 int i = 10;
@@ -712,6 +711,7 @@ while (i >= 0) {
     \caption{Program that requires a relational invariant.}
     \label{fig:relationalc}
 \end{marginfigure}
+acceleration \cite{Gonnord2006, Feautrier2010}.
 
 An alternative approach to tackle infinite interpretation that does not require
 any extrapolation operator is a \textbf{\emph{policy iteration}}
@@ -747,7 +747,7 @@ the affine domain with the congruence domain \cite{Granger1991}.
 Another relational domain is a \emph{polyhedron abstract domain} which is
 inspired by the theory of linear programming and optimization \cite{Cousot1978, Venet2012}
 and provides a unique representation. However, the manipulation with polyhedron
-abstract values involves costly computation of a simplex algorithm
+abstract values involves costly computation of a~simplex algorithm
 \cite{Schrijver1986}. Nowadays a~polyhedron abstract domain is still
 extensively studied: Singh et~al. present an abstraction of polyhedron by
 bounding boxes to simplify abstract operations in \cite{Singh2017};
@@ -767,8 +767,8 @@ of invariants of form $\pm x \pm y \leq c$, where $x$ and $y$ are program
 variables and $c$ is a constant.  Moreover, the advantage of the octagon domain
 is in its representation by potential graphs and difference-bound matrices
 \cite{Larsen1997}, which allows a unique minimal representation of abstract
-values.\sidenote{Unique representation is highly demanded in the program
-verification because it allows fast equality comparisons of abstract states.}
+values.\sidenote[][-2cm]{\footnotesize\textit{Unique representation is highly demanded in the program
+verification because it allows fast equality comparisons of abstract states.}}
 The octagon domain was further optimized by bucketing of octagons
 \cite{Blanchet2003, Venet2004} and modified to extend captured properties
 \cite{Claris2004, Mine2004}. Further restriction provides a \emph{zone domain}
@@ -1046,6 +1046,8 @@ $\gamma: A_{\textit{addr}} \rightarrow
 example of simple non-relational pointer abstract domain is a \emph{null
 pointer} domain illustrated in \autoref{fig:nulldomain}.
 
+\newpage
+
 \begin{definition}
     For abstract pointer domain $\mathcal{A}_{\textit{addr}}$, an abstract program state is
     defined as $(\rho, \epsilon, \mu)$, where:
@@ -1264,12 +1266,12 @@ model; if not so, we are referring to the \emph{spurious} error.
 \subsection{Counterexample-guided abstraction refinement}
 
 A common technique to handle spurious coun\-ter\-examples is the
-coun\-ter\-example-guided abstraction refinement (\cegar), first presented
-in~\cite{Clarke2000}. The idea of the \cegar approach is to examine a
-counterexample and if it is spurious, refine the abstraction in such a way that
-the spurious error would become unfeasible. Subsequently, the analysis is
-restarted with refined abstraction, which is more precise and avoids the
-spurious error (see \autoref{fig:cegar}).
+coun\-ter\-example-guided abstraction refinement (\cegar), first presented by
+Clarke et al.  in~\cite{Clarke2000}. The idea of the \cegar approach is to
+examine a counterexample and if it is spurious, refine the abstraction in such
+a~way that the spurious error would become unfeasible. Subsequently, the
+analysis is restarted with refined abstraction, which is more precise and
+avoids the spurious error (see \autoref{fig:cegar}).
 
 \begin{figure}[h]
 \resizebox{\textwidth}{!}{
