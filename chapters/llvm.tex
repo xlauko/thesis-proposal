@@ -89,7 +89,7 @@ identifiers, global variables, function definitions and declarations:
 \section*{Control Flow}
 
 Control flow graph of \llvm functions consists of labeled basic blocks, where
-each starts with a sequence of phi node instructions (merge points of \ssa
+each starts with a sequence of \texttt{phi} node instructions (merge points of \ssa
 form), and sequence of instructions terminated with a terminal instruction.
 Terminal instruction either branch via conditional/uncon\-di\-tio\-nal branch to the
 subsequent basic block or they return from the function. Alternatively, an
@@ -108,10 +108,10 @@ unreachable location is denoted by special instruction.
 
 \section*{Commands}
 
-Ids identify results of \llvm commands, which are either \ssa instructions
-(binary operations, casts, or relational operations), memory access operations, or
-function calls. A special instruction getelementptr is used to compute offset
-from a pointer.
+Identifiers (\texttt{id}s) represent results of \llvm commands, which are either
+\ssa instructions (binary operations, casts, or relational operations), memory
+access operations, or function calls. A special instruction
+\texttt{getelementptr} is used to compute offset from a pointer.
 
 \begin{grammar}
 <cmd> ::= <id> = <bop> "i"<sz> <val> <val>

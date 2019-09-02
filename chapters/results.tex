@@ -23,7 +23,7 @@ engine, where the instrumented code needs to be interpreted.
 
 Up until now, I have focused on the general design of trans\-for\-mation-based
 abstraction without refinement (\emph{trivially constrainable domains}). The
-main concern of the first prototype was to design a general-purpose analysis
+main concern of the first prototype was to design a general-purpose analyses
 for instrumentation. The goal of these transformations was to allow coexistence
 of concrete and abstract values in a single program. In this way, I was able to
 extend model checker \divine~\cite{Divine17} with symbolic
@@ -34,6 +34,10 @@ All analyses presented in my up-to-date work are implemented in a~tool named
 project. \lart is based on top of the open-source \llvm compiler
 infrastructure. It allows \lart to easily integrate program analyses,
 transformations, and other tools that target \llvm.
+
+\add{ TODO some text }
+
+\newpage
 
 \section{Transformation-based abstraction}
 \label{sec:symbolic}
@@ -58,10 +62,10 @@ from program memory, whenever it needs to decide whether the state is feasible
 or is equal to some previously visited state. An external \textsc{smt} solver solves
 feasibility and equality queries. Notice that the virtual machine has no knowledge
 about abstract values present in the program.
-However, it needs to recognize what parts of the memory contains abstract data,
+However, it needs to recognize which parts of the memory contains abstract data,
 because they can not be compared explicitly when the model checker is
 determining equality of states. Therefore, the virtual machine keeps metadata
-that denotes what parts of memory hold abstract values.
+that denotes which parts of memory hold abstract values.
 
 \begin{figure}
     \centering

@@ -34,7 +34,7 @@ interested reader to \autoref{ch:llvm}.
 The entire program in \llvm consists of global variables and functions.  A
 function is a directed graph of basic blocks. A basic block is a sequence of
 non-terminal instructions terminated by a terminal instruction.\sidenote{A
-terminal instruction are for example branching or return instruction.}
+terminal instruction is for example branching or return instruction.}
 
 For a more accessible representation of an \llvm program, we will use a
 \emph{control flow automaton} (CFA), which is a directed graph with \llvm
@@ -46,7 +46,7 @@ instructions attached to its edges (see \autoref{fig:cfa}).
     where $\mathcal{L}$ is a set of program locations, $l_{\textit{init}} \in
     \mathcal{L}$ is an initial location that represents a program entry point
     and $\mathcal{G} \subseteq (\mathcal{L} \times \mathcal{I} \times
-    \mathcal{L})$ is set of edges between program locations, each labeled with
+    \mathcal{L})$ is a set of edges between program locations, each labeled with
     an instruction that is executed when the control flows along the edge.
 \end{definition}
 
@@ -218,11 +218,11 @@ semantic domain} is a complete lattice $(\mathcal{P}(\Sigma), \cap, \cup,
 compute all possible states that a program might reach, it is, unfortunately,
 uncomputable. To mitigate the problem of computability, we employ an abstract
 domain instead of a concrete one, i.e., we need to drop some information about
-program variables. For instance, to drop all the information about each program
+program variables. For instance, we can drop all the information about each program
 variable except whether it is positive, negative or zero. This can be achieved
 by replacement of values domain we are computing on $\mathsf{C}$ by an abstract
 domain $\domainm{sign} = \{\bot, -, 0, +, \top\}$, where $\bot$ represents an
-undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
+undefined value (variable without assigned value), $-$,$+$ and $0$ denote a
 \begin{marginfigure}%
     \centering
     \begin{tikzpicture}[node distance=1em]
@@ -235,7 +235,7 @@ undefined value (variable without assigned value), $+$,$-$ and $0$ denote a
     \draw [thin] (t) -- (0) -- (b);
     \draw [thin] (t) -- (p) -- (b);
     \end{tikzpicture}
-    \caption{$\mathsf{A}_{\textit{sign}}$ domain lattice.}
+    \caption{Lattice of sign abstract domain $\mathsf{A}_{\textit{sign}}$.}
     \label{fig:signd}%
 \end{marginfigure}%
 sign of variable and $\top$ stands for an arbitrary value (i.e., variable can be
@@ -394,7 +394,7 @@ either negative, positive or zero).
     registers (\llvmint{|\var{\%x}, \var{\%v}, \var{\%a}, \var{\%b}|}). A~tuple
     at each location represents an abstract evaluation of the registers in this
     order.  The presented states of iteration are after first iteration
-    (\textbf{left}), after 5 iterations (\textbf{middle}), reached fixpoint
+    (\textbf{left}), after 5 iterations (\textbf{middle}), at the reached fixpoint
     (\textbf{right}).}
     \label{fig:signcomp}%
     \end{adjustwidth}
@@ -411,7 +411,7 @@ well-defined domain is required to have an image for each concrete value, and
 
  \begin{definition}
  For a concrete lattice $(C, \subseteq)$ and abstract lattice $(A,
- \sqsubseteq)$ a~galois connection is $(\alpha, \gamma)$, where
+ \sqsubseteq)$ a~Galois connection is $(\alpha, \gamma)$, where
  $\alpha \colon C \to A$, $\gamma \colon A \to C$ are monotonic functions
  such that:
 
@@ -500,7 +500,7 @@ a~\textbf{\emph{congruence domain}} \cite{Granger1989, Granger1991}.
     \draw [thin] (t) -- (p) -- (b);
     \end{tikzpicture}
 }
-    \caption{\domain{cp} domain lattice.}
+    \caption{Lattice of constant propagation abstract domain \domain{cp}.}
     \label{fig:cp}%
 \end{marginfigure}%
 A~\textbf{\emph{constant propagation domain}} \domain{cp}
@@ -549,10 +549,10 @@ precise and more efficient than multiple separate interpretations
 \cite{Cousot2011b}.  For further information we kindly refer the to domain
 refinement in \autoref{sec:domainrefinement}.
 
-The basic building block of these domains is \emph{basis} that expresses how to
-abstract one program variable or register and operations on it.  Thanks to the
-galois connection the rest of interpretation can be derived automatically as a
-product domain for all variables \cite{Mine2004Thesis}.
+The basic building block of property domains is \emph{basis} that expresses how
+to abstract one program variable and operations on it.  Thanks to the Galois
+connection the rest of interpretation can be derived automatically as a product
+domain for all variables \cite{Mine2004Thesis}.
 
 Given the state of a program, each of the program variables and registers
 requires a various level of abstraction, as well as different abstract domains.
@@ -595,7 +595,7 @@ abstraction extends the state definition so that registers can hold abstract
 values. These program registers can be handled as Cousot's variables. However,
 the problem arises on the boundaries with memory.  The simplest solution would
 be to lower abstract values to concrete domain with concretization function
-$\gamma$, but we would lose any advantage of abstraction and lose its
+$\gamma$, but we would lose any advantage of abstraction and its
 precision.  Therefore we need to extend \llvm program memory to be able to hold
 abstract scalar values.
 
@@ -710,6 +710,7 @@ semantic equations, such that the least fixpoint is reached after a finite
 number of iterations.  The sequence of policies defines a strategy to approach
 the fixpoint either from above or below. Policies are formed from a
 decomposition of original abstraction.
+
 \begin{marginfigure}
 \begin{minted}[linenos]{c}
 int i = 10;
@@ -720,16 +721,15 @@ while (i >= 0) {
         v = v + 1;
 }
 \end{minted}
-    \caption{Program that requires a relational invariant.}
+    \caption{An example of program that requires a relational invariant.}
     \label{fig:relationalc}
 \end{marginfigure}
-
-The drawback of the domains presented up uptil now is that they are not able to reason about
+The drawback of the domains presented up until now is that they are not able to reason about
 relational properties between variables. Therefore, we address them as
 \emph{non-relational} abstract domains.  However, many verification tasks
 require that one take variable relations into account.  For example, to show that $v \leq 11$
-at line 7 in program of \autoref{fig:relationalc}, we need to prove a
-relational loop invariant $v + i
+holds at line 7 in the program from \autoref{fig:relationalc}, we need to prove
+a relational loop invariant $v + i
 \leq 10$.
 
 %\add{other applications of relational domains: analysis of programs with
@@ -751,7 +751,7 @@ inspired by the theory of linear programming and optimization \cite{Cousot1978, 
 and provides a unique representation. However, the manipulation with polyhedron
 abstract values involves costly computation of a~simplex algorithm
 \cite{Schrijver1986}. Nowadays a~polyhedron abstract domain is still
-extensively studied: Singh et~al. present an abstraction of polyhedron by
+extensively studied: Singh et~al.~present an abstraction of polyhedron by
 bounding boxes to simplify abstract operations in \cite{Singh2017};
 alternatively the combination with interval domain to reason about interval
 linear properties is examined in \cite{Chen2009}.
@@ -769,7 +769,7 @@ representation of invariants of form $\pm x \pm y \leq c$, where $x$ and $y$
 are program variables and $c$ is a constant.  Moreover, the advantage of the
 octagon domain is in its representation by potential graphs and
 difference-bound matrices \cite{Larsen1997}, which allows a unique minimal
-representation of abstract values.\sidenote{\footnotesize\textit{Unique
+representation of abstract values.\sidenote[][-3cm]{\footnotesize\textit{Unique
 representation is highly demanded in the program verification because it allows
 fast equality comparisons of abstract states.}} The octagon domain was further
 optimized by bucketing of octagons \cite{Blanchet2003, Venet2004} and modified
@@ -783,7 +783,7 @@ byte-code. The pentagon domain captures properties of the form $x \in [a,b]
 encode any linear constraint as polyhedra do, while it preserves the efficiency
 of weakly relational abstract domains \cite{Amato2017}.
 
-A disadvantageous aspect of relational abstract domains is their complicated
+A disadvantageous aspect of relational abstract values is their complicated
 representation and therefore computationally less efficient abstract
 operations. In addition to maintaining more properties about variables, the
 representation also needs to assure uniqueness of the representation. Hence,
@@ -792,7 +792,7 @@ bound matrices in the octagon domain \cite{Mine2006}, or generators of affine
 space in the linear equality domain \cite{Karr1976}).
 
 Except picking of a suitable abstraction, a precision of abstract methods can
-be improved by symbolic methods. In his work, Miné presents a set of
+be improved by symbolic methods. In this way, Miné presents a set of
 lightweight simplifications (linearization and symbolic constant propagation)
 which are used to transform numerical expressions in order to increase the
 precision of the analysis~\cite{Mine2006b}. Likewise, Chang takes use of
@@ -837,7 +837,7 @@ components:
 \label{sec:ingredients}
 \begin{enumerate}
     \itemsep0em
-    \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretization and abstraction function,
+    \item a poset $(\mathcal{A}, \sqsupseteq)$ with concretization and abstraction functions,
     \item effective and sound abstract operators,
     \item and an iteration strategy.
 \end{enumerate}
@@ -879,11 +879,11 @@ represent the arbitrary large sizes.
 
 \subsection{Array abstraction}
 
-The simplest and heavily used aggregate -- \emph{array} gets a lot of specific
-abstract domains for efficient reasoning about array manipulating programs. In
-the analysis of arrays, the analyzer needs to be able to discover relationships
-among values of array elements, as well as their relationships to scalar
-variables and constants located in the program.
+The simplest and heavily used aggregate -- an \emph{array} receive a lot of
+specific abstract domains for efficient reasoning about array manipulating
+programs. In the analysis of arrays, the analyzer needs to be able to discover
+relationships among values of array elements, as well as their relationships to
+scalar variables and constants located in the program.
 
 Generally, it is problematic to statically reason about arrays, because of
 their unbounded nature. The problem is that the array operations do not
@@ -1101,7 +1101,7 @@ and concentrates on the design of appropriate shape templates.  In comparison
 to traditional predicate analysis where a user needs to supply a set of
 predicates, template-based domains use a set of parametrized predicates which
 are further gradually refined via \textsc{smt}.  Moreover, the \textsc{smt}
-representation enables a straightforward combination with value analysis --
+representation enables a~straightforward combination with value analysis --
 hence allows reasoning about the shape and their contents at the same time.
 
 To reason only about numeric properties of heap manipulating programs, we can
@@ -1328,19 +1328,20 @@ on-the-fly~\cite{Beyer2008program}.
 \subsection{Lazy abstraction}
 \label{sec:lazya}
 
-A bottleneck of \cegar loop is in its repeated analysis of the program. This
-problem tries to solve a lazy abstraction technique. The lazy abstraction
-refines a single abstract model on-demand, so that different parts of the model
-may exhibit a different level of abstraction~\cite{Henzinger2002}.
-It is achieved by keeping track of both the control-flow graph, which describes how
-the program locations are traversed and the data-flow, which describes what
-holds at a program location. The control-flow is represented explicitly, while
-the data-flow is encoded symbolically~\cite{Alberti2012}.
-Similarly, as previous techniques, lazy abstraction can be improved by
-interpolation~\cite{McMillan2006}. The lazy interpolant-based model checking
-refines the abstraction according to refuting program paths instead of
-predicate refinement as in the previous approach. By doing so, the refinement
-avoids the high cost of a postcondition evaluation in the predicate approach.
+A bottleneck of \cegar loop is in its repeated analysis of the program.  The
+technique, that tries to solve to mitigate this problem is a~lazy abstraction.
+In lazy abstraction, we refine a single abstract model on-demand, so that
+different parts of the model may exhibit a different level of
+abstraction~\cite{Henzinger2002}.  It is achieved by keeping track of both the
+control-flow graph, which describes how the program locations are traversed and
+the data-flow, which describes what holds at a program location. The
+control-flow is represented explicitly, while the data-flow is encoded
+symbolically~\cite{Alberti2012}.  Similarly, as previous techniques, lazy
+abstraction can be improved by interpolation~\cite{McMillan2006}. The lazy
+interpolant-based model checking refines the abstraction according to refuting
+program paths instead of predicate refinement as in the previous approach. By
+doing so, the refinement avoids the high cost of a postcondition evaluation in
+the predicate approach.
 
 Lazy abstraction comes in particularly useful to shape analysis where it allows
 to refine shapes only locally~\cite{Henzinger2003,Beyer2006a}, as well as to
@@ -1364,7 +1365,7 @@ constraints, we obtain a description of an abstract state. In comparison to
 introducing new constraints on variables, hence remains precise throughout the
 execution. The symbolic execution also features a lazy approach since whenever
 it encounters an unfeasible state, it cancels exploration of current path
-backtracks to the previously feasible fork on the path.
+and backtracks to the previously feasible fork on the path.
 
 In between symbolic execution tools, a prominent position holds
 \textsc{klee}~\cite{Cadar2008klee}. It is a symbolic executor based on \llvm,

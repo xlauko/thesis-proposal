@@ -58,7 +58,7 @@ associated with the values, which will determine whether the value is concrete
 or not.
 
 Another part of abstraction execution is a decision procedure which determines
-the feasibility of a program path. One can argue that it can also be refactored out
+the feasibility of a program path. One can argue that it can also be refactored
 out of the execution engine for our purpose, however, in reality, it is hardly
 realizable that whole \textsc{smt} solver would be compiled into the program and
 reinterpreted by further analyses.
@@ -116,18 +116,18 @@ reinterpreted by further analyses.
         interpretation where, the interpreter takes care of whole abstraction
         (maintaining abstract data, additional metadata and optionally uses
         decision procedure \textsc{dp}).
-    \item In the second approach, we let the program to maintain abstract
+    \item In the second approach, the program maintains abstract
         data (this can be achieved by instrumentation as described
         in~\autoref{sec:symbolic}).  However, the interpreter still keeps metadata
         that keeps track for each value, whether it is abstract or concrete.
         This information is used when the interpreter needs to decide how to
-        interpret program memory -- whether to perform an explicit or abstract
+        interpret program memory -- whether to perform an explicit or an abstract
         comparison of states.
     \item The third approach shifts responsibility about metadata to
         the program (they can be kept as shadow memory of the program. A
         similar approach is used by program sanitizers~\cite{Stepanov2015}),
         consequently the interpreter needs to obtain metadata from the program.
-    \item The latter approach let full responsibility about abstraction to the
+    \item The latter approach lets full responsibility about abstraction to the
         program, and the interpreter executes program explicitly. The decision
         procedure needs to take care of non-deterministic execution and
         determine what path to take when a non-deterministic branch occurs, or
@@ -164,8 +164,8 @@ points:
 \end{enumerate}
 
 \noindent
-In the following sections, I will state the main obstacles and objectives of
-these goals. Furthermore, I will explain how they relate to state-of-the-art
+In the following sections, I state the main obstacles and objectives of
+these goals. Furthermore, I explain how they relate to state-of-the-art
 research.
 
 \subsection{General-purpose analyses for self-contained abstraction}
@@ -210,10 +210,10 @@ analysis is performed only once, in comparison to dynamic analysis that needs
 to perform abstraction each time it runs.
 
 For the accessible design of abstract domains, I propose to implement them in a
-higher-level programming language\sidenote[][-2cm]{An abstract domain consists of data
-representation and implementation of its operations.} which is then compiled to
+higher-level programming language\sidenote[][-2cm]{\footnotesize\textit{An abstract domain consists of data
+representation and implementation of its operations.}} which is then compiled to
 \llvm and linked with instrumented bitcode from \lart.  Moreover, I~intend to
-generalize analyses for abstract domains in such a way that all of then can be
+generalize analyses for abstract domains in such a way that all of them can be
 instrumented into the program: this includes numerical abstraction (no matter
 whether it is relational or not), aggregate abstraction and pointer
 abstractions. In contrast, tools like SeaHorn or Astrée aim only at numerical
@@ -237,6 +237,8 @@ to achieve an extended precision, we need to instrument some precision
 mechanism into the program.
 
 \begin{marginfigure}
+\scriptsize
+
 \begin{minted}[linenos]{c}
 int i = input();
 int b = i + 10;
@@ -246,15 +248,15 @@ else
   ...
 \end{minted}
 
-    \footnotesize
-    Instrumentation of this program replaces all operations dependent on variable
-    \ccode{i}.  Therefore, the result of condition \ccode{b < 0} might be
-    either \ccode{true} or \ccode{false}.  For sound exploration, an executor
-    needs to explore both ways. This is achieved by instrumentation of
+    Instrumentation replaces all ope\-ra\-tions dependent on
+    variable~\ccode{i}.  Therefore, the result of condition \ccode{b < 0} might
+    be either \ccode{true} or \ccode{false}.  For sound exploration, an
+    executor needs to explore both ways. This is achieved by instrumentation of
     non-deterministic choice in the control flow, which is supported by most of
     the verification tools. Moreover, the value of \ccode{b} needs to be
     restricted in each of the executions, as well as all values dependent on
-    the condition (in this case variable \ccode{i}):
+    the condition (in this case variable \ccode{i}).
+
 \begin{minted}[linenos]{c}
 int i = input();
 int b = i + 10;
@@ -296,10 +298,10 @@ lazy abstraction.
 \subsubsection{Domain categories}
 
 In addition to scalar domains, I want to cover other abstractions required for
-successful verification of \llvm programs. Especially, I want to focus on how
-to generalize program abstractions. Depending on the target of abstraction, it
-requires various data representations and different analyses. However, I want
-to minimize the number of various abstraction types. Hence in the
+successful verification of \llvm programs. Especially, I want to focus on
+generalization of program abstractions. Depending on the target of abstraction,
+it requires various data representations and different analyses. However, I
+want to minimize the number of various abstraction types. Hence in the
 transformation framework, I unify abstract domains under these categories:
 
 \begin{itemize}
@@ -334,11 +336,11 @@ adapted from the \textsc{smt} community: program variables bitwidth
 abstraction~\cite{Jonavs2018}, theory refinement~\cite{Hyvarinen2017} or lazy
 abstraction approach~\cite{Henzinger2002}.
 
-\subsection{ Executable abstraction }
+\subsection{Executable abstraction}
 
 The hitherto presented abstraction relied on the underlying execution engine,
 which maintained abstraction metadata and enabled non-deter\-mi\-ni\-stic program
-branching. However, for the future, I plan to investigate a possibility of a
+branching. However, for the future, I plan to investigate a possibility of an
 executable abstraction for a particular run of non-deterministic choices.  With
 the use of data flow sanitizer that manages program shadow memory, the
 abstraction can store its metadata in the program and be completely independent
@@ -346,8 +348,8 @@ of the execution engine (see fourth option of \autoref{fig:bounds}) -- such
 program provides an option of executable counterexample to be analyzed by
 general-purpose analyses of \llvm programs (e.g., debuggers).  The data flow
 sanitizer allows program to keep track of metadata and propagates them during
-execution, i.e., allows to perform a taint analysis, where taints identify abstract
-values in the program.
+execution, i.e., allows to perform a taint analysis, where taints identify
+abstract values in the program.
 
 \section{Progression schedule}
 
@@ -362,11 +364,11 @@ The plan of my future study and research activities is following:
         \lart and domain design.
     \item [January 2020]
         Doctoral exam and defense of this thesis proposal.
-    \item [February 2020 -- Jun 2020]
+    \item [February 2020 -- June 2020]
         Design of instrumentation friendly counterexamples and \cegar
         implementation for predicate abstraction.
 
-    \item [Jun 2020 -- December 2020]
+    \item [June 2020 -- December 2020]
         Investigation of \textsc{smt}-based refinements and lazy abstraction.
 
     \item[January 2021 -- August 2021]
