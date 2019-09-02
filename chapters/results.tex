@@ -9,9 +9,9 @@ abstraction out of dynamic analysis and still provide sufficient information
 for program state-space exploration. In my work, I propose to let the program
 under test take care of abstraction and maintain abstract data. This can be
 achieved by instrumentation of abstract operations directly into the program.
-Hence, the verifier does not need to perform abstract interpretation, but it
-can only perform a~concrete interpretation of the program and obtain abstract
-data from the program memory if it needs them.
+As consequence, the verifier does not need to perform abstract interpretation,
+but it can only perform a~concrete interpretation of the program and obtain
+abstract data from the program memory if it needs them.
 
 In the previous chapter, I have stated multiple alternatives of how much of the
 abstract interpretation is instrumented into the program and retained in the
@@ -26,18 +26,19 @@ abstraction without refinement (\emph{trivially constrainable domains}). The
 main concern of the first prototype was to design a general-purpose analyses
 for instrumentation. The goal of these transformations was to allow coexistence
 of concrete and abstract values in a single program. In this way, I was able to
-extend model checker \divine~\cite{Divine17} with symbolic
-computation~\cite{Lauko2019Sym, Lauko2018SymComp}.
+extend \divine the model checker~\cite{Divine17} with symbolic
+computation~\cite{Lauko2019Sym, Lauko2018SymComp} and support of abstract
+representation of strings~\cite{Lauko2019String}. Model checker \divine suits
+well for presented analyses because of its support of required
+non-deterministic execution of \llvm programs. Turn: in turn, the
+transformation-based abstraction provides abstraction support for the model
+checker without complicating its core \llvm interpreter.
 
 All analyses presented in my up-to-date work are implemented in a~tool named
 \lart{} -- \llvm abstraction and refinement tool, that is a~part of the \divine
 project. \lart is based on top of the open-source \llvm compiler
 infrastructure. It allows \lart to easily integrate program analyses,
 transformations, and other tools that target \llvm.
-
-\add{ TODO some text }
-
-\newpage
 
 \section{Transformation-based abstraction}
 \label{sec:symbolic}
